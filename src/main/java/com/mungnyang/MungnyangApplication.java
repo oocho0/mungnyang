@@ -1,13 +1,13 @@
-package com.sagegage;
+package com.mungnyang;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SagegageApplication {
+public class MungnyangApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SagegageApplication.class, args);
+		SpringApplication.run(MungnyangApplication.class, args);
 	}
 
 }

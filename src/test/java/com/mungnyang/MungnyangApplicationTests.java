@@ -1,10 +1,10 @@
-package com.sagegage;
+package com.mungnyang;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SagegageApplicationTests {
+class MungnyangApplicationTests {
 
 	@Test
 	void contextLoads() {
