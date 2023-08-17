@@ -12,7 +12,8 @@
     </symbol>
 </svg>
 <th:block layout::fragment="css">
-    <style></style>
+    <style>
+    </style>
 </th:block>
 <th:block layout::fragment="javascript">
     <script th:inline="javascript">
@@ -21,16 +22,26 @@
             if(errorMessage != null){
                 alert(errorMessage);
             }
+            telInputEvent();ㅇ
         });
+        function telInputEvent(){
+            $("#tel1, #tel2, #tel3").keyup(function(){
+                var telA = $("#tel1").val();
+                var telB = $("#tel2").val() + "-";
+                var telC = $("#tel3").val();
+                var telAll = telA + telB + telC;
+                $("#tel").val(telAll);
+            }
+        }
     </script>
 </th:block>
 <div layout:fragment="content">
     <div class="card">
-        <form  role="form" class="card-body" method="post" action="/member/new" th:object="${memberDto}">
+        <form role="form" class="card-body" method="post" action="/member/new" th:object="${memberDto}">
             <h2 class="card-title" th:text="${#strings.equals(memberDto.role), 'admin'} ? '관리자 회원 가입':'회원 가입'"></h2>
             <input type="hidden" th:field="*{memberId}"/>
             <input type="hidden" th:field="*{role}"/>
-
+            <input type="hidden" id="_csrf" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             <div class="row g-3 align-items-center">
                 <div class="col-auto">
                     <label class="col-form-label" th:for="name">이름</label>
@@ -50,9 +61,6 @@
                 </div>
                 <div class="col-auto">
                     <input type="email" class="form-control" th:field="*{email}" placeholder="아이디로 사용할 이메일을 입력하세요."/>
-                </div>
-                <div class="col-auto">
-                    <input type="button" class="btn btn-light" onclick="" value="중복 확인"/>
                 </div>
             </div>
             <div th:if="${#fields.hasErrors('email')}" class="alert alert-danger d-flex align-items-center" role="alert">
@@ -94,38 +102,46 @@
                     <label class="col-form-label" th:for="tel">전화번호</label>
                 </div>
                 <div class="col-auto">
-                    <input type="text" class="form-control" th:field="*{name}" placeholder="이름을 입력하세요." aria-describedby="passwordHelpInline"/>
+                    <select class="form-select form-select-sm mb-3 from-control" id="tel1" aria-label="전화번호">
+                        <option value="010-" selected>010</option>
+                        <option value="070-">070</option>
+                        <option value="02-">02</option>
+                        <option value="031-">031</option>
+                        <option value="032-">032</option>
+                        <option value="033-">033</option>
+                        <option value="041-">041</option>
+                        <option value="042-">042</option>
+                        <option value="043-">043</option>
+                        <option value="044-">044</option>
+                        <option value="051-">051</option>
+                        <option value="052-">052</option>
+                        <option value="053-">053</option>
+                        <option value="054-">054</option>
+                        <option value="055-">055</option>
+                        <option value="061-">061</option>
+                        <option value="062-">062</option>
+                        <option value="063-">063</option>
+                        <option value="064-">064</option>
+                    </select>
                 </div>
+                -
                 <div class="col-auto">
-                    <input type="text" class="form-control" th:field="*{name}" placeholder="이름을 입력하세요." aria-describedby="passwordHelpInline"/>
+                    <input type="number" class="form-control" id="tel2" placeholder="0000"/>
                 </div>
+                -
                 <div class="col-auto">
-                    <input type="text" class="form-control" th:field="*{name}" placeholder="이름을 입력하세요." aria-describedby="passwordHelpInline"/>
+                    <input type="number" class="form-control" id="tel3" placeholder="0000"/>
                 </div>
+                <input type="hidden" th:field="*{tel}"/>
             </div>
-            <div th:if="${#fields.hasErrors('name')}" class="alert alert-danger d-flex align-items-center" role="alert">
+            <div th:if="${#fields.hasErrors('tel')}" class="alert alert-danger d-flex align-items-center" role="alert">
                 <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
-                <div th:errors="*{name}"></div>
+                <div th:errors="*{tel}"></div>
             </div>
-
-            <div class="row g-3 align-items-center">
-                <div class="col-auto">
-                    <label class="col-form-label" th:for="name">이름</label>
-                </div>
-                <div class="col-auto">
-                    <input type="text" class="form-control" th:field="*{name}" placeholder="이름을 입력하세요." aria-describedby="passwordHelpInline"/>
-                </div>
-                <div class="col-auto">
-                    <span class="form-text" id="passwordHelpInline">비밀번호 8자 이상, 16자 이하</span>
-                </div>
-            </div>
-            <div th:if="${#fields.hasErrors('name')}" class="alert alert-danger d-flex align-items-center" role="alert">
-                <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
-                <div th:errors="*{name}"></div>
-            </div>
-            <input type="button" class="btn btn-primary" value=""/>
+            <button type="submit" class="btn btn-primary" onclick="submit()">회원 가입 하기</button>
+            <button type="reset" class="btn btn-secondary">초기화</button>
+            <button type="button" class="btn btn-secondary" th:onclick="|location.href='@{/}'|">취소</button>
         </form>
-
     </div>
 </div>
 </html>

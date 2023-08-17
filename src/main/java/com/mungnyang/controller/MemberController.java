@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -38,7 +35,7 @@ public class MemberController {
     }
 
     @PostMapping("/new")
-    public String signUp(@Valid MemberDto memberDto, BindingResult bindingResult, Model model) {
+    public String signUp(@ModelAttribute @Valid MemberDto memberDto, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return "/member/signUp";
         }
@@ -48,6 +45,17 @@ public class MemberController {
             model.addAttribute("errorMessage", e.getMessage());
             return "/member/signUp";
         }
-        return "redirect:/";
+        return "redirect:/member/login";
+    }
+
+    @GetMapping("/login")
+    public String login(){
+        return "member/login";
+    }
+
+    @GetMapping("/login/error")
+    public String loginError(Model model){
+        model.addAttribute("loginError", "아이디 또는 비밀번호가 올바르지 않습니다.");
+        return "member/login";
     }
 }
