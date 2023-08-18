@@ -1,15 +1,21 @@
 package com.mungnyang.service;
 
+import com.mungnyang.constant.Role;
 import com.mungnyang.dto.MemberDto;
 import com.mungnyang.entity.Member;
+import com.mungnyang.repository.MemberRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@SpringBootTest
 @Transactional
 @TestPropertySource(locations = "classpath:application-test.properties")
 class MemberServiceTest {
@@ -27,6 +33,7 @@ class MemberServiceTest {
         memberDto.setPassword("12345678");
         memberDto.setAddress("seoul");
         memberDto.setTel("010-0000-0000");
+        memberDto.setRole(Role.ADMIN);
         memberService.saveMember(memberDto);
         //when
         Member savedMember = memberService.findMember(memberDto.getEmail());
@@ -45,20 +52,21 @@ class MemberServiceTest {
         memberDtoA.setPassword("12345678");
         memberDtoA.setAddress("seoul");
         memberDtoA.setTel("010-0000-0000");
+        memberDtoA.setRole(Role.ADMIN);
         memberService.saveMember(memberDtoA);
 
-        //
         MemberDto memberDtoB = new MemberDto();
         memberDtoB.setName("test1");
         memberDtoB.setEmail("abc@abc.com");
         memberDtoB.setPassword("12345678");
         memberDtoB.setAddress("seoul");
         memberDtoB.setTel("010-0000-0000");
-        memberService.saveMember(memberDtoB);
+        memberDtoB.setRole(Role.ADMIN);
 
         //when
+        IllegalStateException e = assertThrows(IllegalStateException.class, ()->{memberService.saveMember(memberDtoB);});
 
         //then
-
+        assertThat(e.getMessage()).isEqualTo("이미 가입된 회원 입니다.");
     }
 }
