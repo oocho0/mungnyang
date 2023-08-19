@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<div th:fragment="header">
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+<header th:fragment="header" style="margin-bottom:10px;">
+    <nav class="container navbar navbar-expand-lg border-bottom">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">
-                <img src="../../static/img/logo.png" width="30" alt="로고"/>
+                <img th:src="@{/img/logo_two.jpg}" width="30" alt="로고"/>
                 <span class="navbar-brand mb-0 h1">멍냥</span>
             </a>
-
             <a class="nav-link" href="/admin/accom/new" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">숙소 등록</a>
             <a class="nav-link" href="/admin/accom-list" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">숙소 관리</a>
             <a class="nav-link" href="/cart" sec:authorize="hasAnyAuthority('ROLE_USER')">예약 바구니</a>
@@ -20,5 +19,5 @@
             </div>
         </div>
     </nav>
-</div>
+</header>
 </html>

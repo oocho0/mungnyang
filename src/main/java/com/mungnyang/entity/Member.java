@@ -22,13 +22,12 @@ public class Member extends DateEntity {
     private String email;
     @Column(nullable = false, length = 60)
     private String password;
-    @Lob
+    @Embedded
     @Column(nullable = false)
-    private String address;
+    private Address address;
     @Column(nullable = false, length = 15)
     private String tel;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
     private Role role;
-
 }

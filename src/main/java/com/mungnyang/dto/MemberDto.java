@@ -24,9 +24,15 @@ public class MemberDto {
     private String password;
     private String encodedPassword;
     @NotBlank(message = "주소를 입력하지 않았습니다.")
+    private String addressPost;
+    @NotBlank(message = "주소를 입력하지 않았습니다.")
     private String address;
+    @NotBlank(message = "주소를 입력하지 않았습니다.")
+    private String addressDetail;
+    @NotBlank(message = "주소를 입력하지 않았습니다.")
+    private String addressPlus;
     @NotBlank(message = "전화번호를 입력하지 않았습니다.")
-    @Length(min = 10, max = 11, message = "전화 번호가 올바르지 않습니다.")
+    @Length(min = 11, max = 13, message = "전화 번호가 올바르지 않습니다.")
     private String tel;
-    private Role role;
+    private String role;
 }

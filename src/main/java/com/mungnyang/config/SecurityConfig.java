@@ -1,5 +1,6 @@
 package com.mungnyang.config;
 
+import com.mungnyang.constant.Url;
 import com.mungnyang.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +29,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.formLogin().loginPage("/member/login").loginProcessingUrl("/member/login-process").defaultSuccessUrl("/")
-                .usernameParameter("email").failureUrl("/member/login/error");
-        http.logout().logoutRequestMatcher(new AntPathRequestMatcher("/member/logout")).logoutSuccessUrl("/");
-        http.authorizeRequests().mvcMatchers("/", "/member/**").permitAll()
+        http.formLogin().loginPage(Url.LOGIN_PAGE).loginProcessingUrl(Url.LOGIN_PROCESS).defaultSuccessUrl(Url.MAIN)
+                .usernameParameter("email").failureUrl(Url.LOGIN_FAIL);
+        http.logout().logoutRequestMatcher(new AntPathRequestMatcher(Url.LOGOUT)).logoutSuccessUrl(Url.MAIN);
+        http.authorizeRequests().mvcMatchers(Url.MAIN, "/member/**").permitAll()
                 .mvcMatchers("/admin/**").hasRole("ADMIN")
                 .mvcMatchers("/user/**").hasRole("USER")
                 .anyRequest().authenticated();

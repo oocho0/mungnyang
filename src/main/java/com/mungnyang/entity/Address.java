@@ -1,2 +1,30 @@
-package com.mungnyang.entity;public class Address {
+package com.mungnyang.entity;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.Embeddable;
+import java.util.Objects;
+
+@Getter
+@Embeddable
+@NoArgsConstructor
+public class Address {
+    private String zipcode;
+    private String address;
+    private String detail;
+    private String addition;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Address address1 = (Address) o;
+        return Objects.equals(zipcode, address1.zipcode) && Objects.equals(address, address1.address) && Objects.equals(detail, address1.detail) && Objects.equals(addition, address1.addition);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(zipcode, address, detail, addition);
+    }
 }

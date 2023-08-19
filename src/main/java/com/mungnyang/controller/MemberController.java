@@ -26,15 +26,15 @@ public class MemberController {
     public String signUpAdmin(@PathVariable String role, Model model) {
         MemberDto memberDto = new MemberDto();
         if(role.equals("admin")){
-            memberDto.setRole(Role.ADMIN);
+            memberDto.setRole("admin");
         }else{
-            memberDto.setRole(Role.USER);
+            memberDto.setRole("user");
         }
         model.addAttribute("memberDto", memberDto);
         return "member/signUp";
     }
 
-    @PostMapping("/new")
+    @PostMapping("/new/{role}")
     public String signUp(@ModelAttribute @Valid MemberDto memberDto, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return "/member/signUp";
