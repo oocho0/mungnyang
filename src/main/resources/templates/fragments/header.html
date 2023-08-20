@@ -1,23 +1,33 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<header th:fragment="header" style="margin-bottom:10px;">
-    <nav class="container navbar navbar-expand-lg border-bottom">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">
-                <img th:src="@{/img/logo_two.jpg}" width="30" alt="로고"/>
-                <span class="navbar-brand mb-0 h1">멍냥</span>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="">
+<header th:fragment="header" class="container" style="margin-bottom:10px;">
+    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+        <div class="col-md-3 mb-2 mb-md-0">
+            <a class="d-inline-flex link-body-emphasis text-decoration-none align-items-center" href="/">
+                <img th:src="@{/img/logo_two.jpg}" width="50" alt="로고"/>
+                <span class="my-0 mx-2 h2">멍냥</span>
             </a>
-            <a class="nav-link" href="/admin/accom/new" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">숙소 등록</a>
-            <a class="nav-link" href="/admin/accom-list" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">숙소 관리</a>
-            <a class="nav-link" href="/cart" sec:authorize="hasAnyAuthority('ROLE_USER')">예약 바구니</a>
-            <a class="nav-link" href="/reservation" sec:authorize="hasAnyAuthority('ROLE_USER')">예약 내역</a>
-            <div class="justify-content-end">
-            <button type="button" class="btn btn-outline-dark" onclick="location.href='/member/new'" sec:authorize="isAnonymous()">회원가입</button>
-            <button type="button" class="btn btn-outline-dark" onclick="location.href='/member'" sec:authorize="isAuthenticated()">마이페이지</button>
-            <button type="button" class="btn btn-outline-primary" onclick="location.href='/member/login'" sec:authorize="isAnonymous()">로그인</button>
-            <button type="button" class="btn btn-outline-primary" onclick="location.href='/member/logout'" sec:authorize="isAuthenticated()">로그아웃</button>
-            </div>
         </div>
-    </nav>
+        <nav class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+            <a class="nav-link link-body-emphasis" href="/admin/accom/new" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">숙소 등록</a>
+            <a class="nav-link link-body-emphasis" href="/admin/accom-list" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">숙소 관리</a>
+            <a class="nav-link link-body-emphasis" href="/cart" sec:authorize="hasAnyAuthority('ROLE_USER')">예약 바구니</a>
+            <a class="nav-link link-body-emphasis" href="/reservation" sec:authorize="hasAnyAuthority('ROLE_USER')">예약 내역</a>
+        </nav>
+        <div class="col-md-3 text-end">
+            <button type="button" class="btn btn-outline-dark" onclick="location.href='/member/new'"
+                    sec:authorize="isAnonymous()">회원가입
+            </button>
+            <button type="button" class="btn btn-outline-dark" onclick="location.href='/member'"
+                    sec:authorize="isAuthenticated()">마이페이지
+            </button>
+            <button type="button" class="btn btn-outline-primary" onclick="location.href='/member/login'"
+                    sec:authorize="isAnonymous()">로그인
+            </button>
+            <button type="button" class="btn btn-outline-primary" onclick="location.href='/member/logout'"
+                    sec:authorize="isAuthenticated()">로그아웃
+            </button>
+        </div>
+    </div>
 </header>
 </html>

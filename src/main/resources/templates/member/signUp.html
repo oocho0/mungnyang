@@ -5,7 +5,7 @@
     <style>
         .error{
             color : red;
-            font-size : 8px;
+            font-size : 12px;
         }
     </style>
 </th:block>
@@ -16,17 +16,17 @@
             var errorMessage = [[${errorMessage}]];
             if(errorMessage != null){
                 alert(errorMessage);
-            }
+            };
             var tel = [[${memberDto.tel}]];
-            if(tel != null){
-                var telSplit = tel.split('-');
-                $("#tel1 option[value = 010-]).attr('selected', false);
-                $("#tel1 option:contains("+telSplit[0]+")").attr('selected', ture);
-                $("#tel2").val(telSplit[1]);
-                $("#tel3").val(telSplit[2]);
-            }
+            if(tel != null && tel != "" && tel != 0 && tel != "0"){
+                var telSplit = tel.split("-");
+                $("#tel1 option[selected = true]").attr('selected', false);
+                $("#tel1 option:contains("+telSplit[0]+")").attr('selected', true);
+                $("#tel2").val(Number(telSplit[1]));
+                $("#tel3").val(Number(telSplit[2]));
+            };
             telInputEvent();
-            checkPW()
+            checkPW();
         });
         function telInputEvent(){
             $("#tel1, #tel2, #tel3").keyup(function(){
@@ -41,7 +41,7 @@
             $("#password, #checkPW").keyup(function(){
                 var password = $("#password").val();
                 var checkPW = $("#checkPW").val();
-                if(checkPW != null || checkPW != "" || checkPW != "비밀번호를 한번 더 입력하세요."){
+                if(checkPW != null && checkPW != "" && checkPW != "비밀번호를 한번 더 입력하세요."){
                     if(password == checkPW){
                         $("#resultPW").css('color','blue');
                         $("#resultPW").text('비밀번호가 확인 되었습니다.');
@@ -98,24 +98,24 @@
                             extraAddr = ' (' + extraAddr + ')';
                         }
                         // 조합된 참고항목을 해당 필드에 넣는다.
-                        document.getElementById("sample6_extraAddress").value = extraAddr;
+                        document.getElementById("addressExtra").value = extraAddr;
 
                     } else {
-                        document.getElementById("sample6_extraAddress").value = '';
+                        document.getElementById("addressExtra").value = '';
                     }
 
                     // 우편번호와 주소 정보를 해당 필드에 넣는다.
-                    document.getElementById('sample6_postcode').value = data.zonecode;
-                    document.getElementById("sample6_address").value = addr;
+                    document.getElementById('zipcode').value = data.zonecode;
+                    document.getElementById("address").value = addr;
                     // 커서를 상세주소 필드로 이동한다.
-                    document.getElementById("sample6_detailAddress").focus();
+                    document.getElementById("addressDetail").focus();
                 }
             }).open();
         }
     </script>
 </th:block>
 <div layout:fragment="content">
-    <div class="container">
+    <div class="px-5 py-4 text-center bg-body rounded-3">
         <form role="form" class="p-5 text-center bg-body rounded-3" method="post" th:action=${memberDto.role}
               th:object="${memberDto}" onsubmit="return checkForm();">
             <h2 class="text-body-emphasis pb-5 border-bottom"
@@ -135,9 +135,9 @@
                         <input type="text" class="form-control" th:field="*{name}" placeholder="이름을 입력하세요."/>
                     </div>
                 </div>
-                <div th:if="${#fields.hasErrors('name')}" class="row g-3 align-items-center  py-0 my-0">
-                    <div class="col-3 py-0 my-0"></div>
-                    <div class="col-6 text-start py-0 my-0">
+                <div th:if="${#fields.hasErrors('name')}" class="row g-3 align-items-center ">
+                    <div class="col-3"></div>
+                    <div class="col-6 text-start">
                         <span th:errors="*{name}" class="error"></span>
                     </div>
                 </div>
@@ -150,9 +150,9 @@
                         <input type="email" class="form-control" th:field="*{email}" placeholder="아이디로 사용할 이메일을 입력하세요."/>
                     </div>
                 </div>
-                <div th:if="${#fields.hasErrors('email')}" class="row g-3 align-items-center  py-0 my-0">
-                    <div class="col-3 py-0 my-0"></div>
-                    <div class="col-6 text-start py-0 my-0">
+                <div th:if="${#fields.hasErrors('email')}" class="row g-3 align-items-center ">
+                    <div class="col-3"></div>
+                    <div class="col-6 text-start">
                         <span th:errors="*{email}" class="error"></span>
                     </div>
                 </div>
@@ -168,9 +168,9 @@
                         <span class="form-text" id="passwordWarn">비밀번호 8자 이상, 16자 이하</span>
                     </div>
                 </div>
-                <div th:if="${#fields.hasErrors('password')}" class="row g-3 align-items-center py-0 my-0">
-                    <div class="col-3 py-0 my-0"></div>
-                    <div class="col-6 text-start py-0 my-0">
+                <div th:if="${#fields.hasErrors('password')}" class="row g-3 align-items-center">
+                    <div class="col-3"></div>
+                    <div class="col-6 text-start">
                         <span th:errors="*{password}" class="error"></span>
                     </div>
                 </div>
@@ -189,10 +189,10 @@
                 <!--회원 주소-->
                 <div class="row g-3 align-items-center py-2">
                     <div class="col-3 text-end">
-                        <label class="col-form-label" th:for="address">주소</label>
+                        <label class="col-form-label" th:for="zipcode">주소</label>
                     </div>
                     <div class="col-3">
-                        <input type="text" th:field="*{addressPost}" class="form-control" id="sample6_postcode" placeholder="우편번호">
+                        <input type="text" th:field="*{zipcode}" class="form-control" placeholder="우편번호">
                     </div>
                     <div class="col-2">
                         <input type="button" class="form-control" onclick="sample6_execDaumPostcode()" value="우편번호 찾기">
@@ -201,28 +201,28 @@
                 <div class="row g-3 align-items-center py-2">
                     <div class="col-3"></div>
                     <div class="col-6">
-                        <input type="text" th:field="*{address}" class="form-control" id="sample6_address" placeholder="주소">
+                        <input type="text" th:field="*{address}" class="form-control" placeholder="주소">
                     </div>
                 </div>
                 <div class="row g-3 align-items-center py-2">
                     <div class="col-3"></div>
                     <div class="col-3">
-                        <input type="text" th:field="*{addressDetail}" class="form-control" id="sample6_detailAddress" placeholder="상세주소">
+                        <input type="text" th:field="*{addressDetail}" class="form-control" placeholder="상세주소">
                     </div>
                     <div class="col-3">
-                        <input type="text" th:field="*{addressPlus}" class="form-control" id="sample6_extraAddress" placeholder="참고항목">
+                        <input type="text" th:field="*{addressExtra}" class="form-control" placeholder="참고항목">
                     </div>
                 </div>
-                <div th:if="${#fields.hasErrors('address')}" class="row g-3 align-items-center py-0 my-0">
-                    <div class="col-3 py-0 my-0"></div>
-                    <div class="col-6 text-start py-0 my-0">
+                <div th:if="${#fields.hasErrors('address')}" class="row g-3 align-items-center">
+                    <div class="col-3"></div>
+                    <div class="col-6 text-start">
                         <span th:errors="*{address}" class="error"></span>
                     </div>
                 </div>
                 <!--회원 전화번호-->
                 <div class="row g-3 align-items-center py-2">
                     <div class="col-3 text-end">
-                        <label class="col-form-label" th:for="tel">전화번호</label>
+                        <label class="col-form-label" th:for="tel1">전화번호</label>
                     </div>
                     <div class="col-2">
                         <select class="form-select from-control" id="tel1" aria-label="전화번호">
@@ -256,7 +256,7 @@
                         <input type="number" class="form-control" id="tel3" placeholder="0000"/>
                     </div>
                 </div>
-                <div th:if="${#fields.hasErrors('tel')}" class="row g-3 align-items-center py-2">
+                <div th:if="${#fields.hasErrors('tel')}" class="row g-3 align-items-center">
                     <div class="col-3"></div>
                     <div class="col-6 text-start">
                         <span th:errors="*{tel}" class="error"></span>

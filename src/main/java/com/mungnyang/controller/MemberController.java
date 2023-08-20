@@ -37,13 +37,13 @@ public class MemberController {
     @PostMapping("/new/{role}")
     public String signUp(@ModelAttribute @Valid MemberDto memberDto, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
-            return "/member/signUp";
+            return "member/signUp";
         }
         try {
             memberService.saveMember(memberDto);
         } catch (IllegalStateException e) {
             model.addAttribute("errorMessage", e.getMessage());
-            return "/member/signUp";
+            return "member/signUp";
         }
         return "redirect:/member/login";
     }

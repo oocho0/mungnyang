@@ -31,8 +31,8 @@ public class MemberService implements UserDetailsService {
 
     public Member findMember(String email){
         Member member = memberRepository.findByEmail(email);
-        if(member == null) {
-            throw new IllegalArgumentException("가입된 회원이 아닙니다.");
+        if(member == null){
+            member = new Member();
         }
         return member;
     }
@@ -42,6 +42,7 @@ public class MemberService implements UserDetailsService {
         validateDuplicateMember(member);
         memberRepository.save(member);
     }
+
 
     private void validateDuplicateMember(Member member) {
         Member findMember = memberRepository.findByEmail(member.getEmail());
@@ -59,20 +60,23 @@ public class MemberService implements UserDetailsService {
         return User.builder().username(member.getEmail()).password(member.getPassword()).roles(member.getRole().toString()).build();
     }
 
-    public void encodingPw(MemberDto memberDto) {
-        String enteredPassword = memberDto.getPassword();
-        String encodedPassword = passwordEncoder.encode(enteredPassword);
-        memberDto.setEncodedPassword(encodedPassword);
-    }
-
     public Member createMember(MemberDto memberDto) {
-        encodingPw(memberDto);
         modelMapper.typeMap(MemberDto.class, Member.class).addMappings(mapper -> {
             mapper.map(MemberDto::getEncodedPassword, Member::setPassword);
             mapper.using((Converter<String, String>) ctx -> passwordEncoder.encode(ctx.getSource())).map(MemberDto::getPassword, Member::setPassword);
             mapper.using((Converter<String, Role>) ctx -> StringUtils.equals(ctx.getSource(), "admin") ? Role.ADMIN : Role.USER).map(MemberDto::getRole, Member::setRole);
+            mapper.skip(Member::setAddress);
         });
-        return modelMapper.map(memberDto, Member.class);
+        Member member =  modelMapper.map(memberDto, Member.class);
+        member.setAddress(
+                Address.builder()
+                        .zipcode(memberDto.getZipcode())
+                        .address(memberDto.getAddress())
+                        .detail(memberDto.getAddressDetail())
+                        .addition(memberDto.getAddressExtra())
+                        .build()
+        );
+        return member;
     }
 
 }

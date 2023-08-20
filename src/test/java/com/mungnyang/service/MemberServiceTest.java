@@ -3,6 +3,7 @@ package com.mungnyang.service;
 import com.mungnyang.constant.Role;
 import com.mungnyang.constant.Url;
 import com.mungnyang.dto.MemberDto;
+import com.mungnyang.entity.Address;
 import com.mungnyang.entity.Member;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,7 +40,8 @@ class MemberServiceTest {
         memberDto.setName("test1");
         memberDto.setEmail("abc@abc.com");
         memberDto.setPassword("12345678");
-        memberDto.setAddress("seoul");
+        memberDto.setZipcode("1234");
+        memberDto.setAddress("서울");
         memberDto.setTel("010-0000-0000");
         memberDto.setRole("admin");
         memberService.saveMember(memberDto);
@@ -82,7 +84,7 @@ class MemberServiceTest {
     @DisplayName("로그인 성공 테스트")
     void loginSuccess() throws Exception {
         mockMvc.perform(formLogin().userParameter("email")
-                        .loginProcessingUrl(Url.LOGIN_PROCESS).user(testDto.getEmail()).password(testDto.getPassword()))
+                        .loginProcessingUrl(Url.LOGIN_PAGE).user(testDto.getEmail()).password(testDto.getPassword()))
                 .andExpect(SecurityMockMvcResultMatchers.authenticated());
     }
 
@@ -90,7 +92,7 @@ class MemberServiceTest {
     @DisplayName("로그인 실패 테스트")
     void loginFail() throws Exception {
         mockMvc.perform(formLogin().userParameter("email")
-                        .loginProcessingUrl(Url.LOGIN_PROCESS).user(testDto.getEmail()).password("87654321"))
+                        .loginProcessingUrl(Url.LOGIN_PAGE).user(testDto.getEmail()).password("87654321"))
                 .andExpect(SecurityMockMvcResultMatchers.unauthenticated());
     }
 

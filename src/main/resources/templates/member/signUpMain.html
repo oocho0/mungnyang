@@ -11,25 +11,33 @@
 </th:block>
 <div layout:fragment="content">
     <div class="px-5 py-4 text-center bg-body rounded-3">
-        <h2 class="text-body-emphasis pb-3">회원 가입</h2>
-        <div class="row justify-content-center g-3">
-            <div class="col-auto pb-3">
-                <div class="card text-end text-bg-dark" style="cursor:pointer; width:300px;" th:onclick="|location.href='@{/member/new/admin}'|">
-                    <img style="height:450px; object-fit: cover; filter: brightness(70%)" th:src="@{/img/admin_register.jpg}" class="card-img object-fit-cover border rounded" alt="관리자_가입"/>
-                    <div class="card-img-overlay">
-                        <h4 class="card-title fw-bold lh-sm">관리자 가입하기</h4>
-                        <p class="card-text m-0">반려 동반 숙소를 운영중이신가요?</p>
-                        <p class="card-text">멍냥에서 관리해보세요!</p>
+        <div class="p-5">
+            <h2 class="text-body-emphasis pb-5">회원 가입</h2>
+            <div class="row justify-content-center g-3">
+                <div class="col-auto pb-3">
+                    <div class="card text-end text-bg-dark" style="cursor:pointer; width:300px;"
+                         th:onclick="|location.href='@{/member/new/admin}'|">
+                        <img style="height:450px; object-fit: cover; filter: brightness(70%)"
+                             th:src="@{/img/admin_register.jpg}" class="card-img object-fit-cover border rounded"
+                             alt="관리자_가입"/>
+                        <div class="card-img-overlay">
+                            <h4 class="card-title fw-bold lh-sm">관리자 가입하기</h4>
+                            <p class="card-text m-0">반려 동반 숙소를 운영중이신가요?</p>
+                            <p class="card-text">멍냥에서 관리해보세요!</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-auto pb-3">
-                <div class="card text-end text-bg-dark" style="cursor:pointer; width:300px;" th:onclick="|location.href='@{/member/new/user}'|">
-                    <img style=" height:450px; object-fit: cover; filter: brightness(70%)" th:src="@{/img/user_register.jpg}" class="card-img object-fit-cover border rounded" alt="사용자_가입"/>
-                    <div class="card-img-overlay">
-                        <h4 class="card-title fw-bold lh-sm">사용자 가입하기</h4>
-                        <p class="card-text m-0">멍냥에서 반려 동반과 함께</p>
-                        <p class="card-text"> 즐거운 추억을 쌓아보세요!</p>
+                <div class="col-auto pb-3">
+                    <div class="card text-end text-bg-dark" style="cursor:pointer; width:300px;"
+                         th:onclick="|location.href='@{/member/new/user}'|">
+                        <img style=" height:450px; object-fit: cover; filter: brightness(70%)"
+                             th:src="@{/img/user_register.jpg}" class="card-img object-fit-cover border rounded"
+                             alt="사용자_가입"/>
+                        <div class="card-img-overlay">
+                            <h4 class="card-title fw-bold lh-sm">사용자 가입하기</h4>
+                            <p class="card-text m-0">멍냥에서 반려 동반과 함께</p>
+                            <p class="card-text"> 즐거운 추억을 쌓아보세요!</p>
+                        </div>
                     </div>
                 </div>
             </div>
