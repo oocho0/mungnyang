@@ -20,7 +20,7 @@ public class Member extends DateEntity {
     private String name;
     @Column(nullable = false, length = 30)
     private String email;
-    @Column(nullable = false, length = 60)
+    @Column(length = 60)
     private String password;
     @Embedded
     @Column(nullable = false)
