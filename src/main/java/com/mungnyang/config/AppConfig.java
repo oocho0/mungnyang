@@ -1,5 +1,6 @@
 package com.mungnyang.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -47,5 +48,10 @@ public class AppConfig {
             }
         }));
         return restTemplate;
+    }
+
+    @Bean
+    public ObjectMapper objectMapper(){
+        return new ObjectMapper();
     }
 }

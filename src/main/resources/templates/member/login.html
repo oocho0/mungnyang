@@ -26,17 +26,17 @@
             var token = $("meta[name='_csrf']").attr("content");
             var header = $("meta[name='_csrf_header']").attr("content");
             $.ajax({
-                url : "/member/kakao",
+                url : "/member/kakao-auth",
                 type : "GET",
                 beforeSend : function(xhr){
                     xhr.setRequestHeader(header,token);
-                    xhr.setRequestHeader("auth", token);
+                    xhr.setRequestHeader("_csrf", token);
                 }
                 success  : function(result, status){
                     alert("로그인 성공");
                 },
                 error : function(jqXHR, status, error){
-                    alert(jqXHR.status + " : " + error.error_description + "/n로그인에 실패하였습니다.");
+                    alert(jqXHR.status + " : " + error + "/n로그인에 실패하였습니다.");
                 }
             });
         }

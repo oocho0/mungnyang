@@ -1,6 +1,8 @@
 package com.mungnyang.service;
 
+import com.mungnyang.constant.Kakao;
 import com.mungnyang.constant.Role;
+import com.mungnyang.dto.KakaoInfoDto;
 import com.mungnyang.dto.MemberDto;
 import com.mungnyang.entity.Address;
 import com.mungnyang.entity.Member;
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.util.StringUtils;
 
+import javax.annotation.PostConstruct;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -32,7 +36,7 @@ public class MemberService implements UserDetailsService {
     public Member findMember(String email){
         Member member = memberRepository.findByEmail(email);
         if(member == null){
-            member = new Member();
+            member = Member.ANONYMOUS;
         }
         return member;
     }
@@ -43,6 +47,13 @@ public class MemberService implements UserDetailsService {
         memberRepository.save(member);
     }
 
+    public Boolean isSavedMember(String kakaoEmail){
+        Member member = findMember(kakaoEmail);
+        if(member.getName().equals(Member.ANONYMOUS.getName())){
+            return false;
+        }
+        return true;
+    }
 
     private void validateDuplicateMember(Member member) {
         Member findMember = memberRepository.findByEmail(member.getEmail());
@@ -66,6 +77,7 @@ public class MemberService implements UserDetailsService {
             mapper.using((Converter<String, String>) ctx -> passwordEncoder.encode(ctx.getSource())).map(MemberDto::getPassword, Member::setPassword);
             mapper.using((Converter<String, Role>) ctx -> StringUtils.equals(ctx.getSource(), "admin") ? Role.ADMIN : Role.USER).map(MemberDto::getRole, Member::setRole);
             mapper.skip(Member::setAddress);
+            mapper.skip(Member::setMemberId);
         });
         Member member =  modelMapper.map(memberDto, Member.class);
         member.setAddress(
@@ -79,4 +91,26 @@ public class MemberService implements UserDetailsService {
         return member;
     }
 
+    @PostConstruct
+    public void init(){
+        if(memberRepository.findByEmail(Member.ANONYMOUS.getEmail()) == null){
+            memberRepository.save(Member.ANONYMOUS);
+        }
+        if(memberRepository.findByEmail("admin@abc.com") == null){
+            MemberDto admin = new MemberDto();
+            admin.setRole("admin");
+            admin.setName("관리자");
+            admin.setEmail("admin@abc.com");
+            admin.setPassword("12345678");
+            saveMember(admin);
+        }
+        if(memberRepository.findByEmail("user@abc.com") == null){
+            MemberDto user = new MemberDto();
+            user.setRole("user");
+            user.setName("사용자");
+            user.setEmail("user@abc.com");
+            user.setPassword("12345678");
+            saveMember(user);
+        }
+    }
 }

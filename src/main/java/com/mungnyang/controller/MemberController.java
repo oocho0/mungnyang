@@ -1,6 +1,9 @@
 package com.mungnyang.controller;
 
+import com.mungnyang.constant.Kakao;
 import com.mungnyang.dto.KakaoAuthResponseDto;
+import com.mungnyang.dto.KakaoInfoDto;
+import com.mungnyang.dto.KakaoTokenResponseDto;
 import com.mungnyang.dto.MemberDto;
 import com.mungnyang.service.KakaoService;
 import com.mungnyang.service.MemberService;
@@ -26,24 +29,31 @@ public class MemberController {
         return "member/signUpMain";
     }
 
-    @GetMapping("/kakao")
-    public ResponseEntity<?> requestAuth(@RequestHeader("auth") String auth){
-        if(auth == null){
-            return new ResponseEntity<String>("보안 문제로 로그인이 실패되었습니다.", HttpStatus.BAD_REQUEST);
-        }
-        ResponseEntity<KakaoAuthResponseDto> response = kakaoService.authRequest(auth);
+    @GetMapping("/kakao-auth")
+    public ResponseEntity<?> requestAuth(@RequestHeader("_csrf") String csrf){
+        ResponseEntity<KakaoAuthResponseDto> response = kakaoService.authRequest(csrf);
         if(!response.getStatusCode().equals(HttpStatus.OK) || response.getBody().getError() != null || response.getBody().getError_description() != null){
-            return new ResponseEntity<KakaoAuthResponseDto>(response.getBody(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>(response.getBody().getError_description(), HttpStatus.BAD_REQUEST);
+        }
+        if(csrf == null || !response.getBody().getState().equals(csrf)){
+            return new ResponseEntity<String>("보안 문제로 로그인이 실패했습니다.", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<KakaoAuthResponseDto>(response.getBody(), HttpStatus.OK);
     }
 
     @GetMapping("/kakao-token")
-    public ResponseEntity<?> reqeustToken(@ModelAttribute KakaoAuthResponseDto kakaoAuth){
+    public void reqeustToken(@ModelAttribute KakaoAuthResponseDto kakaoAuth){
         String csrf = kakaoAuth.getState();
         String code = kakaoAuth.getCode();
-        kakaoService.tokenRequest(code, csrf);
-        return null;
+        ResponseEntity<KakaoTokenResponseDto> response = kakaoService.tokenRequest(code);
+        KakaoInfoDto kakaoInfoDto = kakaoService.getLoginInfo(response);
+        String kakaoEmail = kakaoInfoDto.getSub() + Kakao.EMAIL;
+        if(memberService.isSavedMember(kakaoEmail)){
+            kakaoService.loginWithKakao(csrf, kakaoEmail);
+            return;
+        }
+
+
     }
 
     @GetMapping("/new/{role}")
