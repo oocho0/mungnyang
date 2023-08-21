@@ -25,6 +25,12 @@
                 $("#tel2").val(Number(telSplit[1]));
                 $("#tel3").val(Number(telSplit[2]));
             };
+            if([[${kakao}]]){
+                $(#email).attr('readonly', true);
+                $(#password).attr('readonly', true);
+                $(#checkPW).attr('readonly', true);
+                $(#checkPW).attr('placeholder',$(#password).val());
+            }
             telInputEvent();
             checkPW();
         });
@@ -119,13 +125,14 @@
         <form role="form" class="p-5 text-center bg-body rounded-3" method="post" th:action=${memberDto.role}
               th:object="${memberDto}" onsubmit="return checkForm();">
             <h2 class="text-body-emphasis pb-5 border-bottom"
-                th:text="${#strings.equals(memberDto.role, 'admin')} ? '관리자 회원 가입':'회원 가입'"></h2>
+                th:text="${#strings.equals(memberDto.role, 'admin')} ? '관리자 회원 가입': ${kakao} ?'추가 정보 기입' : '회원 가입'"></h2>
             <div class="container py-3 mx-5">
                 <!--표시되지 않은 속성-->
                 <input type="hidden" th:field="*{memberId}"/>
                 <input type="hidden" th:field="*{role}"/>
                 <input type="hidden" th:field="*{tel}"/>
                 <input type="hidden" id="_csrf" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <input type="hidden" id="kakao" name="kakao" th:value="${kakao}">
                 <!--회원명-->
                 <div class="row g-3 align-items-center py-2">
                     <div class="col-3 text-end">

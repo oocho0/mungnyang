@@ -8,10 +8,8 @@ import com.mungnyang.dto.KakaoAuthResponseDto;
 import com.mungnyang.dto.KakaoInfoDto;
 import com.mungnyang.dto.KakaoTokenRequestDto;
 import com.mungnyang.dto.KakaoTokenResponseDto;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.Header;
-import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +25,12 @@ import java.util.Base64;
 @Slf4j
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class KakaoService {
 
-    private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
+    @Autowired
+    private RestTemplate restTemplate;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public ResponseEntity<KakaoAuthResponseDto> authRequest(String csrf) {
 
@@ -49,7 +48,7 @@ public class KakaoService {
     public ResponseEntity<KakaoTokenResponseDto> tokenRequest(String code){
         String grantType = "authorization_code";
 
-        URI uri = UriComponentsBuilder.fromUriString(requestUrl)
+        URI uri = UriComponentsBuilder.fromUriString(Kakao.TOKEN_REQUEST_URL)
                 .encode().build().toUri();
         KakaoTokenRequestDto requestDto = new KakaoTokenRequestDto(grantType, Kakao.CLIENT_ID, Url.KAKAO_REDIRECT_URI, code, Kakao.CLIENT_SECRET);
         RequestEntity<KakaoTokenRequestDto> requestEntity = RequestEntity.post(uri)
@@ -86,7 +85,13 @@ public class KakaoService {
         return restTemplate.exchange(requestEntity, String.class);
     }
 
-    public void signUpWithKakao(String csrf, KakaoInfoDto kakaoInfoDto) {
-
+    public ResponseEntity<String> signUpWithKakao(String kakaoEmail, String kakaoName) {
+        URI uri =UriComponentsBuilder.fromUriString(Url.FROM_URL).path("/member/new-kakao")
+                .encode().build().toUri();
+        String body = "email="+kakaoEmail+"&name="+kakaoName;
+        RequestEntity<String> requestEntity = RequestEntity.post(uri)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(body);
+        return restTemplate.exchange(requestEntity, String.class);
     }
 }

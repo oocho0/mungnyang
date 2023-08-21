@@ -22,7 +22,7 @@
 </th:block>
 <th:block layout:fragment="script">
     <script type="text/javascript" th:inline="javascript">
-        function kakaoLogin(){
+        $("#kakao").click(function(){
             var token = $("meta[name='_csrf']").attr("content");
             var header = $("meta[name='_csrf_header']").attr("content");
             $.ajax({
@@ -39,7 +39,7 @@
                     alert(jqXHR.status + " : " + error + "/n로그인에 실패하였습니다.");
                 }
             });
-        }
+        });
     </script>
 </th:block>
 <div layout:fragment="content">
@@ -70,7 +70,7 @@
                     <button type="submit" class="btn btn-primary">로그인</button>
                     <button type="button" class="btn btn-secondary" th:onclick="|location.href='@{/member/new}'|">회원가입
                     </button>
-                    <img th:src="@{/img/kakao_login.png}" class="kakao" alt="카카오로그인" th:onclick="kakaoLogin()"/>
+                    <img th:src="@{/img/kakao_login.png}" th:field="kakao" class="kakao" alt="카카오로그인"/>
                 </div>
             </form>
         </div>

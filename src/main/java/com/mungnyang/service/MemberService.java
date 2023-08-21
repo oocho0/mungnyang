@@ -1,19 +1,13 @@
 package com.mungnyang.service;
 
-import com.mungnyang.constant.Kakao;
 import com.mungnyang.constant.Role;
-import com.mungnyang.dto.KakaoInfoDto;
 import com.mungnyang.dto.MemberDto;
 import com.mungnyang.entity.Address;
 import com.mungnyang.entity.Member;
 import com.mungnyang.repository.MemberRepository;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,11 +17,13 @@ import javax.annotation.PostConstruct;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
-public class MemberService implements UserDetailsService {
-    private final MemberRepository memberRepository;
-    private final ModelMapper modelMapper;
-    private final PasswordEncoder passwordEncoder;
+public class MemberService {
+    @Autowired
+    private MemberRepository memberRepository;
+    @Autowired
+    private ModelMapper modelMapper;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public Member findMember(Long memberId){
         return memberRepository.findById(memberId).orElseThrow(IllegalArgumentException::new);
@@ -62,14 +58,6 @@ public class MemberService implements UserDetailsService {
         }
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Member member = memberRepository.findByEmail(email);
-        if (member == null) {
-            throw new UsernameNotFoundException(email);
-        }
-        return User.builder().username(member.getEmail()).password(member.getPassword()).roles(member.getRole().toString()).build();
-    }
 
     public Member createMember(MemberDto memberDto) {
         modelMapper.typeMap(MemberDto.class, Member.class).addMappings(mapper -> {
