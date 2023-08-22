@@ -8,13 +8,13 @@ import com.mungnyang.dto.MemberDto;
 import com.mungnyang.service.KakaoService;
 import com.mungnyang.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Controller
@@ -31,30 +31,31 @@ public class MemberController {
     }
 
     @GetMapping("/kakao-auth")
-    public ResponseEntity<?> requestAuth(@RequestHeader("_csrf") String csrf){
-        ResponseEntity<KakaoAuthResponseDto> response = kakaoService.authRequest(csrf);
-        if(!response.getStatusCode().equals(HttpStatus.OK) || response.getBody().getError() != null || response.getBody().getError_description() != null){
-            return new ResponseEntity<String>(response.getBody().getError_description(), HttpStatus.BAD_REQUEST);
-        }
-        if(csrf == null || !response.getBody().getState().equals(csrf)){
-            return new ResponseEntity<String>("보안 문제로 로그인이 실패했습니다.", HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<KakaoAuthResponseDto>(response.getBody(), HttpStatus.OK);
+    public String requestAuth(@RequestParam String csrf){
+        return "redirect:" + kakaoService.authRequest(csrf);
     }
 
     @GetMapping("/kakao-token")
-    public void reqeustToken(@ModelAttribute KakaoAuthResponseDto kakaoAuth){
+    public String reqeustToken(HttpServletRequest request, @ModelAttribute KakaoAuthResponseDto kakaoAuth, Model model){
         String csrf = kakaoAuth.getState();
         String code = kakaoAuth.getCode();
         ResponseEntity<KakaoTokenResponseDto> response = kakaoService.tokenRequest(code);
         KakaoInfoDto kakaoInfoDto = kakaoService.getLoginInfo(response);
         String kakaoEmail = kakaoInfoDto.getSub() + Kakao.EMAIL;
         String kakaoName = kakaoInfoDto.getNickname();
-        if(memberService.isSavedMember(kakaoEmail)){
-            kakaoService.loginWithKakao(csrf, kakaoEmail);
-            return;
+        String kakaoPW = memberService.savedMemberPW(kakaoEmail);
+        if(kakaoPW != null){
+            kakaoService.loginWithKakao(request, kakaoEmail, kakaoPW);
+            return "redirect:/";
         }
-        kakaoService.signUpWithKakao(kakaoEmail, kakaoName);
+        MemberDto memberDto = new MemberDto();
+        memberDto.setRole("user");
+        memberDto.setName(kakaoName);
+        memberDto.setEmail(kakaoEmail);
+        memberDto.setPassword(kakaoInfoDto.getSub());
+        model.addAttribute("memberDto", memberDto);
+        model.addAttribute("isKakao", "Y");
+        return "member/signUp";
     }
 
     @GetMapping("/new/{role}")
@@ -65,15 +66,15 @@ public class MemberController {
         } else {
             memberDto.setRole("user");
         }
+        model.addAttribute("isKakao", "N");
         model.addAttribute("memberDto", memberDto);
         return "member/signUp";
     }
 
     @PostMapping("/new/{role}")
-    public String signUp(@ModelAttribute @Valid MemberDto memberDto, @RequestParam(required = false) Boolean kakao, BindingResult bindingResult, Model model) {
-        if(kakao){
-            model.addAttribute("kakao", true);
-        }
+    public String signUp(HttpServletRequest request, @ModelAttribute @Valid MemberDto memberDto,
+                         @RequestParam String isKakao, BindingResult bindingResult, Model model) {
+        model.addAttribute("isKakao", isKakao);
         if (bindingResult.hasErrors()) {
             return "member/signUp";
         }
@@ -83,20 +84,13 @@ public class MemberController {
             model.addAttribute("errorMessage", e.getMessage());
             return "member/signUp";
         }
+        if(isKakao.equals("Y")){
+            kakaoService.loginWithKakao(request, memberDto.getEmail(), memberDto.getPassword());
+            return "redirect:/";
+        }
         return "redirect:/member/login";
     }
 
-    @PostMapping("/new-kakao")
-    public String signUpWithKakao(@RequestParam String email, @RequestParam String name, Model model){
-        MemberDto memberDto = new MemberDto();
-        memberDto.setRole("user");
-        memberDto.setName(name);
-        memberDto.setEmail(email);
-        memberDto.setPassword("12345678");
-        model.addAttribute("memberDto", memberDto);
-        model.addAttribute("kakao", true);
-        return "member/signUp";
-    }
 
     @GetMapping("/login")
     public String login() {

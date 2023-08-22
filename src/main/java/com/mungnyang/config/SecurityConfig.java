@@ -34,6 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers("/user/**").hasRole("USER")
                 .anyRequest().authenticated();
         http.exceptionHandling().authenticationEntryPoint(customAuthenticationEntryPoint);
+
     }
 
     @Override

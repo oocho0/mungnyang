@@ -25,12 +25,6 @@
                 $("#tel2").val(Number(telSplit[1]));
                 $("#tel3").val(Number(telSplit[2]));
             };
-            if([[${kakao}]]){
-                $(#email).attr('readonly', true);
-                $(#password).attr('readonly', true);
-                $(#checkPW).attr('readonly', true);
-                $(#checkPW).attr('placeholder',$(#password).val());
-            }
             telInputEvent();
             checkPW();
         });
@@ -122,17 +116,19 @@
 </th:block>
 <div layout:fragment="content">
     <div class="px-5 py-4 text-center bg-body rounded-3">
-        <form role="form" class="p-5 text-center bg-body rounded-3" method="post" th:action=${memberDto.role}
+        <form role="form" class="p-5 text-center bg-body rounded-3" method="post" th:action="@{/member/new/}+${memberDto.role}"
               th:object="${memberDto}" onsubmit="return checkForm();">
-            <h2 class="text-body-emphasis pb-5 border-bottom"
-                th:text="${#strings.equals(memberDto.role, 'admin')} ? '관리자 회원 가입': ${kakao} ?'추가 정보 기입' : '회원 가입'"></h2>
+            <h2 th:unless="${#strings.equals(isKakao, 'Y')}" class="text-body-emphasis pb-5 border-bottom"
+                th:text="${#strings.equals(memberDto.role, 'admin')} ? '관리자 회원 가입' : '회원 가입'"></h2>
+            <h2 th:if="${#strings.equals(isKakao, 'Y')}" class="text-body-emphasis pb-5 border-bottom">추가 정보 기입</h2>
             <div class="container py-3 mx-5">
                 <!--표시되지 않은 속성-->
                 <input type="hidden" th:field="*{memberId}"/>
                 <input type="hidden" th:field="*{role}"/>
                 <input type="hidden" th:field="*{tel}"/>
                 <input type="hidden" id="_csrf" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                <input type="hidden" id="kakao" name="kakao" th:value="${kakao}">
+                <input type="hidden" name="isKakao" th:value="${isKakao}">
+                <input th:if="${#strings.equals(isKakao, 'Y')}" type="hidden" id="kakaoPW" name="password" th:value="*{password}"/>
                 <!--회원명-->
                 <div class="row g-3 align-items-center py-2">
                     <div class="col-3 text-end">
@@ -154,7 +150,7 @@
                         <label class="col-form-label" th:for="email">이메일(아이디)</label>
                     </div>
                     <div class="col-3">
-                        <input type="email" class="form-control" th:field="*{email}" placeholder="아이디로 사용할 이메일을 입력하세요."/>
+                        <input type="email" th:classappend="${#strings.equals(isKakao, 'Y')} ? 'readonly'" class="form-control" id="email" th:field="*{email}" placeholder="아이디로 사용할 이메일을 입력하세요."/>
                     </div>
                 </div>
                 <div th:if="${#fields.hasErrors('email')}" class="row g-3 align-items-center ">
@@ -164,7 +160,7 @@
                     </div>
                 </div>
                 <!--회원 비밀번호-->
-                <div class="row g-3 align-items-center py-2">
+                <div th:unless="${#strings.equals(isKakao, 'Y')}" class="row g-3 align-items-center py-2">
                     <div class="col-3 text-end">
                         <label class="col-form-label" th:for="password">비밀번호</label>
                     </div>
@@ -182,12 +178,12 @@
                     </div>
                 </div>
                 <!--회원 비밀번호 홛인-->
-                <div class="row g-3 align-items-center py-2">
+                <div th:style="${#strings.equals(isKakao, 'Y') ? 'display:none;' : _}" class="row g-3 align-items-center py-2">
                     <div class="col-3 text-end">
                         <label class="col-form-label" for="checkPW">비밀번호 확인</label>
                     </div>
                     <div class="col-3">
-                        <input type="password" id="checkPW" class="form-control" placeholder="비밀번호를 한번 더 입력하세요." data-ok="N" aria-describedby="resultPW"/>
+                        <input type="password" id="checkPW" class="form-control" placeholder="비밀번호를 한번 더 입력하세요." th:attr="data-ok=${isKakao}" aria-describedby="resultPW"/>
                     </div>
                     <div class="col-3 text-start">
                         <span class="form-text" id="resultPW"></span>
@@ -271,8 +267,8 @@
                 </div>
             </div>
             <button type="reset" class="btn btn-secondary mx-1">초기화</button>
-            <button type="submit" class="btn btn-primary mx-1">회원 가입 하기</button>
-            <button type="button" class="btn btn-secondary mx-1" th:onclick="|location.href='@{/member/new}'|">이전으로</button>
+            <button type="submit" class="btn btn-primary mx-1" th:text="${#strings.equals(isKakao, 'Y')} ? '전송하기' : '회원 가입 하기'">회원 가입 하기</button>
+            <button th:if="${not #strings.equals(isKakao, 'Y')}" type="button" class="btn btn-secondary mx-1" th:onclick="|location.href='@{/member/new}'|">이전으로</button>
         </form>
     </div>
 </div>

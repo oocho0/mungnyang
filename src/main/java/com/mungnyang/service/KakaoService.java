@@ -13,11 +13,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -32,38 +40,42 @@ public class KakaoService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public ResponseEntity<KakaoAuthResponseDto> authRequest(String csrf) {
+    public String authRequest(String csrf) {
 
-        URI uri = UriComponentsBuilder.fromUriString(Kakao.AUTH_REQUEST_URL)
+        return UriComponentsBuilder.fromUriString(Kakao.AUTH_REQUEST_URL)
                 .queryParam("client_id", Kakao.CLIENT_ID)
-                .queryParam("redirect_uri", Url.KAKAO_REDIRECT_URI)
+                .queryParam("redirect_uri", Url.FROM_URL+Url.KAKAO_REDIRECT_URI)
                 .queryParam("response_type", "code")
                 .queryParam("state", csrf)
                 .queryParam("scope", "openid")
                 .queryParam("nonce", Kakao.NONCE)
-                .encode().build().toUri();
-        return restTemplate.getForEntity(uri, KakaoAuthResponseDto.class);
+                .encode().build().toUriString();
     }
 
     public ResponseEntity<KakaoTokenResponseDto> tokenRequest(String code){
         String grantType = "authorization_code";
+        String redirectUri = Url.FROM_URL + Url.KAKAO_REDIRECT_URI;
 
         URI uri = UriComponentsBuilder.fromUriString(Kakao.TOKEN_REQUEST_URL)
                 .encode().build().toUri();
-        KakaoTokenRequestDto requestDto = new KakaoTokenRequestDto(grantType, Kakao.CLIENT_ID, Url.KAKAO_REDIRECT_URI, code, Kakao.CLIENT_SECRET);
-        RequestEntity<KakaoTokenRequestDto> requestEntity = RequestEntity.post(uri)
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", grantType);
+        params.add("client_id", Kakao.CLIENT_ID);
+        params.add("redirect_uri", redirectUri);
+        params.add("code", code);
+        params.add("client_secret", Kakao.CLIENT_SECRET);
+        RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity.post(uri)
                 .contentType(new MediaType("application", "x-www-form-urlencoded", StandardCharsets.UTF_8))
-                .body(requestDto);
+                .body(params);
         return restTemplate.exchange(requestEntity, KakaoTokenResponseDto.class);
     }
+
 
     public KakaoInfoDto getLoginInfo(ResponseEntity<KakaoTokenResponseDto> response) {
         String openIdToken = response.getBody().getId_token();
         String[] openIds = openIdToken.split("\\.");
         Base64.Decoder decoder = Base64.getDecoder();
-        String openIdHeader = new String(decoder.decode(openIds[0]));
         String openIdPayload = new String(decoder.decode(openIds[1]));
-        String openIdSignature = new String(decoder.decode(openIds[2]));
         KakaoInfoDto kakaoInfoDto;
         try {
              kakaoInfoDto = objectMapper.readValue(openIdPayload, KakaoInfoDto.class);
@@ -76,22 +88,11 @@ public class KakaoService {
         return kakaoInfoDto;
     }
 
-    public ResponseEntity<String> loginWithKakao(String csrf, String kakaoEmail){
-        URI uri = UriComponentsBuilder.fromUriString(Url.FROM_URL).path(Url.LOGIN).encode().build().toUri();
-        String body = "_csrf.parameterName="+csrf+"&email="+kakaoEmail+"&password="+"12345678";
-        RequestEntity<String> requestEntity = RequestEntity.post(uri)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(body);
-        return restTemplate.exchange(requestEntity, String.class);
-    }
-
-    public ResponseEntity<String> signUpWithKakao(String kakaoEmail, String kakaoName) {
-        URI uri =UriComponentsBuilder.fromUriString(Url.FROM_URL).path("/member/new-kakao")
-                .encode().build().toUri();
-        String body = "email="+kakaoEmail+"&name="+kakaoName;
-        RequestEntity<String> requestEntity = RequestEntity.post(uri)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(body);
-        return restTemplate.exchange(requestEntity, String.class);
+    public void loginWithKakao(HttpServletRequest request, String kakaoEmail, String kakaoPW){
+        Authentication auth = new UsernamePasswordAuthenticationToken(kakaoEmail, kakaoPW);
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        securityContext.setAuthentication(auth);
+        HttpSession session = request.getSession(true);
+        session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
     }
 }

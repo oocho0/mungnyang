@@ -25,7 +25,6 @@ public class MemberDto {
     @NotEmpty(message = "비밀번호를 입력하지 않았습니다.")
     @Length(min = 8, max = 16, message = "비밀번호는 8자 이상, 16자 이하로 입력하세요.")
     private String password;
-    private String encodedPassword;
 
     private String zipcode;
     @NotBlank(message = "주소를 입력하지 않았습니다.")

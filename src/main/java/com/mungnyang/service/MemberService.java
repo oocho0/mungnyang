@@ -32,7 +32,7 @@ public class MemberService {
     public Member findMember(String email){
         Member member = memberRepository.findByEmail(email);
         if(member == null){
-            member = Member.ANONYMOUS;
+            member = memberRepository.findByEmail(Member.ANONYMOUS.getEmail());
         }
         return member;
     }
@@ -43,12 +43,12 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    public Boolean isSavedMember(String kakaoEmail){
+    public String savedMemberPW(String kakaoEmail){
         Member member = findMember(kakaoEmail);
         if(member.getName().equals(Member.ANONYMOUS.getName())){
-            return false;
+            return Member.ANONYMOUS.getPassword();
         }
-        return true;
+        return member.getPassword();
     }
 
     private void validateDuplicateMember(Member member) {
@@ -61,7 +61,6 @@ public class MemberService {
 
     public Member createMember(MemberDto memberDto) {
         modelMapper.typeMap(MemberDto.class, Member.class).addMappings(mapper -> {
-            mapper.map(MemberDto::getEncodedPassword, Member::setPassword);
             mapper.using((Converter<String, String>) ctx -> passwordEncoder.encode(ctx.getSource())).map(MemberDto::getPassword, Member::setPassword);
             mapper.using((Converter<String, Role>) ctx -> StringUtils.equals(ctx.getSource(), "admin") ? Role.ADMIN : Role.USER).map(MemberDto::getRole, Member::setRole);
             mapper.skip(Member::setAddress);

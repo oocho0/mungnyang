@@ -22,22 +22,24 @@
 </th:block>
 <th:block layout:fragment="script">
     <script type="text/javascript" th:inline="javascript">
-        $("#kakao").click(function(){
-            var token = $("meta[name='_csrf']").attr("content");
-            var header = $("meta[name='_csrf_header']").attr("content");
-            $.ajax({
-                url : "/member/kakao-auth",
-                type : "GET",
-                beforeSend : function(xhr){
-                    xhr.setRequestHeader(header,token);
-                    xhr.setRequestHeader("_csrf", token);
-                }
-                success  : function(result, status){
-                    alert("로그인 성공");
-                },
-                error : function(jqXHR, status, error){
-                    alert(jqXHR.status + " : " + error + "/n로그인에 실패하였습니다.");
-                }
+        $(document).ready(function(){
+            $("#kakao").on("click",function(){
+                var token = ${"meta[name='_csrf_header']").attr("content");
+                var token = $("meta[name='_csrf']").attr("content");
+                $.ajax({
+                    url : "/member/kakao-auth",
+                    type : "GET",
+                    beforeSend : function(xhr){
+                        xhr.setRequestHeader("_csrf", token);
+                    },
+                    cache : false,
+                    success  : function(result, status){
+                        alert("로그인 성공");
+                    },
+                    error : function(jqXHR, status, error){
+                        alert(jqXHR.status + " : " + error + "\n로그인에 실패하였습니다.");
+                    }
+                });
             });
         });
     </script>
@@ -70,7 +72,7 @@
                     <button type="submit" class="btn btn-primary">로그인</button>
                     <button type="button" class="btn btn-secondary" th:onclick="|location.href='@{/member/new}'|">회원가입
                     </button>
-                    <img th:src="@{/img/kakao_login.png}" th:field="kakao" class="kakao" alt="카카오로그인"/>
+                    <a th:href="|@{/member/kakao-auth?csrf=}${_csrf.token}|"><img th:src="@{/img/kakao_login.png}" id="kakao" class="kakao" alt="카카오로그인"/></a>
                 </div>
             </form>
         </div>
