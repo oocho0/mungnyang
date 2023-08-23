@@ -13,11 +13,11 @@
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script type="text/javascript" th:inline="javascript">
         $(document).ready(function(){
-            var errorMessage = [[${errorMessage}]];
-            if(errorMessage != null){
-                alert(errorMessage);
+            var errorMessage = [[${success}]];
+            if(success != null){
+                alert(success);
             };
-            var tel = [[${memberDto.tel}]];
+            var tel = [[${updateMemberDto.tel}]];
             if(tel != null && tel != "" && tel != 0 && tel != "0"){
                 var telSplit = tel.split("-");
                 $("#tel1 option[selected = true]").attr('selected', false);
@@ -116,14 +116,12 @@
 </th:block>
 <div layout:fragment="content">
     <div class="px-5 py-4 text-center bg-body rounded-3">
-        <form role="form" class="p-5 text-center bg-body rounded-3" method="post" th:action="@{/member/new/}+${memberDto.role}"
-              th:object="${memberDto}" onsubmit="return checkForm();">
-            <h2 class="text-body-emphasis pb-5 border-bottom"
-                th:text="${#strings.equals(memberDto.role, 'admin')} ? '관리자 회원 가입' : '회원 가입'"></h2>
+        <form role="form" class="p-5 text-center bg-body rounded-3" method="post" th:action="@{/member/modify}"
+              th:object="${updateMemberDto}" onsubmit="return checkForm();">
+            <h2 class="text-body-emphasis pb-5 border-bottom">내 정보 수정</h2>
             <div class="container py-3 mx-5">
                 <!--표시되지 않은 속성-->
                 <input type="hidden" th:field="*{memberId}"/>
-                <input type="hidden" th:field="*{role}"/>
                 <input type="hidden" th:field="*{tel}"/>
                 <input type="hidden" id="_csrf" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                 <input type="hidden" th:field="*{memberType}">
@@ -148,40 +146,56 @@
                         <label class="col-form-label" th:for="email">이메일(아이디)</label>
                     </div>
                     <div class="col-3">
-                        <input type="email" class="form-control" th:field="*{email}" placeholder="아이디로 사용할 이메일을 입력하세요."/>
+                        <input type="email" class="form-control" th:field="*{email}" readonly/>
                     </div>
                 </div>
-                <div th:if="${#fields.hasErrors('email')}" class="row g-3 align-items-center ">
-                    <div class="col-3"></div>
-                    <div class="col-6 text-start">
-                        <span th:errors="*{email}" class="error"></span>
-                    </div>
-                </div>
-                <!--회원 비밀번호-->
-                <div class="row g-3 align-items-center py-2">
+                <!--회원 현재 비밀번호-->
+                <div th:if="${#strings.equals(updateMemberDto.memberType, 'normal')}" class="row g-3 align-items-center py-2">
                     <div class="col-3 text-end">
-                        <label class="col-form-label" th:for="password">비밀번호</label>
+                        <label class="col-form-label">현재 비밀번호</label>
                     </div>
                     <div class="col-3">
-                        <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="비밀번호를 입력하세요." aria-describedby="passwordWarn"/>
+                        <input type="password" class="form-control" th:field="${updatePasswordDto.currentPassword}"
+                               placeholder="현재 비밀번호를 입력하세요." aria-describedby="passwordWarn1"/>
                     </div>
                     <div class="col-3 text-start">
-                        <span class="form-text" id="passwordWarn">비밀번호 8자 이상, 16자 이하</span>
+                        <span class="form-text" id="passwordWarn1">비밀번호 8자 이상, 16자 이하</span>
                     </div>
                 </div>
-                <div th:if="${#fields.hasErrors('password')}" class="row g-3 align-items-center">
+                <div th:if="${not #strings.isEmpty('wrongPassword')}" class="row g-3 align-items-center">
                     <div class="col-3"></div>
                     <div class="col-6 text-start">
-                        <span th:errors="*{password}" class="error"></span>
+                        <span th:text="${wrongPassword}" class="error"></span>
+                    </div>
+                </div>
+                <!--회원 새 비밀번호-->
+                <div th:if="${#strings.equals(updateMemberDto.memberType, 'normal')}" class="row g-3 align-items-center py-2">
+                    <div class="col-3 text-end">
+                        <label class="col-form-label" th:for="password">새 비밀번호</label>
+                    </div>
+                    <div class="col-3">
+                        <input type="password" class="form-control" id="password" th:field="${updatePasswordDto.newPassword}"
+                               placeholder="새 비밀번호를 입력하세요." aria-describedby="passwordWarn2"/>
+                    </div>
+                    <div class="col-3 text-start">
+                        <span class="form-text" id="passwordWarn2">비밀번호 8자 이상, 16자 이하</span>
+                    </div>
+                </div>
+                <div th:if="${not #strings.isEmpty('emptyNewPassword')}" class="row g-3 align-items-center">
+                    <div class="col-3"></div>
+                    <div class="col-6 text-start">
+                        <span th:text="${emptyNewPassword}" class="error"></span>
                     </div>
                 </div>
                 <!--회원 비밀번호 홛인-->
-                <div class="row g-3 align-items-center py-2">
+                <div th:if="${#strings.equals(updateMemberDto.memberType, 'normal')}" class="row g-3 align-items-center py-2">
                     <div class="col-3 text-end">
-                        <label class="col-form-label" for="checkPW">비밀번호 확인</label>
+                        <label class="col-form-label" for="checkPW">새 비밀번호 확인</label>
                     </div>
                     <div class="col-3">
-                        <input type="password" id="checkPW" class="form-control" placeholder="비밀번호를 한번 더 입력하세요." data-ok = "N" aria-describedby="resultPW"/>
+                        <input type="password" id="checkPW" class="form-control" placeholder="새 비밀번호를 한 번 더 입력하세요."
+                               th:attr="data-ok = ${#strings.equals(updateMemberDto.memberType, 'kakao') ? 'Y' : 'N'}"
+                               aria-describedby="resultPW"/>
                     </div>
                     <div class="col-3 text-start">
                         <span class="form-text" id="resultPW"></span>
@@ -197,12 +211,6 @@
                     </div>
                     <div class="col-2">
                         <input type="button" class="form-control" onclick="sample6_execDaumPostcode()" value="우편번호 찾기">
-                    </div>
-                </div>
-                <div th:if="${#fields.hasErrors('zipcode')}" class="row g-3 align-items-center">
-                    <div class="col-3"></div>
-                    <div class="col-6 text-start">
-                        <span th:errors="*{zipcode}" class="error"></span>
                     </div>
                 </div>
                 <div class="row g-3 align-items-center py-2">
@@ -270,9 +278,8 @@
                     </div>
                 </div>
             </div>
-            <button type="reset" class="btn btn-secondary mx-1">초기화</button>
-            <button type="submit" class="btn btn-primary mx-1">회원 가입 하기</button>
-            <button type="button" class="btn btn-secondary mx-1" th:onclick="|location.href='@{/member/new}'|">이전으로</button>
+            <button type="submit" class="btn btn-primary mx-1">수정하기</button>
+            <button type="button" class="btn btn-secondary mx-1" th:onclick="|location.href='@{/}'|">홈으로</button>
         </form>
     </div>
 </div>

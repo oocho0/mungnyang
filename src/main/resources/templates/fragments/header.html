@@ -9,22 +9,32 @@
             </a>
         </div>
         <nav class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-            <a class="nav-link link-body-emphasis" href="/admin/accom/new" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">숙소 등록</a>
-            <a class="nav-link link-body-emphasis" href="/admin/accom-list" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">숙소 관리</a>
-            <a class="nav-link link-body-emphasis" href="/cart" sec:authorize="hasAnyAuthority('ROLE_USER')">예약 바구니</a>
-            <a class="nav-link link-body-emphasis" href="/reservation" sec:authorize="hasAnyAuthority('ROLE_USER')">예약 내역</a>
+            <a class="nav-link link-body-emphasis" href="/admin/accom/new"
+               sec:authorize="hasAnyAuthority('ROLE_ADMIN')">숙소 등록</a>
+            <a class="nav-link link-body-emphasis" href="/admin/accom-list"
+               sec:authorize="hasAnyAuthority('ROLE_ADMIN')">숙소 관리</a>
+            <a class="nav-link link-body-emphasis" href="/cart" sec:authorize="hasAnyAuthority('ROLE_USER')">
+                예약 바구니</a>
+            <a class="nav-link link-body-emphasis" href="/reservation" sec:authorize="hasAnyAuthority('ROLE_USER')">
+                예약 내역</a>
         </nav>
         <div class="col-md-3 text-end">
             <button type="button" class="btn btn-outline-dark" onclick="location.href='/member/new'"
                     sec:authorize="isAnonymous()">회원가입
             </button>
-            <button type="button" class="btn btn-outline-dark" onclick="location.href='/member'"
-                    sec:authorize="isAuthenticated()">마이페이지
-            </button>
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown"
+                        aria-expanded="false" sec:authorize="isAuthenticated()">마이페이지
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" th:href="@{/member/myPage}">내 정보 수정</a></li>
+                    <li><a class="dropdown-item">좋아요한 카페</a></li>
+                </ul>
+            </div>
             <button type="button" class="btn btn-outline-primary" onclick="location.href='/member/login'"
                     sec:authorize="isAnonymous()">로그인
             </button>
-            <button type="button" class="btn btn-outline-primary" onclick="location.href='/member/logout'"
+            <button type="button" class="btn btn-outline-primary" onclick="location.href='/member/pre-logout'"
                     sec:authorize="isAuthenticated()">로그아웃
             </button>
         </div>

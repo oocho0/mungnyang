@@ -16,7 +16,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class Member extends DateEntity {
 
-    public final static Member ANONYMOUS = new Member(null, "anonymous", "anonymous", null, null, null, Role.USER);
+    public final static Member ANONYMOUS = new Member(null, "anonymous", "anonymous", null, null, null, Role.USER, "N");
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -35,4 +35,6 @@ public class Member extends DateEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
     private Role role;
+    @Column(nullable = false)
+    private String memberType;
 }
