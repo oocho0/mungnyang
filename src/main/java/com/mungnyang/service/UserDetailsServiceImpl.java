@@ -1,6 +1,6 @@
 package com.mungnyang.service;
 
-import com.mungnyang.entity.Member;
+import com.mungnyang.entity.member.Member;
 import com.mungnyang.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;

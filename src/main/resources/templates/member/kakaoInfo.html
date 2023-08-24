@@ -22,8 +22,8 @@
                 var telSplit = tel.split("-");
                 $("#tel1 option[selected = true]").attr('selected', false);
                 $("#tel1 option:contains("+telSplit[0]+")").attr('selected', true);
-                $("#tel2").val(Number(telSplit[1]));
-                $("#tel3").val(Number(telSplit[2]));
+                $("#tel2").val(telSplit[1]);
+                $("#tel3").val(telSplit[2]);
             };
             telInputEvent();
         });
@@ -94,7 +94,6 @@
         <!--표시되지 않은 속성-->
         <input type="hidden" th:field="*{memberId}"/>
         <input type="hidden" th:field="*{tel}"/>
-        <input type="hidden" id="_csrf" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
         <!--회원명-->
         <div class="row g-3 align-items-center py-2">
           <div class="col-3 text-end">
@@ -194,11 +193,11 @@
           </div>
           -
           <div class="col-2">
-            <input type="number" class="form-control" id="tel2" placeholder="0000"/>
+            <input type="text" pattern="^[0-9]{3,4}$" class="form-control" id="tel2" placeholder="0000"/>
           </div>
           -
           <div class="col-2">
-            <input type="number" class="form-control" id="tel3" placeholder="0000"/>
+            <input type="text" pattern="^[0-9]{4}$" class="form-control" id="tel3" placeholder="0000"/>
           </div>
         </div>
         <div th:if="${#fields.hasErrors('tel')}" class="row g-3 align-items-center">

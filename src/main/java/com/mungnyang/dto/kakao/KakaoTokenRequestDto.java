@@ -1,4 +1,4 @@
-package com.mungnyang.dto;
+package com.mungnyang.dto.kakao;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

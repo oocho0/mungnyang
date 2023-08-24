@@ -22,8 +22,8 @@
                 var telSplit = tel.split("-");
                 $("#tel1 option[selected = true]").attr('selected', false);
                 $("#tel1 option:contains("+telSplit[0]+")").attr('selected', true);
-                $("#tel2").val(Number(telSplit[1]));
-                $("#tel3").val(Number(telSplit[2]));
+                $("#tel2").val(telSplit[1]);
+                $("#tel3").val(telSplit[2]);
             };
             telInputEvent();
             checkPW();
@@ -41,7 +41,8 @@
             $("#password, #checkPW").keyup(function(){
                 var password = $("#password").val();
                 var checkPW = $("#checkPW").val();
-                if(checkPW != null && checkPW != "" && checkPW != "비밀번호를 한번 더 입력하세요."){
+                var init = $("#checkPW").attr("placeholder");
+                if(checkPW != null && checkPW != "" && checkPW != init){
                     if(password == checkPW){
                         $("#resultPW").css('color','blue');
                         $("#resultPW").text('비밀번호가 확인 되었습니다.');
@@ -52,7 +53,7 @@
                         $("#checkPW").data('ok', 'N');
                     }
                 }
-                if(checkPW == "" || checkPW == "비밀번호를 한번 더 입력하세요."){
+                if(checkPW == "" || checkPW == init"){
                     $("#resultPW").text('');
                     $("#checkPW").data('ok', 'N');
                 }
@@ -116,7 +117,7 @@
 </th:block>
 <div layout:fragment="content">
     <div class="px-5 py-4 text-center bg-body rounded-3">
-        <form role="form" class="p-5 text-center bg-body rounded-3" method="post" th:action="@{/member/new/}+${memberDto.role}"
+        <form role="form" class="p-5 text-center bg-body rounded-3" method="post" th:action="@{/member/new/{role}(role=${memberDto.role})}"
               th:object="${memberDto}" onsubmit="return checkForm();">
             <h2 class="text-body-emphasis pb-5 border-bottom"
                 th:text="${#strings.equals(memberDto.role, 'admin')} ? '관리자 회원 가입' : '회원 가입'"></h2>
@@ -125,7 +126,6 @@
                 <input type="hidden" th:field="*{memberId}"/>
                 <input type="hidden" th:field="*{role}"/>
                 <input type="hidden" th:field="*{tel}"/>
-                <input type="hidden" id="_csrf" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                 <input type="hidden" th:field="*{memberType}">
                 <!--회원명-->
                 <div class="row g-3 align-items-center py-2">
@@ -256,11 +256,11 @@
                     </div>
                     -
                     <div class="col-2">
-                        <input type="number" class="form-control" id="tel2" placeholder="0000"/>
+                        <input type="text" class="form-control" id="tel2" placeholder="0000"/>
                     </div>
                     -
                     <div class="col-2">
-                        <input type="number" class="form-control" id="tel3" placeholder="0000"/>
+                        <input type="text" class="form-control" id="tel3" placeholder="0000"/>
                     </div>
                 </div>
                 <div th:if="${#fields.hasErrors('tel')}" class="row g-3 align-items-center">

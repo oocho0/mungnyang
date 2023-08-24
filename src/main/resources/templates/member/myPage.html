@@ -7,13 +7,18 @@
             color : red;
             font-size : 12px;
         }
+
     </style>
 </th:block>
 <th:block layout:fragment="script">
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script type="text/javascript" th:inline="javascript">
         $(document).ready(function(){
-            var errorMessage = [[${success}]];
+            var memberType = [[${updateMemberDto.memberType}]];
+            if(memberType == "kakao"){
+                $("#checkPW").data('ok','Y');
+            }
+            var success = [[${success}]];
             if(success != null){
                 alert(success);
             };
@@ -22,8 +27,8 @@
                 var telSplit = tel.split("-");
                 $("#tel1 option[selected = true]").attr('selected', false);
                 $("#tel1 option:contains("+telSplit[0]+")").attr('selected', true);
-                $("#tel2").val(Number(telSplit[1]));
-                $("#tel3").val(Number(telSplit[2]));
+                $("#tel2").val(telSplit[1]);
+                $("#tel3").val(telSplit[2]);
             };
             telInputEvent();
             checkPW();
@@ -38,10 +43,11 @@
             });
         }
         function checkPW(){
-            $("#password, #checkPW").keyup(function(){
-                var password = $("#password").val();
+            $("#newPassword, #checkPW").keyup(function(){
+                var password = $("#newPassword").val();
                 var checkPW = $("#checkPW").val();
-                if(checkPW != null && checkPW != "" && checkPW != "비밀번호를 한번 더 입력하세요."){
+                var init = $("#checkPW").attr("placeholder");
+                if(checkPW != null && checkPW != "" && checkPW != init){
                     if(password == checkPW){
                         $("#resultPW").css('color','blue');
                         $("#resultPW").text('비밀번호가 확인 되었습니다.');
@@ -52,15 +58,26 @@
                         $("#checkPW").data('ok', 'N');
                     }
                 }
-                if(checkPW == "" || checkPW == "비밀번호를 한번 더 입력하세요."){
+                if(checkPW == "" || checkPW == init){
                     $("#resultPW").text('');
                     $("#checkPW").data('ok', 'N');
                 }
             });
         }
         function checkForm(){
+            var curPw = $("#curPassword").val();
+            var newPw = $("#newPassword").val();
+            var checkPw = $("#checkPW").val();
+            var initCur = $("#curPassword").attr("placeholder");
+            var initNew = $("#newPassword").attr("placeholder");
+            var initCheck = $("#checkPW").attr("placeholder");
+            if((curPw == '' || curPw == initCur) && (newPw == '' || newPw == initNew) && (checkPw == '' || checkPw == initCheck)){
+                $("#checkPW").data('ok', 'Y');
+            }else{
+                $("form").attr("action","/member/modify/Y");
+            }
             if($("#checkPW").data('ok') == 'N'){
-                alert("비밀번호를 확인하세요!");
+                alert("새 비밀번호를 확인하세요!");
                 return false;
             }
             return true;
@@ -112,18 +129,17 @@
                 }
             }).open();
         }
-    </script>
+</script>
 </th:block>
 <div layout:fragment="content">
     <div class="px-5 py-4 text-center bg-body rounded-3">
-        <form role="form" class="p-5 text-center bg-body rounded-3" method="post" th:action="@{/member/modify}"
+        <form role="form" class="p-5 text-center bg-body rounded-3" method="post" th:action="@{/member/modify/N}"
               th:object="${updateMemberDto}" onsubmit="return checkForm();">
             <h2 class="text-body-emphasis pb-5 border-bottom">내 정보 수정</h2>
             <div class="container py-3 mx-5">
                 <!--표시되지 않은 속성-->
                 <input type="hidden" th:field="*{memberId}"/>
                 <input type="hidden" th:field="*{tel}"/>
-                <input type="hidden" id="_csrf" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                 <input type="hidden" th:field="*{memberType}">
                 <!--회원명-->
                 <div class="row g-3 align-items-center py-2">
@@ -150,16 +166,18 @@
                     </div>
                 </div>
                 <!--회원 현재 비밀번호-->
-                <div th:if="${#strings.equals(updateMemberDto.memberType, 'normal')}" class="row g-3 align-items-center py-2">
+                <div th:if="${#strings.equals(updateMemberDto.memberType, 'normal')}"
+                     class="row g-3 align-items-center py-2">
                     <div class="col-3 text-end">
                         <label class="col-form-label">현재 비밀번호</label>
                     </div>
                     <div class="col-3">
-                        <input type="password" class="form-control" th:field="${updatePasswordDto.currentPassword}"
+                        <input type="password" class="form-control" id="curPassword"
+                               th:field="${updatePasswordDto.currentPassword}"
                                placeholder="현재 비밀번호를 입력하세요." aria-describedby="passwordWarn1"/>
                     </div>
                     <div class="col-3 text-start">
-                        <span class="form-text" id="passwordWarn1">비밀번호 8자 이상, 16자 이하</span>
+                        <span class="form-text" id="passwordWarn1">비밀번호를 변경하려면 현재 비밀번호를 입력하세요.</span>
                     </div>
                 </div>
                 <div th:if="${not #strings.isEmpty('wrongPassword')}" class="row g-3 align-items-center">
@@ -169,12 +187,14 @@
                     </div>
                 </div>
                 <!--회원 새 비밀번호-->
-                <div th:if="${#strings.equals(updateMemberDto.memberType, 'normal')}" class="row g-3 align-items-center py-2">
+                <div th:if="${#strings.equals(updateMemberDto.memberType, 'normal')}"
+                     class="row g-3 align-items-center py-2">
                     <div class="col-3 text-end">
                         <label class="col-form-label" th:for="password">새 비밀번호</label>
                     </div>
                     <div class="col-3">
-                        <input type="password" class="form-control" id="password" th:field="${updatePasswordDto.newPassword}"
+                        <input type="password" class="form-control" id="newPassword"
+                               th:field="${updatePasswordDto.newPassword}"
                                placeholder="새 비밀번호를 입력하세요." aria-describedby="passwordWarn2"/>
                     </div>
                     <div class="col-3 text-start">
@@ -188,7 +208,8 @@
                     </div>
                 </div>
                 <!--회원 비밀번호 홛인-->
-                <div th:if="${#strings.equals(updateMemberDto.memberType, 'normal')}" class="row g-3 align-items-center py-2">
+                <div th:if="${#strings.equals(updateMemberDto.memberType, 'normal')}"
+                     class="row g-3 align-items-center py-2">
                     <div class="col-3 text-end">
                         <label class="col-form-label" for="checkPW">새 비밀번호 확인</label>
                     </div>
@@ -264,11 +285,17 @@
                     </div>
                     -
                     <div class="col-2">
-                        <input type="number" class="form-control" id="tel2" placeholder="0000"/>
+                        <input type="text" pattern="^[0-9]{3,4}$" class="form-control" id="tel2" placeholder="0000"/>
                     </div>
                     -
                     <div class="col-2">
-                        <input type="number" class="form-control" id="tel3" placeholder="0000"/>
+                        <input type="text" pattern="^[0-9]{4}$" class="form-control" id="tel3" placeholder="0000"/>
+                    </div>
+                </div>
+                <div id="wrongTel" style="display:none;" class="row g-3 align-items-center">
+                    <div class="col-3"></div>
+                    <div class="col-6 text-start">
+                        <span class="error"></span>
                     </div>
                 </div>
                 <div th:if="${#fields.hasErrors('tel')}" class="row g-3 align-items-center">

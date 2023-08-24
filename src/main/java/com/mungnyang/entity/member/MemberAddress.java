@@ -1,4 +1,4 @@
-package com.mungnyang.entity;
+package com.mungnyang.entity.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import java.util.Objects;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Address {
+public class MemberAddress {
     private String zipcode;
     private String address;
     private String detail;
@@ -23,7 +23,7 @@ public class Address {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Address address1 = (Address) o;
+        MemberAddress address1 = (MemberAddress) o;
         return Objects.equals(zipcode, address1.zipcode) && Objects.equals(address, address1.address) && Objects.equals(detail, address1.detail) && Objects.equals(addition, address1.addition);
     }
 

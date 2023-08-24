@@ -5,11 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mungnyang.constant.Kakao;
 import com.mungnyang.constant.MemberType;
 import com.mungnyang.constant.Url;
-import com.mungnyang.dto.KakaoInfoDto;
-import com.mungnyang.dto.KakaoMemberDto;
-import com.mungnyang.dto.KakaoTokenResponseDto;
-import com.mungnyang.dto.MemberDto;
-import com.mungnyang.entity.Member;
+import com.mungnyang.dto.kakao.KakaoInfoDto;
+import com.mungnyang.dto.member.KakaoMemberDto;
+import com.mungnyang.dto.kakao.KakaoTokenResponseDto;
+import com.mungnyang.dto.member.MemberDto;
+import com.mungnyang.entity.member.Member;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,8 +118,8 @@ public class KakaoService {
      */
     public String getMemberPW(String kakaoEmail) {
         Member member = memberService.findMember(kakaoEmail);
-        if (member.getName().equals(Member.ANONYMOUS.getName())) {
-            return Member.ANONYMOUS.getPassword();
+        if (member == null) {
+            return null;
         }
         return member.getEmail().split("@")[0];
     }

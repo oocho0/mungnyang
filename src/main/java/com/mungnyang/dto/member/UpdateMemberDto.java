@@ -1,4 +1,4 @@
-package com.mungnyang.dto;
+package com.mungnyang.dto.member;
 
 import lombok.Getter;
 import lombok.Setter;

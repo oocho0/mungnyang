@@ -1,7 +1,7 @@
-package com.mungnyang.entity;
+package com.mungnyang.entity.member;
 
 import com.mungnyang.constant.Role;
-import lombok.AllArgsConstructor;
+import com.mungnyang.entity.base.DateEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,10 +13,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "member")
 @NoArgsConstructor
-@AllArgsConstructor
 public class Member extends DateEntity {
-
-    public final static Member ANONYMOUS = new Member(null, "anonymous", "anonymous", null, null, null, Role.USER, "N");
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,11 +22,11 @@ public class Member extends DateEntity {
     private String name;
     @Column(nullable = false, length = 30)
     private String email;
-    @Column(length = 60)
+    @Column
     private String password;
     @Embedded
     @Column
-    private Address address;
+    private MemberAddress address;
     @Column(length = 15)
     private String tel;
     @Enumerated(EnumType.STRING)

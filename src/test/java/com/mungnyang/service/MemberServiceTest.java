@@ -2,9 +2,9 @@ package com.mungnyang.service;
 
 import com.mungnyang.constant.MemberType;
 import com.mungnyang.constant.Url;
-import com.mungnyang.dto.MemberDto;
-import com.mungnyang.dto.UpdateMemberDto;
-import com.mungnyang.entity.Member;
+import com.mungnyang.dto.member.MemberDto;
+import com.mungnyang.dto.member.UpdateMemberDto;
+import com.mungnyang.entity.member.Member;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -116,7 +116,7 @@ class MemberServiceTest {
         updateMemberDto.setEmail("test2@abc.com");
         updateMemberDto.setName("수정테스트");
         updateMemberDto.setZipcode("4321");
-        memberService.modifyMember(updateMemberDto);
+        memberService.updateMember(updateMemberDto, findMember);
         Member updatedMember = memberService.findMember(testDto.getEmail());
         assertThat(updatedMember.getEmail()).isEqualTo(testDto.getEmail());
         assertThat(updatedMember.getName()).isEqualTo("수정테스트");

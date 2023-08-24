@@ -1,5 +1,6 @@
-package com.mungnyang.entity;
+package com.mungnyang.entity.base;
 
+import com.mungnyang.entity.member.Member;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @Setter
 @MappedSuperclass
 @EntityListeners(value = {AuditingEntityListener.class})
-public class WriterEntity extends DateEntity{
+public abstract class WriterEntity extends DateEntity{
     @CreatedBy
     @Column(updatable = false)
     @ManyToOne(fetch = FetchType.LAZY)

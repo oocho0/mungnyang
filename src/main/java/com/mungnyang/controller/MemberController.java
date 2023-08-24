@@ -3,8 +3,14 @@ package com.mungnyang.controller;
 import com.mungnyang.constant.Kakao;
 import com.mungnyang.constant.MemberType;
 import com.mungnyang.constant.Url;
-import com.mungnyang.dto.*;
-import com.mungnyang.entity.Member;
+import com.mungnyang.dto.kakao.KakaoAuthResponseDto;
+import com.mungnyang.dto.kakao.KakaoInfoDto;
+import com.mungnyang.dto.kakao.KakaoTokenResponseDto;
+import com.mungnyang.dto.member.KakaoMemberDto;
+import com.mungnyang.dto.member.MemberDto;
+import com.mungnyang.dto.member.UpdateMemberDto;
+import com.mungnyang.dto.member.UpdatePasswordDto;
+import com.mungnyang.entity.member.Member;
 import com.mungnyang.service.KakaoService;
 import com.mungnyang.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/member")
@@ -32,7 +39,7 @@ public class MemberController {
     }
 
     @GetMapping("/new/{role}")
-    public String signUpAdmin(@PathVariable String role, Model model) {
+    public String setRole(@PathVariable String role, Model model) {
         MemberDto memberDto = new MemberDto();
         memberDto.setMemberType(MemberType.NORMAL);
         if (role.equals("admin")) {
@@ -59,26 +66,26 @@ public class MemberController {
     }
 
     @GetMapping("/kakao-auth")
-    public String requestAuth(@RequestParam String csrf){
+    public String requestAuth(@RequestParam String csrf) {
         return "redirect:" + kakaoService.getKakaoAuthRequestURI(csrf);
     }
 
     @GetMapping("/kakao-token")
-    public String requestToken(HttpServletRequest request, @ModelAttribute KakaoAuthResponseDto kakaoAuth, Model model){
+    public String requestToken(HttpServletRequest request, @ModelAttribute KakaoAuthResponseDto kakaoAuth, Model model) {
         String code = kakaoAuth.getCode();
         ResponseEntity<KakaoTokenResponseDto> response = kakaoService.tokenRequest(code);
         KakaoInfoDto kakaoInfoDto = kakaoService.getLoginInfo(response);
         String kakaoEmail = kakaoInfoDto.getSub() + Kakao.EMAIL;
         String kakaoName = kakaoInfoDto.getNickname();
         String kakaoPW = kakaoService.getMemberPW(kakaoEmail);
-        if(kakaoPW != null){
+        if (kakaoPW != null) {
             kakaoService.loginWithKakao(request, kakaoEmail, kakaoPW);
             return "redirect:" + Url.MAIN;
         }
         KakaoMemberDto kakaoMemberDto = new KakaoMemberDto();
         kakaoMemberDto.setName(kakaoName);
         kakaoMemberDto.setEmail(kakaoEmail);
-        model.addAttribute("KakaoMemberDto", kakaoMemberDto);
+        model.addAttribute("kakaoMemberDto", kakaoMemberDto);
         return "member/kakaoInfo";
     }
 
@@ -111,16 +118,19 @@ public class MemberController {
     }
 
     @GetMapping("/pre-logout")
-    public String logout(Principal principal){
+    public String logout(Principal principal) {
         Member SignInMember = memberService.findMember(principal.getName());
-        if(SignInMember.getMemberType().equals(MemberType.KAKAO)){
+        if (SignInMember.getMemberType().equals(MemberType.KAKAO)) {
             return "redirect:" + kakaoService.getKakaologoutRequestURI();
         }
         return "redirect:" + Url.LOGOUT;
     }
 
     @GetMapping("/myPage")
-    public String getMemberInfo(Principal principal, Model model){
+    public String getMemberInfo(@RequestParam(required = false) String success, Principal principal, Model model) {
+        if (success != null && success.equals("Y")) {
+            model.addAttribute("success", "성공적으로 수정되었습니다.");
+        }
         Member signInMember = memberService.findMember(principal.getName());
         UpdateMemberDto updateMemberDto = memberService.of(signInMember);
         model.addAttribute("updateMemberDto", updateMemberDto);
@@ -129,32 +139,22 @@ public class MemberController {
         return "member/myPage";
     }
 
-    @PatchMapping("/modify")
+    @PostMapping("/modify/{changePwOrNot}")
     public String modifyInfo(@ModelAttribute @Valid UpdateMemberDto updateMemberDto, BindingResult bindingResult,
-                             @ModelAttribute UpdatePasswordDto updatePasswordDto, @RequestParam String changePwOrNot,
-                             Principal principal, Model model){
+                             @ModelAttribute UpdatePasswordDto updatePasswordDto, @PathVariable String changePwOrNot,
+                             Principal principal, Model model) {
         Member signInMember = memberService.findMember(principal.getName());
-        if(changePwOrNot.equals("Y")){
-            String currentPassword = updatePasswordDto.getCurrentPassword();
-            String newPassword = updatePasswordDto.getNewPassword();
-            if (memberService.isNullPassword(currentPassword)) {
-                model.addAttribute("wrongPassword", "현재 비밀번호를 입력하지 않았습니다.");
-                return "member/myPage";
-            }
-            if (memberService.isNullPassword(newPassword)) {
-                model.addAttribute("emptyNewPassword", "새 비밀번호를 입력하지 않았습니다.");
-                return "member/myPage";
-            }
-            if(! memberService.updatePassword(updatePasswordDto, signInMember)){
-                model.addAttribute("wrongPassword", "입력하신 현재 비밀번호가 틀렸습니다.");
+        if (changePwOrNot.equals("Y")) {
+            List<String> result = memberService.updatePassword(updatePasswordDto, signInMember);
+            if (result != null) {
+                model.addAttribute(result.get(0), result.get(1));
                 return "member/myPage";
             }
         }
-        if(bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             return "member/myPage";
         }
-        memberService.modifyMember(updateMemberDto);
-        model.addAttribute("success", "성공적으로 수정되었습니다.");
-        return "member/myPage";
+        memberService.updateMember(updateMemberDto, signInMember);
+        return "redirect:/member/myPage?success=Y";
     }
 }
