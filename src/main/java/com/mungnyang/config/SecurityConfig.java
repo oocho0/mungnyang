@@ -1,8 +1,9 @@
 package com.mungnyang.config;
 
+import com.mungnyang.constant.Role;
 import com.mungnyang.constant.Url;
 import com.mungnyang.service.UserDetailsServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,15 +16,12 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
-    @Autowired
-    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserDetailsServiceImpl userDetailsService;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -32,8 +30,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .usernameParameter("email").failureUrl(Url.LOGIN_FAIL);
         http.logout().logoutRequestMatcher(new AntPathRequestMatcher(Url.LOGOUT)).logoutSuccessUrl(Url.MAIN);
         http.authorizeRequests().mvcMatchers(Url.MAIN, "/member/**").permitAll()
-                .mvcMatchers("/admin/**").hasRole("ADMIN")
-                .mvcMatchers("/user/**").hasRole("USER")
+                .mvcMatchers("/admin/**", "/seller/**", "/user/**").hasRole(Role.ADMIN.name())
+                .mvcMatchers("/seller/**").hasRole(Role.SELLER.name())
+                .mvcMatchers("/user/**").hasRole(Role.USER.name())
                 .anyRequest().authenticated();
         http.exceptionHandling().authenticationEntryPoint(customAuthenticationEntryPoint);
 
@@ -41,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/css/**", "/img/**");
+        web.ignoring().antMatchers("/css/**", "/image/**", "/js/**");
     }
 
     @Override

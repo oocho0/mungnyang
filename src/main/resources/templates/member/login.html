@@ -2,23 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}">
 <th:block layout:fragment="css">
-    <style>
-        .error{
-            color : red;
-        }
-        .kakao{
-            height : 40px;
-            cursor : pointer;
-        }
-        .kakao:hover{
-            filter : brightness(95%);
-        }
-
-    </style>
+    <link th:href="@{/css/member/login.css}" rel="stylesheet"/>
 </th:block>
 <th:block layout:fragment="script">
-    <script type="text/javascript" th:inline="javascript">
-    </script>
 </th:block>
 <div layout:fragment="content">
     <div class="px-5 py-4 text-center bg-body rounded-3">
@@ -48,7 +34,7 @@
                     <button type="submit" class="btn btn-primary">로그인</button>
                     <button type="button" class="btn btn-secondary" th:onclick="|location.href='@{/member/new}'|">회원가입
                     </button>
-                    <a th:href="|@{/member/kakao-auth?csrf=}${_csrf.token}|"><img th:src="@{/img/kakao_login.png}" id="kakao" class="kakao" alt="카카오로그인"/></a>
+                    <a th:href="|@{/member/kakao-auth?csrf=}${_csrf.token}|"><img th:src="@{/image/member/kakao_login.png}" id="kakao" class="kakao" alt="카카오로그인"/></a>
                 </div>
             </form>
         </div>

@@ -1,6 +1,7 @@
 package com.mungnyang.entity.store;
 
-import com.mungnyang.entity.base.WriterEntity;
+import com.mungnyang.entity.abstractEntity.WriterEntity;
+import com.mungnyang.entity.embeddableEntity.Image;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,14 +15,13 @@ public class StoreImage extends WriterEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long storeImgId;
+    private Long storeImageId;
 
-    private String imgName;
-    private String originalImgName;
-    private String imgUrl;
-    private String isRepresentativeImg;
+    @Embedded
+    @Column
+    private Image image;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store")
-    private Long storeId;
+    @JoinColumn(name = "store_id")
+    private Store store;
 }

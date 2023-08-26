@@ -4,18 +4,20 @@
     <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
         <div class="col-md-3 mb-2 mb-md-0">
             <a class="d-inline-flex link-body-emphasis text-decoration-none align-items-center" href="/">
-                <img th:src="@{/img/logo_two.jpg}" width="50" alt="로고"/>
+                <img th:src="@{/image/fragments/logo_two.jpg}" width="50" alt="로고"/>
                 <span class="my-0 mx-2 h2">멍냥</span>
             </a>
         </div>
         <nav class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-            <a class="nav-link link-body-emphasis" href="/admin/accom/new"
-               sec:authorize="hasAnyAuthority('ROLE_ADMIN')">숙소 등록</a>
-            <a class="nav-link link-body-emphasis" href="/admin/accom-list"
-               sec:authorize="hasAnyAuthority('ROLE_ADMIN')">숙소 관리</a>
-            <a class="nav-link link-body-emphasis" href="/cart" sec:authorize="hasAnyAuthority('ROLE_USER')">
+            <a class="nav-link link-body-emphasis" href="/admin/store" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">시설 등록</a>
+            <a class="nav-link link-body-emphasis" href="/admin/stores" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">시설 관리</a>
+            <a class="nav-link link-body-emphasis" href="/seller/accommodation"
+               sec:authorize="hasAnyAuthority('ROLE_SELLER', 'ROLE_ADMIN')">숙소 등록</a>
+            <a class="nav-link link-body-emphasis" href="/seller/accommodations"
+               sec:authorize="hasAnyAuthority('ROLE_SELLER', 'ROLE_ADMIN')">숙소 관리</a>
+            <a class="nav-link link-body-emphasis" href="/user/cart" sec:authorize="hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')">
                 예약 바구니</a>
-            <a class="nav-link link-body-emphasis" href="/reservation" sec:authorize="hasAnyAuthority('ROLE_USER')">
+            <a class="nav-link link-body-emphasis" href="/user/reservations" sec:authorize="hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')">
                 예약 내역</a>
         </nav>
         <div class="col-md-3 text-end">
@@ -28,7 +30,7 @@
                 </button>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" th:href="@{/member/myPage}">내 정보 수정</a></li>
-                    <li><a class="dropdown-item">좋아요한 카페</a></li>
+                    <li><a class="dropdown-item" th:href="@{/member/pre-withdraw}">회원 탈퇴</a></li>
                 </ul>
             </div>
             <button type="button" class="btn btn-outline-primary" onclick="location.href='/member/login'"

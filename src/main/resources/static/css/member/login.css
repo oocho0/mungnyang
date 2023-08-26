@@ -1,0 +1,10 @@
+.error{
+    color : red;
+}
+.kakao{
+    height : 40px;
+    cursor : pointer;
+}
+.kakao:hover{
+    filter : brightness(95%);
+}

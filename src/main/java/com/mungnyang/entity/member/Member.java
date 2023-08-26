@@ -1,7 +1,9 @@
 package com.mungnyang.entity.member;
 
+import com.mungnyang.constant.MemberType;
 import com.mungnyang.constant.Role;
-import com.mungnyang.entity.base.DateEntity;
+import com.mungnyang.entity.abstractEntity.DateEntity;
+import com.mungnyang.entity.embeddableEntity.MemberAddress;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,20 +20,28 @@ public class Member extends DateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long memberId;
+
     @Column(nullable = false, length = 10)
     private String name;
+
     @Column(nullable = false, length = 30)
     private String email;
+
     @Column
     private String password;
+
     @Embedded
     @Column
-    private MemberAddress address;
+    private MemberAddress memberAddress;
+
     @Column(length = 15)
     private String tel;
+
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 10)
-    private Role role;
     @Column(nullable = false)
-    private String memberType;
+    private Role role;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MemberType memberType;
 }

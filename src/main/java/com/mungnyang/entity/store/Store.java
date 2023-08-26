@@ -1,6 +1,9 @@
 package com.mungnyang.entity.store;
 
-import com.mungnyang.entity.base.WriterEntity;
+import com.mungnyang.entity.fixedEntity.City;
+import com.mungnyang.entity.embeddableEntity.ProductAddress;
+import com.mungnyang.entity.fixedEntity.SmallCategory;
+import com.mungnyang.entity.abstractEntity.WriterEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,21 +19,20 @@ public class Store extends WriterEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long storeId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "city")
     private String storeName;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "small_category")
-    private Long smallCategoryId;
+    @JoinColumn(name = "small_category_id")
+    private SmallCategory smallCategory;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "city_id")
+    private City city;
 
-    private Long cityId;
+    @Embedded
+    @Column
+    private ProductAddress productAddress;
+
     @Lob
-    private String storeRestAddress;
-
-    private Double storeIon;
-    private Double storeLat;
-
     private String storeDetail;
 }

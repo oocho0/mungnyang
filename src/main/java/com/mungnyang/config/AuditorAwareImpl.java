@@ -1,6 +1,7 @@
 package com.mungnyang.config;
 
-import com.mungnyang.repository.MemberRepository;
+import com.mungnyang.repository.member.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;
@@ -10,8 +11,6 @@ import java.util.Optional;
 
 public class AuditorAwareImpl implements AuditorAware<String> {
 
-    @Autowired
-    private MemberRepository memberRepository;
 
     @Override
     public Optional<String> getCurrentAuditor() {

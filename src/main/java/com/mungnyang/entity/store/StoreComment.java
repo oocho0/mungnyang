@@ -1,6 +1,7 @@
 package com.mungnyang.entity.store;
 
-import com.mungnyang.entity.base.WriterEntity;
+import com.mungnyang.entity.abstractEntity.WriterEntity;
+import com.mungnyang.entity.embeddableEntity.Comment;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,12 +17,11 @@ public class StoreComment extends WriterEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long storeCommentId;
 
-    @Lob
-    private String storeContent;
-
-    private Float storeRate;
+    @Embedded
+    @Column
+    private Comment commentInfo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store")
-    private Long storeId;
+    @JoinColumn(name = "store_id")
+    private Store store;
 }

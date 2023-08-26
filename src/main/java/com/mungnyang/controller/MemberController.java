@@ -2,36 +2,41 @@ package com.mungnyang.controller;
 
 import com.mungnyang.constant.Kakao;
 import com.mungnyang.constant.MemberType;
+import com.mungnyang.constant.Role;
 import com.mungnyang.constant.Url;
 import com.mungnyang.dto.kakao.KakaoAuthResponseDto;
 import com.mungnyang.dto.kakao.KakaoInfoDto;
 import com.mungnyang.dto.kakao.KakaoTokenResponseDto;
+import com.mungnyang.dto.member.CreateMemberDto;
 import com.mungnyang.dto.member.KakaoMemberDto;
-import com.mungnyang.dto.member.MemberDto;
 import com.mungnyang.dto.member.UpdateMemberDto;
 import com.mungnyang.dto.member.UpdatePasswordDto;
 import com.mungnyang.entity.member.Member;
-import com.mungnyang.service.KakaoService;
-import com.mungnyang.service.MemberService;
+import com.mungnyang.service.member.KakaoService;
+import com.mungnyang.service.member.MemberService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/member")
+@RequiredArgsConstructor
 public class MemberController {
-    @Autowired
-    private MemberService memberService;
-    @Autowired
-    private KakaoService kakaoService;
+    private final MemberService memberService;
+    private final KakaoService kakaoService;
 
     @GetMapping("/new")
     public String signUpMain() {
@@ -40,24 +45,24 @@ public class MemberController {
 
     @GetMapping("/new/{role}")
     public String setRole(@PathVariable String role, Model model) {
-        MemberDto memberDto = new MemberDto();
-        memberDto.setMemberType(MemberType.NORMAL);
-        if (role.equals("admin")) {
-            memberDto.setRole("admin");
+        CreateMemberDto createMemberDto = new CreateMemberDto();
+        createMemberDto.setMemberType(MemberType.NORMAL.name());
+        if (role.equals(Role.SELLER.name())) {
+            createMemberDto.setRole(Role.SELLER.name());
         } else {
-            memberDto.setRole("user");
+            createMemberDto.setRole(Role.USER.name());
         }
-        model.addAttribute("memberDto", memberDto);
+        model.addAttribute("createMemberDto", createMemberDto);
         return "member/signUp";
     }
 
     @PostMapping("/new/{role}")
-    public String signUp(@ModelAttribute @Valid MemberDto memberDto, BindingResult bindingResult, Model model) {
+    public String signUp(@ModelAttribute @Valid CreateMemberDto createMemberDto, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return "member/signUp";
         }
         try {
-            memberService.saveMember(memberDto);
+            memberService.saveMember(createMemberDto);
         } catch (IllegalStateException e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "member/signUp";
@@ -90,7 +95,7 @@ public class MemberController {
     }
 
     @PostMapping("/new-kakao")
-    public String singUpWithKakao(HttpServletRequest request, @ModelAttribute @Valid KakaoMemberDto kakaoMemberDto,
+    public String signUpWithKakao(HttpServletRequest request, @ModelAttribute @Valid KakaoMemberDto kakaoMemberDto,
                                   BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return "member/kakaoInfo";
@@ -119,8 +124,8 @@ public class MemberController {
 
     @GetMapping("/pre-logout")
     public String logout(Principal principal) {
-        Member SignInMember = memberService.findMember(principal.getName());
-        if (SignInMember.getMemberType().equals(MemberType.KAKAO)) {
+        Member signInMember = memberService.findMember(principal.getName());
+        if (signInMember.getMemberType().equals(MemberType.KAKAO)) {
             return "redirect:" + kakaoService.getKakaologoutRequestURI();
         }
         return "redirect:" + Url.LOGOUT;
@@ -156,5 +161,38 @@ public class MemberController {
         }
         memberService.updateMember(updateMemberDto, signInMember);
         return "redirect:/member/myPage?success=Y";
+    }
+
+    @GetMapping("/pre-withdraw")
+    public String recheckWithdraw(Principal principal, SessionStatus sessionStatus) {
+        Member signInMember = memberService.findMember(principal.getName());
+        if (signInMember.getMemberType().equals(MemberType.KAKAO)) {
+            return "member/withdraw-kakao";
+        }
+        return "member/withdraw";
+    }
+
+    @DeleteMapping("/withdraw-kakao")
+    public ResponseEntity<String> withdrawKakaoMember(Principal principal) {
+        Member signInMember = memberService.findMember(principal.getName());
+        String result = kakaoService.withdrawRequest(signInMember.getEmail());
+        if (result != null) {
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        }
+        memberService.withdrawMember(signInMember);
+        SecurityContextHolder.clearContext();
+        return new ResponseEntity<>("success", HttpStatus.OK);
+    }
+
+    @PostMapping("/withdraw")
+    public ResponseEntity<String> withdraw(@RequestBody Map<String, String> bodyMap, Principal principal) {
+        Member signInMember = memberService.findMember(principal.getName());
+        List<String> result = memberService.checkPasswordBeforeWithdraw(bodyMap.get("inputPassword"), signInMember);
+        if (result != null) {
+            return new ResponseEntity<>(result.get(1), HttpStatus.BAD_REQUEST);
+        }
+        memberService.withdrawMember(signInMember);
+        SecurityContextHolder.clearContext();
+        return new ResponseEntity<>("success", HttpStatus.OK);
     }
 }

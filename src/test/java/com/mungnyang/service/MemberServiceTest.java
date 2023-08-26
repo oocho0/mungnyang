@@ -1,10 +1,12 @@
 package com.mungnyang.service;
 
 import com.mungnyang.constant.MemberType;
+import com.mungnyang.constant.Role;
 import com.mungnyang.constant.Url;
-import com.mungnyang.dto.member.MemberDto;
+import com.mungnyang.dto.member.CreateMemberDto;
 import com.mungnyang.dto.member.UpdateMemberDto;
 import com.mungnyang.entity.member.Member;
+import com.mungnyang.service.member.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,21 +34,21 @@ class MemberServiceTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private MemberDto testDto;
+    private CreateMemberDto testDto;
 
     @BeforeEach
     void 테스트에_사용할_객체를_먼저_리포지토리에_저장한_후에_testDto에_테스트_객체를_지정한다() {
-        MemberDto memberDto = new MemberDto();
-        memberDto.setName("test1");
-        memberDto.setEmail("abc@abc.com");
-        memberDto.setPassword("12345678");
-        memberDto.setZipcode("1234");
-        memberDto.setAddress("서울");
-        memberDto.setTel("010-0000-0000");
-        memberDto.setRole("admin");
-        memberDto.setMemberType(MemberType.NORMAL);
-        memberService.saveMember(memberDto);
-        testDto = memberDto;
+        CreateMemberDto createMemberDto = new CreateMemberDto();
+        createMemberDto.setName("test1");
+        createMemberDto.setEmail("abc@abc.com");
+        createMemberDto.setPassword("12345678");
+        createMemberDto.setMemberAddressZipcode("1234");
+        createMemberDto.setMemberAddressMain("서울");
+        createMemberDto.setTel("010-0000-0000");
+        createMemberDto.setRole(Role.SELLER.name());
+        createMemberDto.setMemberType(MemberType.NORMAL.name());
+        memberService.saveMember(createMemberDto);
+        testDto = createMemberDto;
     }
 
     @Test
@@ -64,18 +66,18 @@ class MemberServiceTest {
     @DisplayName("중복 회원 가입 테스트")
     void 먼저_저장되어있는_테스트_객체의_아이디와_중복되는_아이디를_저장하면_중복체크에서_예외가_발생한다() {
         //given
-        MemberDto memberDto = new MemberDto();
-        memberDto.setName("test1");
-        memberDto.setEmail("abc@abc.com");
-        memberDto.setPassword("12345678");
-        memberDto.setAddress("seoul");
-        memberDto.setTel("010-0000-0000");
-        memberDto.setRole("admin");
-        memberDto.setMemberType(MemberType.NORMAL);
+        CreateMemberDto createMemberDto = new CreateMemberDto();
+        createMemberDto.setName("test1");
+        createMemberDto.setEmail("abc@abc.com");
+        createMemberDto.setPassword("12345678");
+        createMemberDto.setMemberAddressMain("seoul");
+        createMemberDto.setTel("010-0000-0000");
+        createMemberDto.setRole("admin");
+        createMemberDto.setMemberType(MemberType.NORMAL.name());
 
         //when
         IllegalStateException e = assertThrows(IllegalStateException.class, () -> {
-            memberService.saveMember(memberDto);
+            memberService.saveMember(createMemberDto);
         });
 
         //then
@@ -105,7 +107,7 @@ class MemberServiceTest {
         UpdateMemberDto mappingMemberDto = memberService.of(findMember);
         assertThat(mappingMemberDto.getMemberType()).isEqualTo(testDto.getMemberType());
         assertThat(mappingMemberDto.getEmail()).isEqualTo(testDto.getEmail());
-        assertThat(mappingMemberDto.getZipcode()).isEqualTo(testDto.getZipcode());
+        assertThat(mappingMemberDto.getMemberAddressZipcode()).isEqualTo(testDto.getMemberAddressZipcode());
     }
 
     @Test
@@ -115,12 +117,12 @@ class MemberServiceTest {
         UpdateMemberDto updateMemberDto = memberService.of(findMember);
         updateMemberDto.setEmail("test2@abc.com");
         updateMemberDto.setName("수정테스트");
-        updateMemberDto.setZipcode("4321");
+        updateMemberDto.setMemberAddressZipcode("4321");
         memberService.updateMember(updateMemberDto, findMember);
         Member updatedMember = memberService.findMember(testDto.getEmail());
         assertThat(updatedMember.getEmail()).isEqualTo(testDto.getEmail());
         assertThat(updatedMember.getName()).isEqualTo("수정테스트");
-        assertThat(updatedMember.getAddress().getZipcode()).isEqualTo("4321");
-        assertThat(updatedMember.getAddress().getAddress()).isEqualTo(testDto.getAddress());
+        assertThat(updatedMember.getMemberAddress().getZipcode()).isEqualTo("4321");
+        assertThat(updatedMember.getMemberAddress().getMain()).isEqualTo(testDto.getMemberAddressMain());
     }
 }
