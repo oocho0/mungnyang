@@ -6,7 +6,6 @@ import com.mungnyang.dto.member.CreateMemberDto;
 import com.mungnyang.dto.member.KakaoMemberDto;
 import com.mungnyang.dto.member.UpdateMemberDto;
 import com.mungnyang.dto.member.UpdatePasswordDto;
-import com.mungnyang.entity.embeddableEntity.MemberAddress;
 import com.mungnyang.entity.member.Member;
 import com.mungnyang.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
