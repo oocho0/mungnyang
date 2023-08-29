@@ -315,7 +315,7 @@ public class MemberService {
             user.setAddressDetail("서울");
             user.setAddressExtra("어딘가");
             user.setTel("010-4321-4321");
-            user.setRole("user");
+            user.setRole(Role.USER.name());
             user.setMemberType(MemberType.NORMAL.name());
             saveMember(user);
         }

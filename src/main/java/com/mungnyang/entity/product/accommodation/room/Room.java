@@ -19,6 +19,7 @@ public class Room extends WriterEntity {
 
     private String roomName;
     private Integer roomPrice;
+    @Lob
     private String roomDetail;
     private String isAvailable;
 

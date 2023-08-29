@@ -30,9 +30,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .usernameParameter("email").failureUrl(Url.LOGIN_FAIL);
         http.logout().logoutRequestMatcher(new AntPathRequestMatcher(Url.LOGOUT)).logoutSuccessUrl(Url.MAIN);
         http.authorizeRequests().mvcMatchers(Url.MAIN, "/member/**").permitAll()
-                .mvcMatchers("/admin/**", "/seller/**", "/user/**").hasRole(Role.ADMIN.name())
-                .mvcMatchers("/seller/**").hasRole(Role.SELLER.name())
-                .mvcMatchers("/user/**").hasRole(Role.USER.name())
+                .mvcMatchers("/admin/**").hasRole(Role.ADMIN.name())
+                .mvcMatchers("/seller/**").hasAnyRole(Role.ADMIN.name(), Role.SELLER.name())
+                .mvcMatchers("/user/**").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
                 .anyRequest().authenticated();
         http.exceptionHandling().authenticationEntryPoint(customAuthenticationEntryPoint);
 
