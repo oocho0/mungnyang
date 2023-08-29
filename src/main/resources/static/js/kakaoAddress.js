@@ -31,17 +31,17 @@ function sample6_execDaumPostcode() {
                     extraAddr = ' (' + extraAddr + ')';
                 }
                 // 조합된 참고항목을 해당 필드에 넣는다.
-                document.getElementById("memberAddressExtra").value = extraAddr;
+                document.getElementById("addressExtra").value = extraAddr;
 
             } else {
-                document.getElementById("memberAddressExtra").value = '';
+                document.getElementById("addressExtra").value = '';
             }
 
             // 우편번호와 주소 정보를 해당 필드에 넣는다.
-            document.getElementById('memberAddressZipcode').value = data.zonecode;
-            document.getElementById("memberAddressMain").value = addr;
+            document.getElementById('addressZipcode').value = data.zonecode;
+            document.getElementById("addressMain").value = addr;
             // 커서를 상세주소 필드로 이동한다.
-            document.getElementById("memberAddressDetail").focus();
+            document.getElementById("addressDetail").focus();
         }
     }).open();
 }

@@ -5,9 +5,9 @@ $(document).ready(function() {
 
 function loadSmallCategory() {
     $("#bigCategory").on("change", function(){
-        $("#smallCategory").attr('disabled', true);
-        $("#smallCategory").empty();
-        $("#smallCategory").append(`<option selected>소분류 선택</option>`);
+        $("#smallCategoryId").attr('disabled', true);
+        $("#smallCategoryId").empty();
+        $("#smallCategoryId").append(`<option selected>소분류 선택</option>`);
         var bigCategoryId = $("#bigCategory option:selected").val();
         if(bigCategoryId == "대분류 선택"){
             return;
@@ -15,7 +15,7 @@ function loadSmallCategory() {
         var data = requestCategory(bigCategoryId);
         $.each(data, function(key, value){
             var option = `<option value="${value.smallCategoryId}">${value.name}</option>`;
-            $("#smallCategory").append(option);
+            $("#smallCategoryId").append(option);
         });
     });
 }
@@ -29,7 +29,7 @@ function requestCategory(bigCategoryId){
         dataType : "json",
         cache : false,
         success : function(result, status){
-            $("#smallCategory").removeAttr('disabled');
+            $("#smallCategoryId").removeAttr('disabled');
             data = result;
         },
         error : function(status, error){

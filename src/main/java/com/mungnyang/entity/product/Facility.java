@@ -11,7 +11,7 @@ import java.util.Objects;
 @Setter
 public class Facility {
 
-    private String facilityName;
+    private String name;
     private String isExist;
 
     @Override
@@ -19,11 +19,11 @@ public class Facility {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Facility facility = (Facility) o;
-        return Objects.equals(facilityName, facility.facilityName) && Objects.equals(isExist, facility.isExist);
+        return Objects.equals(name, facility.name) && Objects.equals(isExist, facility.isExist);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(facilityName, isExist);
+        return Objects.hash(name, isExist);
     }
 }

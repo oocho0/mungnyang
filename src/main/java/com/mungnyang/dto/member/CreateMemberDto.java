@@ -28,11 +28,11 @@ public class CreateMemberDto {
     private String password;
 
     @NotBlank(message = "우편번호를 입력하지 않았습니다.")
-    private String memberAddressZipcode;
+    private String addressZipcode;
     @NotBlank(message = "주소를 입력하지 않았습니다.")
-    private String memberAddressMain;
-    private String memberAddressDetail;
-    private String memberAddressExtra;
+    private String addressMain;
+    private String addressDetail;
+    private String addressExtra;
 
     @NotBlank(message = "전화번호를 입력하지 않았습니다.")
     @Length(min = 11, max = 13, message = "전화 번호가 올바르지 않습니다.")

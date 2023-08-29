@@ -18,6 +18,9 @@ public class City {
 
     private String name;
 
+    private Long zipcodeStart;
+    private Long zipcodeEnd;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "state_id")

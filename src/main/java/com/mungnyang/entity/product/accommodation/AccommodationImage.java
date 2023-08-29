@@ -19,7 +19,7 @@ public class AccommodationImage extends WriterEntity {
 
     @Embedded
     @Column
-    private Image imageInfo;
+    private Image image;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accommodation_id")

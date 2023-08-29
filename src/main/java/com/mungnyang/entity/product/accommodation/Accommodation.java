@@ -1,6 +1,7 @@
 package com.mungnyang.entity.product.accommodation;
 
 import com.mungnyang.entity.fixedEntity.City;
+import com.mungnyang.entity.product.Product;
 import com.mungnyang.entity.product.ProductAddress;
 import com.mungnyang.entity.fixedEntity.SmallCategory;
 import com.mungnyang.entity.WriterEntity;
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Table(name = "accommodation")
-public class Accommodation extends WriterEntity {
+public class Accommodation extends WriterEntity implements Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,5 +32,8 @@ public class Accommodation extends WriterEntity {
 
     @Embedded
     @Column
-    private ProductAddress address;
+    private ProductAddress productAddress;
+
+    @Lob
+    private String accommodationDetail;
 }

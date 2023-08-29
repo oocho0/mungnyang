@@ -1,6 +1,7 @@
 package com.mungnyang.entity.product.store;
 
 import com.mungnyang.entity.fixedEntity.City;
+import com.mungnyang.entity.product.Product;
 import com.mungnyang.entity.product.ProductAddress;
 import com.mungnyang.entity.fixedEntity.SmallCategory;
 import com.mungnyang.entity.WriterEntity;
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Table(name = "store")
-public class Store extends WriterEntity {
+public class Store extends WriterEntity implements Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

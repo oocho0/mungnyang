@@ -42,8 +42,8 @@ class MemberServiceTest {
         createMemberDto.setName("test1");
         createMemberDto.setEmail("abc@abc.com");
         createMemberDto.setPassword("12345678");
-        createMemberDto.setMemberAddressZipcode("1234");
-        createMemberDto.setMemberAddressMain("서울");
+        createMemberDto.setAddressZipcode("1234");
+        createMemberDto.setAddressMain("서울");
         createMemberDto.setTel("010-0000-0000");
         createMemberDto.setRole(Role.SELLER.name());
         createMemberDto.setMemberType(MemberType.NORMAL.name());
@@ -70,7 +70,7 @@ class MemberServiceTest {
         createMemberDto.setName("test1");
         createMemberDto.setEmail("abc@abc.com");
         createMemberDto.setPassword("12345678");
-        createMemberDto.setMemberAddressMain("seoul");
+        createMemberDto.setAddressMain("seoul");
         createMemberDto.setTel("010-0000-0000");
         createMemberDto.setRole("admin");
         createMemberDto.setMemberType(MemberType.NORMAL.name());
@@ -107,7 +107,7 @@ class MemberServiceTest {
         UpdateMemberDto mappingMemberDto = memberService.of(findMember);
         assertThat(mappingMemberDto.getMemberType()).isEqualTo(testDto.getMemberType());
         assertThat(mappingMemberDto.getEmail()).isEqualTo(testDto.getEmail());
-        assertThat(mappingMemberDto.getMemberAddressZipcode()).isEqualTo(testDto.getMemberAddressZipcode());
+        assertThat(mappingMemberDto.getAddressZipcode()).isEqualTo(testDto.getAddressZipcode());
     }
 
     @Test
@@ -117,12 +117,12 @@ class MemberServiceTest {
         UpdateMemberDto updateMemberDto = memberService.of(findMember);
         updateMemberDto.setEmail("test2@abc.com");
         updateMemberDto.setName("수정테스트");
-        updateMemberDto.setMemberAddressZipcode("4321");
+        updateMemberDto.setAddressZipcode("4321");
         memberService.updateMember(updateMemberDto, findMember);
         Member updatedMember = memberService.findMember(testDto.getEmail());
         assertThat(updatedMember.getEmail()).isEqualTo(testDto.getEmail());
         assertThat(updatedMember.getName()).isEqualTo("수정테스트");
-        assertThat(updatedMember.getMemberAddress().getZipcode()).isEqualTo("4321");
-        assertThat(updatedMember.getMemberAddress().getMain()).isEqualTo(testDto.getMemberAddressMain());
+        assertThat(updatedMember.getAddress().getZipcode()).isEqualTo("4321");
+        assertThat(updatedMember.getAddress().getMain()).isEqualTo(testDto.getAddressMain());
     }
 }

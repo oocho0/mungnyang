@@ -44,9 +44,8 @@ public class AppConfig {
         restTemplate.setInterceptors(Collections.singletonList(new ClientHttpRequestInterceptor() {
             @Override
             public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-                log.info("URL 호출 전");
                 ClientHttpResponse response = execution.execute(request, body);
-                log.info("URL 호출 후");
+                log.info("URL 요청");
                 return response;
             }
         }));

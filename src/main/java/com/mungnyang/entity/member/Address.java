@@ -8,7 +8,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Embeddable
-public class MemberAddress {
+public class Address {
     private String zipcode;
     private String main;
     private String detail;
@@ -18,8 +18,8 @@ public class MemberAddress {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MemberAddress memberAddress = (MemberAddress) o;
-        return Objects.equals(zipcode, memberAddress.zipcode) && Objects.equals(main, memberAddress.main) && Objects.equals(detail, memberAddress.detail) && Objects.equals(extra, memberAddress.extra);
+        Address address = (Address) o;
+        return Objects.equals(zipcode, address.zipcode) && Objects.equals(main, address.main) && Objects.equals(detail, address.detail) && Objects.equals(extra, address.extra);
     }
 
     @Override

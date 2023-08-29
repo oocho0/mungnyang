@@ -31,7 +31,7 @@ public class Member extends DateEntity {
 
     @Embedded
     @Column
-    private MemberAddress memberAddress;
+    private Address address;
 
     @Column(length = 15)
     private String tel;

@@ -1,9 +1,9 @@
 package com.mungnyang.controller.product;
 
 import com.mungnyang.dto.ErrorMessage;
-import com.mungnyang.dto.product.store.CreateStoreDto;
+import com.mungnyang.dto.product.accommodation.CreateAccommodationDto;
 import com.mungnyang.service.fixedEntity.CategoryService;
-import com.mungnyang.service.product.store.StoreService;
+import com.mungnyang.service.product.accommodation.AccommodationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,24 +18,24 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Controller
-@RequestMapping("admin")
+@RequestMapping("/seller")
 @RequiredArgsConstructor
-public class StoreController {
+public class AccommodationController {
 
-    private final StoreService storeService;
+    private final AccommodationService accommodationService;
 
-    @GetMapping("/store")
+    @GetMapping("/accommodation")
     public String loadRegisterPage(Model model) {
-        storeService.initializeStore(model);
-        return "admin/register";
+        accommodationService.initializeStore(model);
+        return "seller/register";
     }
 
-    @PostMapping("/store")
-    public ResponseEntity<?> registerStore(CreateStoreDto createStoreDto,
-                                           @RequestParam(value = "imageFile", required = false)
-                                           List<MultipartFile> storeImageFileList) {
+    @PostMapping("/accommodation")
+    public ResponseEntity<?> registerAccommodation(CreateAccommodationDto createAccommodationDto,
+                                                   @RequestParam(value = "imageFile", required = false)
+                                                   List<MultipartFile> accommodationImageFileList) {
         try {
-            storeService.registerStore(createStoreDto, storeImageFileList);
+            accommodationService.registerAccommodation(createAccommodationDto, accommodationImageFileList);
         } catch (Exception e) {
             return new ResponseEntity<ErrorMessage>(new ErrorMessage(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }

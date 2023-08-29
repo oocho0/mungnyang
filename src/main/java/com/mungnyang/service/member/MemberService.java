@@ -91,7 +91,7 @@ public class MemberService {
      * 회원 가입을 위한 MemberDto -> Member
      * 회원 비밀번호와 회원 권한은 인코딩 처리
      * 회원 일련번호는 null
-     * 회원 주소는 MemberAddress 객체로 변환
+     * 회원 주소는 Address 객체로 변환
      *
      * @param createMemberDto 페이지에서 입력받은 회원 정보
      * @return 생성된 Member 객체
@@ -282,10 +282,10 @@ public class MemberService {
             admin.setName("관리자");
             admin.setEmail("admin@abc.com");
             admin.setPassword("12345678");
-            admin.setMemberAddressZipcode("00000");
-            admin.setMemberAddressMain("한국");
-            admin.setMemberAddressDetail("서울");
-            admin.setMemberAddressExtra("어딘가");
+            admin.setAddressZipcode("00000");
+            admin.setAddressMain("한국");
+            admin.setAddressDetail("서울");
+            admin.setAddressExtra("어딘가");
             admin.setTel("010-1234-1234");
             admin.setRole(Role.ADMIN.name());
             admin.setMemberType(MemberType.NORMAL.name());
@@ -296,10 +296,10 @@ public class MemberService {
             seller.setName("판매자");
             seller.setEmail("seller@abc.com");
             seller.setPassword("12345678");
-            seller.setMemberAddressZipcode("00000");
-            seller.setMemberAddressMain("한국");
-            seller.setMemberAddressDetail("서울");
-            seller.setMemberAddressExtra("어딘가");
+            seller.setAddressZipcode("00000");
+            seller.setAddressMain("한국");
+            seller.setAddressDetail("서울");
+            seller.setAddressExtra("어딘가");
             seller.setTel("010-1212-3434");
             seller.setRole(Role.SELLER.name());
             seller.setMemberType(MemberType.NORMAL.name());
@@ -310,10 +310,10 @@ public class MemberService {
             user.setName("사용자");
             user.setEmail("user@abc.com");
             user.setPassword("12345678");
-            user.setMemberAddressZipcode("00000");
-            user.setMemberAddressMain("한국");
-            user.setMemberAddressDetail("서울");
-            user.setMemberAddressExtra("어딘가");
+            user.setAddressZipcode("00000");
+            user.setAddressMain("한국");
+            user.setAddressDetail("서울");
+            user.setAddressExtra("어딘가");
             user.setTel("010-4321-4321");
             user.setRole("user");
             user.setMemberType(MemberType.NORMAL.name());

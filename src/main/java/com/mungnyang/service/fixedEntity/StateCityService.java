@@ -20,8 +20,23 @@ public class StateCityService {
         return stateRepository.findAllByOrderByStateIdAsc();
     }
 
+    public List<City> getAllCities() {
+        return cityRepository.findAllByOrderByCityIdAsc();
+    }
+
     public List<City> getCitiesByStateId(Long stateId){
         return cityRepository.findByStateStateIdOrderByCityIdAsc(stateId);
+    }
+
+    public City getMatchedCity(String zipcode){
+        List<City> cities = getAllCities();
+        int zipcodeInt = Integer.parseInt(zipcode);
+        for (City city : cities) {
+            if (zipcodeInt >= city.getZipcodeStart() && zipcodeInt < city.getZipcodeEnd()) {
+                return city;
+            }
+        }
+        return null;
     }
 
 }

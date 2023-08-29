@@ -19,7 +19,7 @@ public class RoomFacility extends WriterEntity {
 
     @Embedded
     @Column
-    private Facility facilityInfo;
+    private Facility facility;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
