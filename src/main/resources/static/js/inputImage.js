@@ -1,35 +1,52 @@
-var fileNo = 0;
 var fileArray = new Array();
+var maxFileAmount = 10;
+
 function addFile(selectedFiles) {
-    var maxFileAmount = 10;
-    var currentFileAmount = $(".image-file").length;
+    fileWorks("image-file", selectedFiles, "#explain-image", fileArray, "#image-list", "#input-image");
+}
+
+var roomFileArray = [[],[],[],[],[],[],[]];
+
+function addRoomFile(selectedFiles){
+    var id = $(event.target).attr("id");.
+    var idNo = Number(id[id.length -1]);
+    var inputElement = "room-image-file" + idNo;
+    var explainElement = "#explain-roomImageWarn" + idNo;
+    var fileListElement = "#roomImageWarn" + idNo;
+    fileWorks(inputElement, selectedFiles, explainElement, roomFileArray[idNo - 1], fileListElement, "#"+id);
+}
+
+function fileWorks(inputElement, selectedFiles, explainElement, arrayForFile, fileListElement, inputTagId){
+    var currentFileAmount = $("." + inputElement).length;
     var remainFileAmount = maxFileAmount - currentFileAmount;
     var selectedFileAmount = selectedFiles.files.length;
+    var imageCount =
 
     if(selectedFileAmount > remainFileAmount){
-        alert("이미지는 최대" + maxFileAmount + "개 까지 첨부 가능합니다.");
+        alert("이미지는 최대" + maxFileAmount +"개 까지 첨부 가능합니다.");
     }
-    $("#explain-image").hide();
+
+    $(explainElement).hide();
     for(var i = 0; i < Math.min(selectedFileAmount, remainFileAmount); i++){
         const file = selectedFiles.files[i];
         if(validation(file)) {
             var reader = new FileReader();
             reader.onload = function () {
-                fileArray.push(file);
+                arrayForFile.push(file);
             };
             reader.readAsDataURL(file);
             let imageList = '';
-            imageList += '<div id="file' + fileNo + '" class="image-file">' + file.name;
-            imageList += '   <a class="delete"  style="cursor:pointer; text-decoration : none; color:inherit;" onclick="deleteFile(' + fileNo + ');">✖<i class="far fa-minus-square"></i></a>';
+            imageList += '<div id="' + inputElement + numberForFile + '" class="' + inputElement + '">' + file.name;
+            imageList += '   <a class="delete"  style="cursor:pointer; text-decoration : none; color:inherit;" onclick="deleteFile(' + numberForFile + ');">✖</a>';
             imageList += '</div>';
-            $("#image-list").append(imageList);
-            fileNo++;
+            $(fileListElement).append(imageList);
+            numberForFile++;
         }else{
             continue;
         }
     }
-    $("input [type='file']").val("");
-    console.log(fileArray);
+    $(inputTagId).val("");
+    console.log(arrayForFile);
 }
 
 function validation(file){
@@ -54,8 +71,16 @@ function validation(file){
 }
 
 function deleteFile(fileNo){
-    $("#file" + fileNo).remove();
-    fileArray[fileNo].is_delete = true;
+    var idNo = $(event.target).closest("div").attr("id");
+    if($(event.target).closest("div").parent("div").attr("id") == "image-list"){
+        fileArray[fileNo].is_delete = true;
+        console.log(fileArray);
+    }else{
+        var i = Number(idNo[idNo.length -2]);
+        roomFileArray[i-1][fileNo].is_delete = true;
+        console.log(roomFileArray);
+    }
+    $("#" + idNo).remove();
 }
 
 function addFormData(formData){
@@ -65,12 +90,51 @@ function addFormData(formData){
         }
         formData.append("imageFile", fileArray[i]);
     }
-    if(fileArray.length == 0){
-        formData.append("imageFile", null);
+    return formData;
+}
+
+function addFormDataWithRoom(maxFileNo, formData){
+    for(var i = 0; i < maxFileNo; i++){
+        var roomFileObject = new Object();
+        var array = new Array();
+        for(var j = 0 ; j < roomFileArray[i].length; j ++){
+            if(roomFileArray[i][j].is_delete == true){
+                continue;
+            }
+            array = roomFileArray[i][j];
+        }
+        roomFileObject["room" + (i+1)] = array;
+        formData.append("roomImageFile", roomFileObject)
     }
     return formData;
 }
 
+
 function getFileArray(){
     return fileArray;
+}
+
+function accommodationImageCheck(resultObject){
+    imageCheck(fileArray, resultObject, "#input-image");
+}
+
+function roomImageCheck(i, resultObject){
+    var inputTagId = "#roomImage"+ i
+    imageCheck(roomFileArray[i - 1], resultObject, inputTagId)
+}
+
+function imageCheck(arrayForFile, resultObject, tagName){
+    var count = 0;
+    for(var i = 0; i < fileArray.length; i++){
+        if(arrayForFile[i].is_delete == true){
+            count++;
+        }
+    };
+    if(arrayForFile == null || arrayForFile.length == count){
+        resultObject[tagName] = "이미지를 1개 이상 업로드해주세요.";
+    }
+}
+
+function deleteAllImages(i){
+    roomFileArray[i].length = 0;
 }

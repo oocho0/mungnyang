@@ -11,4 +11,5 @@ public class RoomImageDto {
     private String imageFileName;
     private String imageUrl;
     private String imageIsRepresentative;
+    private Long roomId;
 }

@@ -79,7 +79,7 @@ function checkStoreDtoForm(){
             '</div>'));
         }
     });
-    if(resultObject.length != undefined && resultObject.length != null){
+    if(resultObject != undefined && resultObject != null){
         return false;
     }
     return true;

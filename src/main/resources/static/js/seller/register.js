@@ -8,6 +8,8 @@ function request(){
     var form = $("form")[0];
     var formData = new FormData(form);
     formData = addFormData(formData);
+     var roomAmount = Number($("#roomAmount").val());
+    formData = addFormDataWithRoom(roomAmount, formData);
 
     $.ajax({
         url      : url,
@@ -56,17 +58,24 @@ function checkStoreDtoForm(){
     if($("#accommodationName").val().length > 50){
         resultObject["#accommodationName"] = "50자 이내로 작성해주세요.";
     }
+    accommodationImageCheck(resultObject);
 
-    var files = getFileArray();
-    var count = 0;
-    for(var i = 0; i < files.length; i++){
-        if(files[i].is_delete == true){
-            count++;
+    var roomAmount = Number($("#roomAmount").val());
+    const checkRoomLabels = ["#roomName", "#roomPrice"];
+    for (var i = 1; i < roomAmount+1; i++){
+        $.each(checkRoomLabels, function(index, value){
+            if($(value + i).val() == "" || $(value + i).val() == null){
+                resultObject[value + i] = $(value + i).data('error') + " 입력되지 않았습니다.";
+            }
+        });
+
+        if($("#roomName" + i).val().length > 50){
+            resultObject["#roomName" + i] = "50자 이내로 작성해주세요.";
         }
-    };
-    if(files == null || files.length == count){
-        resultObject["#input-image"] = "이미지를 1개 이상 업로드해주세요."
+
+        roomImageCheck(i, resultObject);
     }
+
 
     $.each(resultObject, function(key, value){
         if($(key).closest("div").parent("div").next("div").find(".error").text().length == 0){
@@ -79,7 +88,7 @@ function checkStoreDtoForm(){
             '</div>'));
         }
     });
-    if(resultObject.length != undefined && resultObject.length != null){
+    if(resultObject != undefined && resultObject != null){
         return false;
     }
     return true;

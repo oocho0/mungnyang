@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -34,6 +35,10 @@ public class AccommodationService {
     public void initializeStore(Model model) {
         List<SmallCategory> smallCategoryList = categoryService.getSmallCategoriesByBigCategoryId(1L);
         model.addAttribute("smallCategories", smallCategoryList);
+        String[] accommodationFacility = {"24시간 리셉션", "반려견 운동장", "반려견 수영장", "주차", "무료 WiFi", "반려견 셀프 목욕", "조식"};
+        model.addAttribute("accommodationFacility", accommodationFacility);
+        String[] roomFacility = {"객실 무료 WiFi", "에어컨", "개별 바베큐", "스파", "반려견 욕실 용품", "반려견 드라이룸", "냉장고"};
+        model.addAttribute("roomFacility", roomFacility);
     }
 
     /**
@@ -55,7 +60,6 @@ public class AccommodationService {
      */
     private Accommodation createAccommodation(CreateAccommodationDto createAccommodationDto) {
         modelMapper.typeMap(CreateAccommodationDto.class, Accommodation.class).addMappings(mapping -> {
-            mapping.skip(Accommodation::setAccommodationId);
             mapping.skip(Accommodation::setCity);
         });
         Accommodation createdAccommodation = modelMapper.map(createAccommodationDto, Accommodation.class);

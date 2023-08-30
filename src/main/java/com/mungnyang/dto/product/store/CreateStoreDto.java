@@ -10,8 +10,6 @@ import java.util.List;
 @Setter
 public class CreateStoreDto {
 
-    private Long storeId;
-
     private String storeName;
 
     private Long smallCategoryId;

@@ -56,7 +56,6 @@ public class StoreService {
      */
     private Store createStore(CreateStoreDto createStoreDto) {
         modelMapper.typeMap(CreateStoreDto.class, Store.class).addMappings(mapping -> {
-            mapping.skip(Store::setStoreId);
             mapping.skip(Store::setSmallCategory);
             mapping.skip(Store::setCity);
         });

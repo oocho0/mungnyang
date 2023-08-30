@@ -14,8 +14,6 @@ import javax.validation.constraints.NotEmpty;
 @Setter
 public class CreateMemberDto {
 
-    private Long memberId;
-
     @NotBlank(message = "이름을 입력하지 않았습니다.")
     private String name;
 

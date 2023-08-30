@@ -1,17 +1,12 @@
 package com.mungnyang.dto.product.accommodation;
 
-import com.mungnyang.dto.product.accommodation.room.RoomDto;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
 public class CreateAccommodationDto {
-
-    private Long accommodationId;
 
     private String accommodationName;
 

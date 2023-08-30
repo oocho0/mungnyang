@@ -6,7 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AccommodationFacilityDto {
-    private Long accommodationFacilityId;
     private String facilityName;
     private String facilityIsExist;
 }
