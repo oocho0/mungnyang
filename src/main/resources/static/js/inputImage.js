@@ -2,25 +2,26 @@ var fileArray = new Array();
 var maxFileAmount = 10;
 
 function addFile(selectedFiles) {
-    fileWorks("image-file", selectedFiles, "#explain-image", fileArray, "#image-list", "#input-image");
+    var eventId = $(event.target).attr("id");
+    fileWorks(eventId, "image-file", selectedFiles, "#explain-image", fileArray, "#image-list", "#input-image");
 }
 
 var roomFileArray = [[],[],[],[],[],[],[]];
 
 function addRoomFile(selectedFiles){
-    var id = $(event.target).attr("id");.
-    var idNo = Number(id[id.length -1]);
+    var eventId = $(event.target).attr("id");
+    var roomNumber = Number();
     var inputElement = "room-image-file" + idNo;
     var explainElement = "#explain-roomImageWarn" + idNo;
     var fileListElement = "#roomImageWarn" + idNo;
-    fileWorks(inputElement, selectedFiles, explainElement, roomFileArray[idNo - 1], fileListElement, "#"+id);
+    fileWorks(eventId, inputElement, selectedFiles, explainElement, roomFileArray[idNo - 1], fileListElement, "#"+id);
 }
 
-function fileWorks(inputElement, selectedFiles, explainElement, arrayForFile, fileListElement, inputTagId){
-    var currentFileAmount = $("." + inputElement).length;
+function fileWorks(eventId, inputElement, selectedFiles, explainElement, arrayForFile, fileListElement, inputTagId){
+    var currentFileAmount = $("#"+eventId).closest("div").parent("div").find(".image-file-list").length;
     var remainFileAmount = maxFileAmount - currentFileAmount;
     var selectedFileAmount = selectedFiles.files.length;
-    var imageCount =
+    var numberForFile = $("#"+eventId).attr("data-imageIndex");
 
     if(selectedFileAmount > remainFileAmount){
         alert("이미지는 최대" + maxFileAmount +"개 까지 첨부 가능합니다.");
@@ -36,7 +37,7 @@ function fileWorks(inputElement, selectedFiles, explainElement, arrayForFile, fi
             };
             reader.readAsDataURL(file);
             let imageList = '';
-            imageList += '<div id="' + inputElement + numberForFile + '" class="' + inputElement + '">' + file.name;
+            imageList += '<div id="' + inputElement + numberForFile + '" class="image-file-list">' + file.name;
             imageList += '   <a class="delete"  style="cursor:pointer; text-decoration : none; color:inherit;" onclick="deleteFile(' + numberForFile + ');">✖</a>';
             imageList += '</div>';
             $(fileListElement).append(imageList);
@@ -45,6 +46,7 @@ function fileWorks(inputElement, selectedFiles, explainElement, arrayForFile, fi
             continue;
         }
     }
+    $("#"+eventId).attr("data-imageIndex", numberForFile);
     $(inputTagId).val("");
     console.log(arrayForFile);
 }
@@ -72,7 +74,7 @@ function validation(file){
 
 function deleteFile(fileNo){
     var idNo = $(event.target).closest("div").attr("id");
-    if($(event.target).closest("div").parent("div").attr("id") == "image-list"){
+    if($("#"+idNo).parent("div").attr("id") == "image-list"){
         fileArray[fileNo].is_delete = true;
         console.log(fileArray);
     }else{
@@ -81,6 +83,16 @@ function deleteFile(fileNo){
         console.log(roomFileArray);
     }
     $("#" + idNo).remove();
+    var currentFileAmount = $("#"+ idNo).closest(".image-file-list").length;
+    if(currentFileAmount == 0 || currentFileAmount == null){
+        if($("#"+idNo).parent("div").attr("id") == "image-list"){
+            $(".")
+        }else{
+            $("#room-image-file"+i).hide();
+            $("#explain-roomImageWarn"+i).show();
+        }
+    }
+
 }
 
 function addFormData(formData){
@@ -136,5 +148,8 @@ function imageCheck(arrayForFile, resultObject, tagName){
 }
 
 function deleteAllImages(i){
-    roomFileArray[i].length = 0;
+    roomFileArray[i-1] = [];
+    $("#roomImage"+i).val('');
+    $("#room-image-file"+i).hide();
+    $("#explain-roomImageWarn"+i).show();
 }

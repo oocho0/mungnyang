@@ -1,30 +1,45 @@
 function addFacility(){
-    var addFacility = $(event.target).siblings("input").val();
-    var facilityNum = $(event.target).siblings("input").attr("id");
-    var num = Number(facilityNum[facilityNum.length -1]);
-    $(event.target).closest("div").attr('class', 'form-check form-switch');
-    $(event.target).closest("div").append($(
-    '   <input class="form-check-input facility" type="checkbox" role="switch" id="facility' + facilityNum + '"/>' +
-    '   <label class="form-check-label" for="facility' + facilityNum + '">' + addFacility + '</label>'
+    var facilityId = $(event.target).siblings("input").attr("id");
+    adding(facilityId, "facility", "facility", "addFacility();");
+}
+function addRoomFacility(){
+    var facilityId = $(event.target).siblings("input").attr("id");
+    var roomIndex = Number($(event.target).closest(".accordion-item").attr('data-roomIndex'));
+    var classFacility = "roomFacility"+ roomIndex;
+    var idName = "room" + roomIndex + "-facility";
+    adding(facilityId, classFacility, idName, "addRoomFacility();");
+}
+
+function adding(facilityId, classFacility, idName, funcName){
+    var addFacility = $("#"+facilityId).val();
+    if(addFacility == "" || addFacility == null){
+        return false;
+    }
+    var num = Number($("#"+facilityId).attr("data-facilityIndex"));
+
+    $("#"+facilityId).closest("div").attr('class', 'form-check form-switch');
+    $("#"+facilityId).closest("div").append($(
+    '   <input class="form-check-input ' + classFacility + '" type="checkbox" role="switch" id="' + idName + num + '" name="' + idName + num + '" data-facilityIndex="' + num + '"/>' +
+    '   <label class="form-check-label" for="' + idName + num + '">' + addFacility + '</label>'
     ));
-    $(event.target).closest("div").children(".form-control, button").detach();
     var next = null;
     if(num % 2 == 0 ){
-        next = "#odd";
+        next = $("#"+facilityId).closest("div").parent("div").parent("div").find(".col-4:first");
     }else{
-        next = "#even";
+        next = $("#"+facilityId).closest("div").parent("div").parent("div").find(".col-4:last");
     }
     $(next).append($(
     '<div class="input-group mb-3">' +
-    '   <input type="text" class="form-control" aria-label="숙소 시설" id="facility' + (num+1) + '" placeholder="추가 숙소 시설">' +
-    '   <button class="btn btn-outline-secondary" type="button" onclick="addFacility();">추가</button>' +
+    '   <input type="text" class="form-control" aria-label="숙소 시설" id="' + idName + (num+1) + '" placeholder="추가 숙소 시설" data-facilityIndex="' + (num+1) + '">' +
+    '   <button class="btn btn-outline-secondary" type="button" onclick="' + funcName + '">추가</button>' +
     '</div>'
     ));
+    $("#"+facilityId).closest("div").children(".form-control, button").detach();
 }
 
 function initFacility(i){
-    var lastId = $("input[type='text']").attr("id");
-    var lastIndex = Number(lastId[lastId.length -1]);
+    var lastId = $("#room"+i+" .row:last").find("input[type='text']:last").attr("id");
+    var lastIndex = Number($("#"+lastId).attr('data-facilityIndex'));
     for(var j = 1; j < 8; j++){
         $("#room"+ i + "-facility" + j).prop("checked", false);
     }
@@ -33,10 +48,12 @@ function initFacility(i){
     }
     $("#room"+ i + "-facility8").closest("div").attr('class', 'input-group mb-3');
     $("#room"+ i + "-facility8").closest("div").append($(
-    '    <input type="text" class="form-control" aria-label="숙소 시설" th:id="|room' + i + '-facility8|" placeholder="추가 숙소 시설">' +
+    '    <input type="text" class="form-control" aria-label="숙소 시설" th:id="|room' + i + '-facility8|" placeholder="추가 숙소 시설" data-facilityIndex="8">' +
     '    <button class="btn btn-outline-secondary" type="button" onclick="addFacility();">추가</button>'
     ));
     $("#room"+ i + "-facility8").closest("div").children(".form-check-input, label").detach();
+
+
     for(var j = 9; j < lastIndex+1; j++){
         $("#room" + i + "-facility" + j).closest("div").detach();
     }
