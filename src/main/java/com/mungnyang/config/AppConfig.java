@@ -1,12 +1,9 @@
 package com.mungnyang.config;
 
-import ch.qos.logback.classic.pattern.PropertyConverter;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mungnyang.constant.MemberType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

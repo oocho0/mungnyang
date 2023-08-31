@@ -1,4 +1,4 @@
-package com.mungnyang.service;
+package com.mungnyang.service.member;
 
 import com.mungnyang.constant.MemberType;
 import com.mungnyang.constant.Role;
@@ -25,7 +25,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
-@TestPropertySource(locations = "classpath:application-test.properties")
 class MemberServiceTest {
 
     @Autowired

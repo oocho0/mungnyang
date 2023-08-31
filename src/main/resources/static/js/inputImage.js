@@ -1,23 +1,46 @@
+$(document).ready(function(){
+    roomAvailable();
+})
+
+function roomAvailable(){
+    $(".roomAvailable").on("change", function(){
+        var value = $(event.target).closest(".col-8").find(".roomAvailable:checked").attr("value");
+        if(value == "OPEN"){
+            if($(event.target).closest(".accordion-body").find(".roomAvailableTarget").find("[value='AVAILABLE']").attr("disabled") == 'disabled'){
+                $(event.target).closest(".accordion-body").find(".roomAvailableTarget").find("[value='AVAILABLE']").removeAttr('disabled');
+                $(event.target).closest(".accordion-body").find(".roomAvailableTarget").find("[value='BOOKED']").removeAttr('disabled');
+                $(event.target).closest(".accordion-body").find(".roomAvailableTarget").find("[value='UNAVAILABLE']").prop("checked", false);
+                $(event.target).closest(".accordion-body").find(".roomAvailableTarget").find("[value='AVAILABLE']").prop("checked", true);
+            }
+            return false;
+        }
+        $(event.target).closest(".accordion-body").find(".roomAvailableTarget").find("[value='AVAILABLE']").prop("checked", false);
+        $(event.target).closest(".accordion-body").find(".roomAvailableTarget").find("[value='AVAILABLE']").attr("disabled", true);
+        $(event.target).closest(".accordion-body").find(".roomAvailableTarget").find("[value='BOOKED']").attr("disabled", true);
+        $(event.target).closest(".accordion-body").find(".roomAvailableTarget").find("[value='UNAVAILABLE']").prop("checked", true);
+    });
+}
+
 var fileArray = new Array();
 var maxFileAmount = 10;
 
 function addFile(selectedFiles) {
     var eventId = $(event.target).attr("id");
-    fileWorks(eventId, "image-file", selectedFiles, "#explain-image", fileArray, "#image-list", "#input-image");
+    fileWorks(eventId, "image-file", selectedFiles, "#explain-image", fileArray, "#image-list", "#input-image", "deleteFile");
 }
 
 var roomFileArray = [[],[],[],[],[],[],[]];
 
 function addRoomFile(selectedFiles){
     var eventId = $(event.target).attr("id");
-    var roomNumber = Number();
-    var inputElement = "room-image-file" + idNo;
-    var explainElement = "#explain-roomImageWarn" + idNo;
-    var fileListElement = "#roomImageWarn" + idNo;
-    fileWorks(eventId, inputElement, selectedFiles, explainElement, roomFileArray[idNo - 1], fileListElement, "#"+id);
+    var roomNumber = Number($(event.target).closest(".accordion-item").attr("data-roomIndex"));
+    var inputElement = "room-image-file" + roomNumber;
+    var explainElement = "#explain-roomImageWarn" + roomNumber;
+    var fileListElement = "#roomImageWarn" + roomNumber;
+    fileWorks(eventId, inputElement, selectedFiles, explainElement, roomFileArray[roomNumber - 1], fileListElement, "#"+eventId, "deleteRoomImage");
 }
 
-function fileWorks(eventId, inputElement, selectedFiles, explainElement, arrayForFile, fileListElement, inputTagId){
+function fileWorks(eventId, inputElement, selectedFiles, explainElement, arrayForFile, fileListElement, inputTagId, deleteFunction){
     var currentFileAmount = $("#"+eventId).closest("div").parent("div").find(".image-file-list").length;
     var remainFileAmount = maxFileAmount - currentFileAmount;
     var selectedFileAmount = selectedFiles.files.length;
@@ -28,6 +51,7 @@ function fileWorks(eventId, inputElement, selectedFiles, explainElement, arrayFo
     }
 
     $(explainElement).hide();
+
     for(var i = 0; i < Math.min(selectedFileAmount, remainFileAmount); i++){
         const file = selectedFiles.files[i];
         if(validation(file)) {
@@ -38,7 +62,7 @@ function fileWorks(eventId, inputElement, selectedFiles, explainElement, arrayFo
             reader.readAsDataURL(file);
             let imageList = '';
             imageList += '<div id="' + inputElement + numberForFile + '" class="image-file-list">' + file.name;
-            imageList += '   <a class="delete"  style="cursor:pointer; text-decoration : none; color:inherit;" onclick="deleteFile(' + numberForFile + ');">✖</a>';
+            imageList += '   <a class="delete"  style="cursor:pointer; text-decoration : none; color:inherit;" onclick="' + deleteFunction + '(' + numberForFile + ');">✖</a>';
             imageList += '</div>';
             $(fileListElement).append(imageList);
             numberForFile++;
@@ -73,26 +97,27 @@ function validation(file){
 }
 
 function deleteFile(fileNo){
-    var idNo = $(event.target).closest("div").attr("id");
-    if($("#"+idNo).parent("div").attr("id") == "image-list"){
-        fileArray[fileNo].is_delete = true;
-        console.log(fileArray);
-    }else{
-        var i = Number(idNo[idNo.length -2]);
-        roomFileArray[i-1][fileNo].is_delete = true;
-        console.log(roomFileArray);
-    }
-    $("#" + idNo).remove();
-    var currentFileAmount = $("#"+ idNo).closest(".image-file-list").length;
+    var idName = $(event.target).closest("div").attr("id");
+    fileArray[fileNo].is_delete = true;
+    console.log(fileArray);
+    $("#" + idName).remove();
+    var currentFileAmount = $("#image-list .image-file-list").length;
     if(currentFileAmount == 0 || currentFileAmount == null){
-        if($("#"+idNo).parent("div").attr("id") == "image-list"){
-            $(".")
-        }else{
-            $("#room-image-file"+i).hide();
-            $("#explain-roomImageWarn"+i).show();
-        }
+        $("#explain-image").show();
     }
+}
 
+function deleteRoomImage(fileNo){
+    var idName = $(event.target).closest("div").attr("id");
+    var roomNo = Number($("#"+idName).closest(".accordion-item").attr("data-roomIndex"));
+    roomFileArray[roomNo-1][fileNo].is_delete = true;
+    console.log(roomFileArray);
+    console.log(roomFileArray[roomNo-1]);
+    $("#" + idName).remove();
+    var currentFileAmount = $("#room"+ roomNo + " .image-file-list").length;
+    if(currentFileAmount == 0 || currentFileAmount == null){
+        $("#explain-roomImageWarn"+roomNo).show();
+    }
 }
 
 function addFormData(formData){
@@ -102,23 +127,17 @@ function addFormData(formData){
         }
         formData.append("imageFile", fileArray[i]);
     }
-    return formData;
 }
 
-function addFormDataWithRoom(maxFileNo, formData){
-    for(var i = 0; i < maxFileNo; i++){
-        var roomFileObject = new Object();
-        var array = new Array();
-        for(var j = 0 ; j < roomFileArray[i].length; j ++){
-            if(roomFileArray[i][j].is_delete == true){
-                continue;
-            }
-            array = roomFileArray[i][j];
+function addFormDataWithRoom(roomObject, roomNo){
+    var array = new Array();
+    for(var j = 0 ; j < roomFileArray[roomNo].length; j ++){
+        if(roomFileArray[roomNo][j].is_delete == true){
+            continue;
         }
-        roomFileObject["room" + (i+1)] = array;
-        formData.append("roomImageFile", roomFileObject)
+        array.push(roomFileArray[roomNo][j]);
     }
-    return formData;
+    roomObject["roomImageFile"] = array;
 }
 
 
@@ -137,7 +156,7 @@ function roomImageCheck(i, resultObject){
 
 function imageCheck(arrayForFile, resultObject, tagName){
     var count = 0;
-    for(var i = 0; i < fileArray.length; i++){
+    for(var i = 0; i < arrayForFile.length; i++){
         if(arrayForFile[i].is_delete == true){
             count++;
         }

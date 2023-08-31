@@ -110,6 +110,7 @@ public class MemberService {
                     (Converter<String, MemberType>) ctx ->
                             StringUtils.equals(ctx.getSource(), MemberType.KAKAO.name()) ? MemberType.KAKAO : MemberType.NORMAL
                     ).map(CreateMemberDto::getMemberType, Member::setMemberType);
+            mapping.skip(Member::setMemberId);
         });
         return modelMapper.map(createMemberDto, Member.class);
     }

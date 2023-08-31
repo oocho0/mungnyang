@@ -32,7 +32,7 @@ public class StoreController {
 
     @PostMapping("/store")
     public ResponseEntity<?> registerStore(CreateStoreDto createStoreDto,
-                                           @RequestParam(value = "imageFile", required = false)
+                                           @RequestParam("imageFile")
                                            List<MultipartFile> storeImageFileList) {
         try {
             storeService.registerStore(createStoreDto, storeImageFileList);

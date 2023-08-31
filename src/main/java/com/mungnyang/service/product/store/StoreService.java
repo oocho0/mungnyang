@@ -1,19 +1,21 @@
 package com.mungnyang.service.product.store;
 
+import com.mungnyang.constant.Status;
 import com.mungnyang.dto.product.store.CreateStoreDto;
 import com.mungnyang.entity.fixedEntity.BigCategory;
 import com.mungnyang.entity.product.store.Store;
 import com.mungnyang.repository.product.store.StoreRepository;
 import com.mungnyang.service.fixedEntity.CategoryService;
 import com.mungnyang.service.fixedEntity.StateCityService;
+import com.mungnyang.service.product.StatusService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -56,6 +58,8 @@ public class StoreService {
      */
     private Store createStore(CreateStoreDto createStoreDto) {
         modelMapper.typeMap(CreateStoreDto.class, Store.class).addMappings(mapping -> {
+            mapping.using((Converter<String , Status>) ctx -> StatusService.statusConverter(ctx.getSource())).map(CreateStoreDto::getStoreStatus, Store::setStoreStatus);
+            mapping.skip(Store::setStoreId);
             mapping.skip(Store::setSmallCategory);
             mapping.skip(Store::setCity);
         });

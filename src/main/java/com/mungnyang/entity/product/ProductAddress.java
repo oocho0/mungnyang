@@ -1,6 +1,6 @@
 package com.mungnyang.entity.product;
 
-import com.mungnyang.entity.member.Address;
+import com.mungnyang.entity.Address;
 import lombok.*;
 
 import javax.persistence.Column;

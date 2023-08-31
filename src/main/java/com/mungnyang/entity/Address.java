@@ -1,4 +1,4 @@
-package com.mungnyang.entity.member;
+package com.mungnyang.entity;
 
 import lombok.*;
 

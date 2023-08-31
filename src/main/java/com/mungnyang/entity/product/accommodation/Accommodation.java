@@ -1,5 +1,6 @@
 package com.mungnyang.entity.product.accommodation;
 
+import com.mungnyang.constant.Status;
 import com.mungnyang.entity.fixedEntity.City;
 import com.mungnyang.entity.product.Product;
 import com.mungnyang.entity.product.ProductAddress;
@@ -36,4 +37,8 @@ public class Accommodation extends WriterEntity implements Product {
 
     @Lob
     private String accommodationDetail;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status accommodationStatus;
 }

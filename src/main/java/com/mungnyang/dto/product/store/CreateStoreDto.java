@@ -22,4 +22,5 @@ public class CreateStoreDto {
     private String productAddressLat;
 
     private String storeDetail;
+    private String storeStatus;
 }

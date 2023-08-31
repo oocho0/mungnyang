@@ -1,8 +1,12 @@
 package com.mungnyang.entity.product;
 
+import com.mungnyang.constant.IsTrue;
 import lombok.*;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.util.Objects;
 
 @Getter
@@ -13,7 +17,10 @@ public class Image {
     private String name;
     private String fileName;
     private String url;
-    private String isRepresentative;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private IsTrue isRepresentative;
 
     @Override
     public boolean equals(Object o) {

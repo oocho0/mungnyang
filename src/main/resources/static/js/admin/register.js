@@ -5,9 +5,8 @@ function request(){
     }
     var url = "/admin/store";
 
-    var form = $("form")[0];
-    var formData = new FormData(form);
-    formData = addFormData(formData);
+    var formData = new FormData($("form")[0]);
+    addFormData(formData);
 
     $.ajax({
         url      : url,
@@ -35,22 +34,33 @@ function request(){
     });
 }
 
+let resultObjectKeys = [];
+
 function checkStoreDtoForm(){
     let resultObject = new Object();
-    const checkLabels = ["#storeName", "#smallCategoryId", "#addressZipcode",
+    const checkLabels = ["#storeName", "#addressZipcode",
     "#addressMain", "#productAddressLat", "#productAddressLon"];
 
-    $.each(checkLabels, function(index, value){
-        if($(value).closest("div").parent("div").next("div").find(".error").text().length != 0){
-            $(value).closest("div").parent("div").next("div").remove();
-        }
+    if(resultObjectKeys.length != 0){
+        $.each(resultObjectKeys, function(index, value){
+            if($(value).closest("div").parent("div").next("div").find(".error").text().length != 0){
+                $(value).closest("div").parent("div").next("div").remove();
+            }
+        })
+    }
 
+    $.each(checkLabels, function(index, value){
         if($(value).val() == "" || $(value).val() == null){
             resultObject[value] = $(value).data('error') + " 입력되지 않았습니다.";
         }
     });
     if($("#input-image").closest("div").parent("div").next("div").find(".error").text().length != 0){
         $("#input-image").closest("div").parent("div").next("div").remove();
+    }
+
+    if($("#smallCategoryId").val() == "소분류 선택" || $("#smallCategoryId").val() == "" ||
+        $("#smallCategoryId").val() == null || $("#smallCategoryId option:selected").val() == "소분류 선택"){
+        resultObject["#smallCategoryId"] = $("#smallCategoryId").data('error') + " 입력되지 않았습니다.";
     }
 
     if($("#storeName").val().length > 50){
@@ -79,8 +89,9 @@ function checkStoreDtoForm(){
             '</div>'));
         }
     });
-    if(resultObject != undefined && resultObject != null){
-        return false;
+    if(resultObject[0] == null){
+        return true;
     }
-    return true;
+    resultObjectKeys = Object.keys(resultObject);
+    return false;
 }

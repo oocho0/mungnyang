@@ -3,7 +3,7 @@ package com.mungnyang.service.product.store;
 import com.mungnyang.entity.product.store.Store;
 import com.mungnyang.entity.product.store.StoreImage;
 import com.mungnyang.repository.product.store.StoreImageRepository;
-import com.mungnyang.service.ImageService;
+import com.mungnyang.service.product.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

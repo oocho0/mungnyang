@@ -19,7 +19,7 @@ function adding(facilityId, classFacility, idName, funcName){
 
     $("#"+facilityId).closest("div").attr('class', 'form-check form-switch');
     $("#"+facilityId).closest("div").append($(
-    '   <input class="form-check-input ' + classFacility + '" type="checkbox" role="switch" id="' + idName + num + '" name="' + idName + num + '" data-facilityIndex="' + num + '"/>' +
+    '   <input class="form-check-input ' + classFacility + '" type="checkbox" role="switch" id="' + idName + num + '" data-facilityIndex="' + num + '"/>' +
     '   <label class="form-check-label" for="' + idName + num + '">' + addFacility + '</label>'
     ));
     var next = null;
@@ -58,4 +58,38 @@ function initFacility(i){
         $("#room" + i + "-facility" + j).closest("div").detach();
     }
 
+}
+
+function addFacilityData(formData){
+    var facilityObject = new Object();
+    var num = Number($("[onclick='addFacility();']").attr("data-facilityIndex"));
+
+    for(var i = 1; i < num; i++){
+        facilityObject["facilityName"] = $("label [for='facility'"+i+"]").val();
+        if($("#facility"+i).prop("checked")){
+            facilityObject["facilityIsExist"] = "YES";
+        }else{
+            facilityObject["facilityIsExist"] = "NO";
+        }
+        formData.append("facility", facilityObject);
+    }
+}
+
+function addRoomFacilityData(roomObject, roomNo){
+    var facilityIdPrefix = "room" + roomNo + "-facility";
+    var lastId = $("#room" + roomNo + " .row:last").find("input[type='text']:last").attr("id");
+    var lastIndex = Number($("#"+lastId).attr('data-facilityIndex'));
+    var roomFacility = new Object();
+    var array = new Array();
+    for(var i = 1; i < lastIndex; i++){
+
+        roomFacility["facilityName"] = $("label [for='"+facilityIdPrefix+i+"']").val();
+        if($("#"+facilityIdPrefix + i).prop("checked")){
+            roomFacility["facilityIsExist"] = "YES";
+        }else{
+            roomFacility["facilityIsExist"] = "NO";
+        }
+        array.push(roomFacility);
+    }
+    roomObject["roomFacilityList"] = array;
 }

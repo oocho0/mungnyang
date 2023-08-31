@@ -1,5 +1,6 @@
 package com.mungnyang.entity.product;
 
+import com.mungnyang.constant.IsTrue;
 import lombok.*;
 
 import javax.persistence.Embeddable;
@@ -12,7 +13,7 @@ import java.util.Objects;
 public class Facility {
 
     private String name;
-    private String isExist;
+    private IsTrue isExist;
 
     @Override
     public boolean equals(Object o) {

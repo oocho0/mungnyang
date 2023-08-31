@@ -1,5 +1,5 @@
 package com.mungnyang.constant;
 
 public enum Status {
-    AVAILABLE, BOOKED
+    OPEN, CLOSED, PAUSE
 }

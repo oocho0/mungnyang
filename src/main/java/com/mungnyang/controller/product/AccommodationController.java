@@ -1,9 +1,9 @@
 package com.mungnyang.controller.product;
 
 import com.mungnyang.dto.ErrorMessage;
+import com.mungnyang.dto.product.accommodation.AccommodationFacilityDto;
 import com.mungnyang.dto.product.accommodation.CreateAccommodationDto;
-import com.mungnyang.dto.product.accommodation.room.RoomImageFileList;
-import com.mungnyang.service.fixedEntity.CategoryService;
+import com.mungnyang.dto.product.accommodation.room.CreateRoomDto;
 import com.mungnyang.service.product.accommodation.AccommodationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/seller")
@@ -34,12 +33,14 @@ public class AccommodationController {
 
     @PostMapping("/accommodation")
     public ResponseEntity<?> registerAccommodation(CreateAccommodationDto createAccommodationDto,
-                                                   @RequestParam(value = "imageFile", required = false)
+                                                   @RequestParam("imageFile")
                                                    List<MultipartFile> accommodationImageFileList,
-                                                   @RequestParam(value = "roomImageFile", required = false)
-                                                   List<RoomImageFileList> roomImageFileList) {
+                                                   @RequestParam("facility")
+                                                   List<AccommodationFacilityDto> accommodationFacilityList,
+                                                   @RequestParam("room")
+                                                   List<CreateRoomDto> roomList) {
         try {
-            accommodationService.registerAccommodation(createAccommodationDto, accommodationImageFileList);
+            accommodationService.registerAccommodation(createAccommodationDto, accommodationImageFileList, accommodationFacilityList, roomList);
         } catch (Exception e) {
             return new ResponseEntity<ErrorMessage>(new ErrorMessage(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }

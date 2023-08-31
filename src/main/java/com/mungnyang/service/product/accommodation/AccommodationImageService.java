@@ -3,7 +3,7 @@ package com.mungnyang.service.product.accommodation;
 import com.mungnyang.entity.product.accommodation.Accommodation;
 import com.mungnyang.entity.product.accommodation.AccommodationImage;
 import com.mungnyang.repository.product.accommodation.AccommodationImageRepository;
-import com.mungnyang.service.ImageService;
+import com.mungnyang.service.product.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,5 +34,13 @@ public class AccommodationImageService {
             createdAccommodationImage.setImage(imageService.createImage(accommodation, accommodationImageFile, i));
             accommodationImageRepository.save(createdAccommodationImage);
         }
+    }
+
+    public List<AccommodationImage> findAccommodationImageByAccommodation(Accommodation accommodation) {
+        List<AccommodationImage> accommodationImages = accommodationImageRepository.findByAccommodationAccommodationIdOrderByAccommodationImageId(accommodation.getAccommodationId());
+        if (accommodationImages.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        return accommodationImages;
     }
 }

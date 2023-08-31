@@ -2,6 +2,7 @@ package com.mungnyang.entity.member;
 
 import com.mungnyang.constant.MemberType;
 import com.mungnyang.constant.Role;
+import com.mungnyang.entity.Address;
 import com.mungnyang.entity.DateEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

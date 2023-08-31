@@ -7,9 +7,7 @@ function request(){
 
     var form = $("form")[0];
     var formData = new FormData(form);
-    formData = addFormData(formData);
-     var roomAmount = Number($("#roomAmount").val());
-    formData = addFormDataWithRoom(roomAmount, formData);
+    formData = makeFormData(formData);
 
     $.ajax({
         url      : url,
@@ -37,16 +35,38 @@ function request(){
     });
 }
 
+function makeFormData(formData){
+    addFormData(formData);
+    addFacilityData(formData);
+    var roomAmount = Number($("#roomAmount").val());
+    for(var i = 1; i < roomAmount+1; i++){
+        var roomObject = new Object();
+        roomObject["roomName"] = $("#roomName" + i).val();
+        roomObject["roomPrice"] = $("#roomPrice" + i).val();
+        roomObject["roomDetail"] = $("#roomDetail" + i).val();
+        roomObject["roomStatus"] = $("#roomStatus" + i).val();
+        roomObject["isAvailable"] = $("#isAvailable" + i).val();
+        addFormDataWithRoom(roomObject, i);
+        addRoomFacilityData(roomObject, i);
+        formData.append("room", roomObject);
+    }
+}
+
+let resultObjectKeys = [];
+
 function checkStoreDtoForm(){
     let resultObject = new Object();
     const checkLabels = ["#accommodationName", "#smallCategoryId", "#addressZipcode",
     "#addressMain", "#productAddressLat", "#productAddressLon"];
 
+    if(resultObjectKeys.length != 0){
+        $.each(resultObjectKeys, function(index, value){
+            if($(value).closest("div").parent("div").next("div").find(".error").text().length != 0){
+                $(value).closest("div").parent("div").next("div").remove();
+            }
+        })
+    }
     $.each(checkLabels, function(index, value){
-        if($(value).closest("div").parent("div").next("div").find(".error").text().length != 0){
-            $(value).closest("div").parent("div").next("div").remove();
-        }
-
         if($(value).val() == "" || $(value).val() == null){
             resultObject[value] = $(value).data('error') + " 입력되지 않았습니다.";
         }
@@ -88,9 +108,10 @@ function checkStoreDtoForm(){
             '</div>'));
         }
     });
-    if(resultObject != undefined && resultObject != null){
-        return false;
+    if(resultObject[0] == null){
+        return true;
     }
-    return true;
+    resultObjectKeys = Object.keys(resultObject);
+    return false;
 }
 

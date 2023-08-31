@@ -1,5 +1,6 @@
 package com.mungnyang.entity.product.store;
 
+import com.mungnyang.constant.Status;
 import com.mungnyang.entity.fixedEntity.City;
 import com.mungnyang.entity.product.Product;
 import com.mungnyang.entity.product.ProductAddress;
@@ -36,4 +37,8 @@ public class Store extends WriterEntity implements Product {
 
     @Lob
     private String storeDetail;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status storeStatus;
 }

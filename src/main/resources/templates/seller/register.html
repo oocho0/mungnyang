@@ -22,6 +22,26 @@
             <h2 class="text-body-emphasis pb-5 border-bottom">새 숙소 등록</h2>
             <div class="container py-3 mx-3">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <!--숙소 상태-->
+                <div class="row g-3 align-items-center py-2">
+                    <div class="col-2 text-end">
+                        <label class="col-form-label">숙소 상태</label>
+                    </div>
+                    <div class="col-8 text-start">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" value="OPEN" name="accommodationStatus" id="accommodationStatusOpen" checked>
+                            <label class="form-check-label" for="accommodationStatusOpen">영업중</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" value="CLOSED" name="accommodationStatus" id="accommodationStatusClose">
+                            <label class="form-check-label" for="accommodationStatusClose">폐업</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" value="PAUSE" name="accommodationStatus" id="accommodationStatusPause">
+                            <label class="form-check-label" for="accommodationStatusPause">휴업</label>
+                        </div>
+                    </div>
+                </div>
                 <!--숙소 명-->
                 <div class="row g-3 align-items-center py-2">
                     <div class="col-2 text-end">
@@ -129,13 +149,13 @@
                     </div>
                     <div class="col-4 text-start" id="odd">
                         <div class="form-check form-switch" th:each="num : ${#numbers.sequence(1,7,2)}">
-                            <input class="form-check-input facility" type="checkbox" role="switch" th:id="|facility${num}|" th:name="|facility${num}|" th:data-facilityIndex="${num}"/>
+                            <input class="form-check-input facility" type="checkbox" role="switch" th:id="|facility${num}|" th:data-facilityIndex="${num}"/>
                             <label class="form-check-label" th:for="|facility${num}|" th:text="${accommodationFacility[num-1]}"></label>
                         </div>
                     </div>
                     <div class="col-4 text-start"  id="even">
                         <div class="form-check form-switch" th:each="num : ${#numbers.sequence(2,6,2)}">
-                            <input class="form-check-input facility" type="checkbox" role="switch" th:id="|facility${num}|" th:name="|facility${num}|" th:data-facilityIndex="${num}"/>
+                            <input class="form-check-input facility" type="checkbox" role="switch" th:id="|facility${num}|" th:data-facilityIndex="${num}"/>
                             <label class="form-check-label" th:for="|facility${num}|" th:text="${accommodationFacility[num-1]}"></label>
                         </div>
                         <div class="input-group mb-3">
@@ -170,13 +190,53 @@
                         </h2>
                         <div th:id="|roomInfo${num}|" class="accordion-collapse collapse show">
                             <div class="accordion-body border border-light-subtle">
+                                <!--방 상태-->
+                                <div class="row g-3 align-items-center py-2">
+                                    <div class="col-2 text-end">
+                                        <label class="col-form-label" th:for="|roomStatus${num}|">방 상태</label>
+                                    </div>
+                                    <div class="col-8 text-start">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input roomAvailable" type="radio" value="OPEN" th:name="|roomStatus${num}|" th:id="|roomStatus${num}Open|" checked>
+                                            <label class="form-check-label" th:for="|roomStatus${num}Open|">영업중</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input roomAvailable" type="radio" value="CLOSED" th:name="|roomStatus${num}|" th:id="|roomStatus${num}Close|">
+                                            <label class="form-check-label" th:for="|roomStatus${num}Close|">영구 폐쇄</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input roomAvailable" type="radio" value="PAUSE" th:name="|roomStatus${num}|" th:id="|roomStatus${num}Pause|">
+                                            <label class="form-check-label" th:for="|roomStatus${num}Pause|">임시 폐쇄</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--방 예약 상태-->
+                                <div class="row g-3 align-items-center py-2">
+                                    <div class="col-2 text-end">
+                                        <label class="col-form-label" th:for="|isAvailable${num}|">방 예약 상태</label>
+                                    </div>
+                                    <div class="col-8 text-start roomAvailableTarget">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" value="AVAILABLE" th:name="|isAvailable${num}|" th:id="|isAvailable${num}Available|" checked>
+                                            <label class="form-check-label" th:for="|isAvailable${num}Available|">예약 가능</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" value="BOOKED" th:name="|isAvailable${num}|" th:id="|isAvailable${num}Booked|">
+                                            <label class="form-check-label" th:for="|isAvailable${num}Booked|">예약됨</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" value="UNAVAILABLE" th:name="|isAvailable${num}|" th:id="|isAvailable${num}Unavailable|">
+                                            <label class="form-check-label" th:for="|isAvailable${num}Unavailable|">예약 불가</label>
+                                        </div>
+                                    </div>
+                                </div>
                                 <!--방 이름-->
                                 <div class="row g-3 align-items-center py-2">
                                     <div class="col-3 text-end">
                                         <label class="col-form-label" th:for="|roomName${num}|">방 이름</label>
                                     </div>
                                     <div class="col-5">
-                                        <input type="text" class="form-control" th:id="|roomName${num}|" th:name="|roomName${num}|"
+                                        <input type="text" class="form-control" th:id="|roomName${num}|"
                                                th:aria-describedby="|nameWarn${num}|"
                                                data-error="방 이름이" aria-label="방 이름" placeholder="방 이름을 입력하세요."/>
                                     </div>
@@ -190,7 +250,7 @@
                                         <label class="col-form-label" th:for="|roomPrice${num}|">방 가격</label>
                                     </div>
                                     <div class="col-5">
-                                        <input type="number" class="form-control" th:id="|roomPrice${num}|" th:name="|roomPrice${num}|"
+                                        <input type="number" class="form-control" th:id="|roomPrice${num}|"
                                                data-error="방 가격이" aria-label="방 가격" placeholder="방 가격을 입력하세요."/>
                                     </div>
                                     <div class="col-4 text-start">
@@ -203,7 +263,7 @@
                                         <label class="col-form-label" th:for="|roomDetail${num}|">방 상세 정보</label>
                                     </div>
                                     <div class="col-8">
-                                        <textarea class="form-control" th:id="|roomDetail${num}|" th:name="|roomDetail${num}|"
+                                        <textarea class="form-control" th:id="|roomDetail${num}|"
                                                   aria-label="방 상세 정보" placeholder="방 상세 정보를 입력하세요."></textarea>
                                     </div>
                                 </div>
@@ -214,7 +274,7 @@
                                     </div>
                                     <div class="col-5">
                                         <input type="file" multiple="multiple" th:id="|roomImage${num}|" class="form-control"
-                                               aria-label="사진" data-imageIndex="0" th:name="|roomImage${num}|"
+                                               aria-label="사진" data-imageIndex="0"
                                                th:aria-describedby="|explain-roomImageWarn${num}|" onchange="addRoomFile(this);"/>
                                     </div>
                                     <div class="col-4 text-start" th:id="|roomImageWarn${num}|">
@@ -228,13 +288,13 @@
                                     </div>
                                     <div class="col-4 text-start" th:id="|odd${num}|">
                                         <div class="form-check form-switch" th:each="facNum : ${#numbers.sequence(1,7,2)}">
-                                            <input th:class="|form-check-input roomFacility${num}|" type="checkbox" role="switch" th:id="|room${num}-facility${facNum}|" th:name="|room${num}-facility${facNum}|" th:data-facilityIndex="${facNum}"/>
+                                            <input th:class="|form-check-input roomFacility${num}|" type="checkbox" role="switch" th:id="|room${num}-facility${facNum}|" th:data-facilityIndex="${facNum}"/>
                                             <label class="form-check-label" th:for="|room${num}-facility${facNum}|" th:text="${roomFacility[facNum-1]}"></label>
                                         </div>
                                     </div>
                                     <div class="col-4 text-start" th:id="|even${num}|">
                                         <div class="form-check form-switch" th:each="facNum : ${#numbers.sequence(2,6,2)}">
-                                            <input th:class="|form-check-input roomFacility${num}|" type="checkbox" role="switch" th:id="|room${num}-facility${facNum}|" th:name="|room${num}-facility${facNum}|" th:data-facilityIndex="${facNum}"/>
+                                            <input th:class="|form-check-input roomFacility${num}|" type="checkbox" role="switch" th:id="|room${num}-facility${facNum}|" th:data-facilityIndex="${facNum}"/>
                                             <label class="form-check-label" th:for="|room${num}-facility${facNum}|" th:text="${roomFacility[facNum-1]}"></label>
                                         </div>
                                         <div class="input-group mb-3">

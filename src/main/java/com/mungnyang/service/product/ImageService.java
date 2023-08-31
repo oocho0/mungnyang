@@ -1,11 +1,13 @@
-package com.mungnyang.service;
+package com.mungnyang.service.product;
 
+import com.mungnyang.constant.IsTrue;
 import com.mungnyang.constant.Path;
 import com.mungnyang.entity.product.Image;
 import com.mungnyang.entity.product.Product;
 import com.mungnyang.entity.product.accommodation.Accommodation;
 import com.mungnyang.entity.product.accommodation.room.Room;
 import com.mungnyang.entity.product.store.Store;
+import com.mungnyang.service.FileIOService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,12 +24,20 @@ public class ImageService {
     private final FileIOService fileIOService;
     private final Path path;
 
+    /**
+     * 신규 이미지 저장
+     * @param product Store/Accommodation/Room 타입에 참조할 이미지 저장
+     * @param imageFile 저장할 이미지 파일 MulipartFile
+     * @param i 저장할 이미지의 index
+     * @return 저장된 이미지 객체
+     * @throws Exception
+     */
     public Image createImage(Product product, MultipartFile imageFile, int i) throws Exception {
         Image image = new Image();
         if (i == 0) {
-            image.setIsRepresentative("Y");
+            image.setIsRepresentative(IsTrue.YES);
         } else {
-            image.setIsRepresentative("N");
+            image.setIsRepresentative(IsTrue.NO);
         }
         String originalFileName = imageFile.getOriginalFilename();
         String imageName = "";

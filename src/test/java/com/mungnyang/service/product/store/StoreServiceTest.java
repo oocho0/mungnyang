@@ -1,6 +1,11 @@
 package com.mungnyang.service.product.store;
 
 
+import com.mungnyang.constant.IsTrue;
+import com.mungnyang.constant.Status;
+import com.mungnyang.dto.product.accommodation.AccommodationFacilityDto;
+import com.mungnyang.dto.product.accommodation.room.CreateRoomDto;
+import com.mungnyang.dto.product.accommodation.room.RoomFacilityDto;
 import com.mungnyang.dto.product.store.CreateStoreDto;
 import com.mungnyang.entity.product.store.Store;
 import com.mungnyang.entity.product.store.StoreImage;
@@ -8,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -22,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
 @SpringBootTest
-@TestPropertySource(locations = "classpath:application-test.properties")
+@AutoConfigureMockMvc
 class StoreServiceTest {
 
     @Autowired
@@ -36,7 +42,6 @@ class StoreServiceTest {
     @Test
     @DisplayName("편의 시설 등록하기")
     @WithMockUser(username = "admin@abc.com", roles = "ADMIN")
-
     void 편의_시설을_등록하여_입력한_정보가_올바른지_확인한다() {
         //given - BeforeEach
         //when
@@ -56,14 +61,15 @@ class StoreServiceTest {
         for (int i = 1; i < 6; i++) {
             CreateStoreDto createStoreDto = new CreateStoreDto();
             createStoreDto.setStoreName("test" + i);
-            createStoreDto.setSmallCategoryId(1L + i);
-            createStoreDto.setProductAddressAddressZipcode(String.valueOf(12345 + i * 1000));
+            createStoreDto.setSmallCategoryId(12L);
+            createStoreDto.setProductAddressAddressZipcode(String.valueOf(12345));
             createStoreDto.setProductAddressAddressMain("my house" + i);
             createStoreDto.setProductAddressAddressDetail("somewhere" + i);
             createStoreDto.setProductAddressAddressExtra("extra" + i);
             createStoreDto.setProductAddressLat(String.valueOf(12.3456789 + i));
-            createStoreDto.setProductAddressLat(String.valueOf(98.7654321 - i));
+            createStoreDto.setProductAddressLon(String.valueOf(98.7654321 - i));
             createStoreDto.setStoreDetail("details of test" + i);
+            createStoreDto.setStoreStatus(Status.OPEN.name());
 
             List<MultipartFile> multipartFileList_this = createTestStoreImageArray(i);
             storeService.registerStore(createStoreDto, multipartFileList_this);
@@ -74,6 +80,17 @@ class StoreServiceTest {
             }
 
         }
+    }
+
+    private List<AccommodationFacilityDto> createAccommodationFacilityList(int i) {
+        List<AccommodationFacilityDto> accommodationFacilityDtos = new ArrayList<>();
+        for (int j = 0; j < 6; j++) {
+            AccommodationFacilityDto accommodationFacilityDto = new AccommodationFacilityDto();
+            accommodationFacilityDto.setFacilityName("test" + i + "facility" + j);
+            accommodationFacilityDto.setFacilityIsExist(IsTrue.YES.name());
+            accommodationFacilityDtos.add(accommodationFacilityDto);
+        }
+        return accommodationFacilityDtos;
     }
 
     private List<MultipartFile> createTestStoreImageArray(int i) {
