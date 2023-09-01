@@ -1,8 +1,9 @@
 package com.mungnyang.service.product.store;
 
 import com.mungnyang.constant.Status;
+import com.mungnyang.dto.product.SearchStoreFilter;
 import com.mungnyang.dto.product.store.CreateStoreDto;
-import com.mungnyang.entity.fixedEntity.BigCategory;
+import com.mungnyang.dto.product.store.StoreListDto;
 import com.mungnyang.entity.product.store.Store;
 import com.mungnyang.repository.product.store.StoreRepository;
 import com.mungnyang.service.fixedEntity.CategoryService;
@@ -11,9 +12,10 @@ import com.mungnyang.service.product.StatusService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -27,17 +29,8 @@ public class StoreService {
     private final StateCityService stateCityService;
     private final CategoryService categoryService;
     private final StoreImageService storeImageService;
+    private final StoreCommentService storeCommentService;
     private final ModelMapper modelMapper;
-
-    /**
-     * 편의 시설 등록 시 필요한 대분류를 모델에 담아 전달
-     * @param model 전달할 모델
-     */
-    public void initializeStore(Model model) {
-        Long[] bigCategoryIds = {2L, 3L, 4L, 5L, 6L};
-        List<BigCategory> bigCategories = categoryService.getBigCategoriesById(bigCategoryIds);
-        model.addAttribute("bigCategories", bigCategories);
-    }
 
     /**
      * 신규 편의 시설 등록하기
@@ -82,5 +75,20 @@ public class StoreService {
         return findStore;
     }
 
+    /**
+     * 원하는 조건에 해당하는 Store의 정보를 page에 맞게 반환
+     * @param searchStoreFilter 원하는 조건
+     * @param pageable 해당 page
+     * @return 페이지에 표시될 Store 정보
+     */
+    @Transactional(readOnly = true)
+    public Page<StoreListDto> findStoresByConditionsAndPage(SearchStoreFilter searchStoreFilter, Pageable pageable) {
+        Page<StoreListDto> storeListDtos = storeRepository.getStoreListDtoCriteriaPaging(searchStoreFilter, pageable);
+        for (StoreListDto storeListDto : storeListDtos) {
+            Long storeId = storeListDto.getStoreId();
+            storeListDto.setCommentCount(storeCommentService.getStoreCommentCountByStoreId(storeId));
+        }
+        return storeListDtos;
+    }
 
 }

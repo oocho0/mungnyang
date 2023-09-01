@@ -6,9 +6,7 @@ import com.mungnyang.repository.fixedEntity.BigCategoryRepository;
 import com.mungnyang.repository.fixedEntity.SmallCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,14 +21,6 @@ public class CategoryService {
      */
     public List<BigCategory> getAllBigCategories() {
         return bigCategoryRepository.findAllByOrderByBigCategoryIdAsc();
-    }
-
-    public List<BigCategory> getBigCategoriesById(Long[] bigCategoryIds){
-        List<BigCategory> bigCategories = new ArrayList<>();
-        for (Long bigCategoryId : bigCategoryIds) {
-            bigCategories.add(bigCategoryRepository.findById(bigCategoryId).orElseThrow(IllegalArgumentException::new));
-        }
-        return bigCategories;
     }
 
     public BigCategory getBigCategoriesById(Long bigCategoryId) {
@@ -53,6 +43,13 @@ public class CategoryService {
      */
     public SmallCategory getSmallCategoryBySmallCategoryId(Long smallCategoryId){
         return smallCategoryRepository.findById(smallCategoryId).orElseThrow(IllegalStateException::new);
+    }
+
+    /**
+     * 편의 시설 등록 시 필요한 대분류 리스트 전달
+     */
+    public List<BigCategory> getBigCategoriesForStore() {
+        return bigCategoryRepository.findByBigCategoryIdNotOrderByBigCategoryIdAsc(1L);
     }
 
 }

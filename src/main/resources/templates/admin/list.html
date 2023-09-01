@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<th:block layout:fragment="css">
+    <style></style>
+</th:block>
+<th:block layout:fragment="script">
+    <script type="text/javascript" th:inline="javascript"></script>
+</th:block>
+<div layout:fragment="content">
+    <div class="px-5 py-4 text-center bg-body rounded-3">
+        <div class="p-5 text-center bg-body rounded-3">
+            <h2 class="text-body-emphasis pb-5 border-bottom">편의 시설 관리</h2>
+            <div class="container py-3 mx-3">
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">No.</th>
+                        <th scope="col">편의 시설 명</th>
+                        <th scope="col">대분류</th>
+                        <th scope="col">소분류</th>
+                        <th scope="col">시/도</th>
+                        <th scope="col">시/군/구</th>
+                        <th scope="col">상태</th>
+                    </tr>
+                    </thead>
+                    <tbody th:each="">
+                        <th scope="row"></th>
+                        <td></td>
+                        <td></td>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

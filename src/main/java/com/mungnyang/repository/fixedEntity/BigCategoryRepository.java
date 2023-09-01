@@ -8,4 +8,7 @@ import java.util.List;
 public interface BigCategoryRepository extends JpaRepository<BigCategory, Long> {
 
     List<BigCategory> findAllByOrderByBigCategoryIdAsc();
+
+    List<BigCategory> findByBigCategoryIdNotOrderByBigCategoryIdAsc(Long bigCategoryId);
 }
+

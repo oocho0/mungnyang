@@ -1,9 +1,20 @@
 package com.mungnyang.controller.product;
 
 import com.mungnyang.dto.ErrorMessage;
+import com.mungnyang.dto.product.SearchStoreFilter;
 import com.mungnyang.dto.product.store.CreateStoreDto;
+import com.mungnyang.dto.product.store.StoreListDto;
+import com.mungnyang.entity.fixedEntity.BigCategory;
+import com.mungnyang.entity.fixedEntity.State;
+import com.mungnyang.service.fixedEntity.CategoryService;
+import com.mungnyang.service.fixedEntity.StateCityService;
+import com.mungnyang.service.member.MemberService;
 import com.mungnyang.service.product.store.StoreService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -19,10 +30,14 @@ import java.util.List;
 public class StoreController {
 
     private final StoreService storeService;
+    private final MemberService memberService;
+    private final CategoryService categoryService;
+    private final StateCityService stateCityService;
 
     @GetMapping("/store")
     public String loadRegisterPage(Model model) {
-        storeService.initializeStore(model);
+        List<BigCategory> bigCategories = categoryService.getBigCategoriesForStore();
+        model.addAttribute("bigCategories", bigCategories);
         return "admin/register";
     }
 
@@ -36,5 +51,18 @@ public class StoreController {
             return new ResponseEntity<ErrorMessage>(new ErrorMessage(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<String>("success", HttpStatus.OK);
+    }
+
+    @GetMapping({"/stores", "/stores/{page}"})
+    public String loadManagementPage(@ModelAttribute SearchStoreFilter searchStoreFilter,
+                                     @PageableDefault(sort = "storeId", direction = Sort.Direction.DESC) Pageable pageable,
+                                     Model model) {
+        List<BigCategory> bigCategories = categoryService.getBigCategoriesForStore();
+        model.addAttribute("bigCategories", bigCategories);
+        List<State> states = stateCityService.getAllStates();
+        model.addAttribute("states", states);
+        Page<StoreListDto> findStore = storeService.findStoresByConditionsAndPage(searchStoreFilter, pageable);
+        model.addAttribute("stores", findStore);
+        return "admin/list";
     }
 }

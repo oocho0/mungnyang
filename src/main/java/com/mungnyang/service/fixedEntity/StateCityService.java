@@ -16,6 +16,10 @@ public class StateCityService {
     private final StateRepository stateRepository;
     private final CityRepository cityRepository;
 
+    /**
+     * 모든 시/도를 id 순으로 반환
+     * @return 모든 시/도 리스트
+     */
     public List<State> getAllStates(){
         return stateRepository.findAllByOrderByStateIdAsc();
     }
@@ -28,15 +32,14 @@ public class StateCityService {
         return cityRepository.findByStateStateIdOrderByCityIdAsc(stateId);
     }
 
+    /**
+     * zipcode에 맞는 City 찾기
+     * @param zipcode 찾을 zipcode 값
+     * @return 찾은 City
+     */
     public City getMatchedCity(String zipcode){
-        List<City> cities = getAllCities();
-        int zipcodeInt = Integer.parseInt(zipcode);
-        for (City city : cities) {
-            if (zipcodeInt >= city.getZipcodeStart() && zipcodeInt < city.getZipcodeEnd()) {
-                return city;
-            }
-        }
-        return null;
+        Long zipcodeLong = Long.parseLong(zipcode);
+        return cityRepository.findCityByZipcodeStartLessThanEqualAndZipcodeEndGreaterThanEqual(zipcodeLong, zipcodeLong);
     }
 
 }

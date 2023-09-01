@@ -79,17 +79,6 @@ class StoreServiceTest {
         }
     }
 
-    private List<FacilityDto> createAccommodationFacilityList(int i) {
-        List<FacilityDto> facilityDtos = new ArrayList<>();
-        for (int j = 0; j < 6; j++) {
-            FacilityDto facilityDto = new FacilityDto();
-            facilityDto.setName("test" + i + "facility" + j);
-            facilityDto.setIsExist(IsTrue.YES.name());
-            facilityDtos.add(facilityDto);
-        }
-        return facilityDtos;
-    }
-
     private List<MultipartFile> createTestStoreImageArray(int i) {
         List<MultipartFile> multipartFileList = new ArrayList<>();
         for (int j = 1; j < 6; j++) {
