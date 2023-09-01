@@ -3,7 +3,10 @@ package com.mungnyang.entity.product;
 import com.mungnyang.constant.IsTrue;
 import lombok.*;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.util.Objects;
 
 
@@ -13,6 +16,9 @@ import java.util.Objects;
 public class Facility {
 
     private String name;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private IsTrue isExist;
 
     @Override

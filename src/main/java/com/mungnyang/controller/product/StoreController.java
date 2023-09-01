@@ -2,17 +2,13 @@ package com.mungnyang.controller.product;
 
 import com.mungnyang.dto.ErrorMessage;
 import com.mungnyang.dto.product.store.CreateStoreDto;
-import com.mungnyang.service.fixedEntity.CategoryService;
 import com.mungnyang.service.product.store.StoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -32,7 +28,7 @@ public class StoreController {
 
     @PostMapping("/store")
     public ResponseEntity<?> registerStore(CreateStoreDto createStoreDto,
-                                           @RequestParam("imageFile")
+                                           @RequestPart("imageFile")
                                            List<MultipartFile> storeImageFileList) {
         try {
             storeService.registerStore(createStoreDto, storeImageFileList);

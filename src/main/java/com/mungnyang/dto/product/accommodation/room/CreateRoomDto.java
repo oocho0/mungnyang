@@ -1,5 +1,6 @@
 package com.mungnyang.dto.product.accommodation.room;
 
+import com.mungnyang.dto.product.accommodation.FacilityDto;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +17,6 @@ public class CreateRoomDto {
     private String roomStatus;
     private String isAvailable;
 
-    private List<MultipartFile> roomImageFile;
-    private List<RoomFacilityDto> roomFacilityList;
+    private List<MultipartFile> imageFile;
+    private List<FacilityDto> facilityList;
 }

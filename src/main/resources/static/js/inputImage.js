@@ -129,15 +129,16 @@ function addFormData(formData){
     }
 }
 
-function addFormDataWithRoom(roomObject, roomNo){
-    var array = new Array();
-    for(var j = 0 ; j < roomFileArray[roomNo].length; j ++){
-        if(roomFileArray[roomNo][j].is_delete == true){
+function addFormDataWithRoom(formData, i){
+    var array = {};
+    var k = 0;
+    for(var j = 0 ; j < roomFileArray[i].length; j ++){
+        if(roomFileArray[i][j].is_delete == true){
             continue;
         }
-        array.push(roomFileArray[roomNo][j]);
+        formData.append("roomList[" + i + "].imageFile["+k+"]", roomFileArray[i][j]);
+        k++;
     }
-    roomObject["roomImageFile"] = array;
 }
 
 

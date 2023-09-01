@@ -2,10 +2,9 @@ package com.mungnyang.service.product.accommodation;
 
 import com.mungnyang.constant.IsTrue;
 import com.mungnyang.constant.Status;
-import com.mungnyang.dto.product.accommodation.AccommodationFacilityDto;
+import com.mungnyang.dto.product.accommodation.FacilityDto;
 import com.mungnyang.dto.product.accommodation.CreateAccommodationDto;
 import com.mungnyang.dto.product.accommodation.room.CreateRoomDto;
-import com.mungnyang.dto.product.accommodation.room.RoomFacilityDto;
 import com.mungnyang.entity.product.accommodation.Accommodation;
 import com.mungnyang.entity.product.accommodation.AccommodationFacility;
 import com.mungnyang.entity.product.accommodation.AccommodationImage;
@@ -51,7 +50,7 @@ class AccommodationServiceTest {
 
     private CreateAccommodationDto testDto;
     private List<MultipartFile> testImageList;
-    private List<AccommodationFacilityDto> testFacilityList;
+    private List<FacilityDto> testFacilityList;
     private List<CreateRoomDto> testRoomList;
 
     @Test
@@ -72,10 +71,10 @@ class AccommodationServiceTest {
         assertThat(findAccommodation.getSmallCategory().getSmallCategoryId()).isEqualTo(testDto.getSmallCategoryId());
         assertThat(findAccommodation.getProductAddress().getAddress().getMain()).isEqualTo(testDto.getProductAddressAddressMain());
         assertThat(findAccommodationImages.get(0).getImage().getFileName()).isEqualTo(testImageList.get(0).getOriginalFilename());
-        assertThat(findAccommodationFacilities.get(0).getFacility().getName()).isEqualTo(testFacilityList.get(0).getFacilityName());
+        assertThat(findAccommodationFacilities.get(0).getFacility().getName()).isEqualTo(testFacilityList.get(0).getName());
         assertThat(findRooms.get(0).getRoomName()).isEqualTo(testRoomList.get(0).getRoomName());
-        assertThat(roomFacilities.get(0).getFacility().getName()).isEqualTo(testRoomList.get(0).getRoomFacilityList().get(0).getFacilityName());
-        assertThat(roomImages.get(0).getImage().getFileName()).isEqualTo(testRoomList.get(0).getRoomImageFile().get(0).getOriginalFilename());
+        assertThat(roomFacilities.get(0).getFacility().getName()).isEqualTo(testRoomList.get(0).getFacilityList().get(0).getName());
+        assertThat(roomImages.get(0).getImage().getFileName()).isEqualTo(testRoomList.get(0).getImageFile().get(0).getOriginalFilename());
     }
 
     @BeforeEach
@@ -95,14 +94,14 @@ class AccommodationServiceTest {
             createAccommodationDto.setAccommodationStatus(Status.OPEN.name());
 
             List<MultipartFile> multipartFileList_this = createTestStoreImageArray(i);
-            List<AccommodationFacilityDto> accommodationFacilityDtos = createAccommodationFacilityList(i);
+            List<FacilityDto> facilityDtos = createAccommodationFacilityList(i);
             List<CreateRoomDto> roomDtos = createRoomList(i);
-            accommodationService.registerAccommodation(createAccommodationDto, multipartFileList_this, accommodationFacilityDtos, roomDtos);
+            accommodationService.registerAccommodation(createAccommodationDto, multipartFileList_this, facilityDtos, roomDtos);
 
             if (i == 1) {
                 testDto = createAccommodationDto;
                 testImageList = multipartFileList_this;
-                testFacilityList = accommodationFacilityDtos;
+                testFacilityList = facilityDtos;
                 testRoomList = roomDtos;
             }
 
@@ -117,35 +116,35 @@ class AccommodationServiceTest {
             createRoomDto.setRoomDetail("detail of test " + i + "room" + j);
             createRoomDto.setRoomStatus(Status.OPEN.name());
             createRoomDto.setIsAvailable(IsTrue.YES.name());
-            List<RoomFacilityDto> roomFacilityDtoList = createRoomFacility(i, j);
-            createRoomDto.setRoomFacilityList(roomFacilityDtoList);
+            List<FacilityDto> facilityDtoList = createRoomFacility(i, j);
+            createRoomDto.setFacilityList(facilityDtoList);
             List<MultipartFile> roomImageDtoList = createTestStoreImageArray(i);
-            createRoomDto.setRoomImageFile(roomImageDtoList);
+            createRoomDto.setImageFile(roomImageDtoList);
             createRoomDtos.add(createRoomDto);
         }
         return createRoomDtos;
     }
 
-    private List<RoomFacilityDto> createRoomFacility(int i, int j) {
-        List<RoomFacilityDto> roomFacilityDtoList = new ArrayList<>();
+    private List<FacilityDto> createRoomFacility(int i, int j) {
+        List<FacilityDto> facilityDtoList = new ArrayList<>();
         for (int k = 0; k < 6; k++) {
-            RoomFacilityDto roomFacilityDto = new RoomFacilityDto();
-            roomFacilityDto.setFacilityName("test" + i + "room"+ j + "facility" + k);
-            roomFacilityDto.setFacilityIsExist(IsTrue.YES.name());
-            roomFacilityDtoList.add(roomFacilityDto);
+            FacilityDto facilityDto = new FacilityDto();
+            facilityDto.setName("test" + i + "room"+ j + "facility" + k);
+            facilityDto.setIsExist(IsTrue.YES.name());
+            facilityDtoList.add(facilityDto);
         }
-        return roomFacilityDtoList;
+        return facilityDtoList;
     }
 
-    private List<AccommodationFacilityDto> createAccommodationFacilityList(int i) {
-        List<AccommodationFacilityDto> accommodationFacilityDtos = new ArrayList<>();
+    private List<FacilityDto> createAccommodationFacilityList(int i) {
+        List<FacilityDto> facilityDtos = new ArrayList<>();
         for (int j = 0; j < 6; j++) {
-            AccommodationFacilityDto accommodationFacilityDto = new AccommodationFacilityDto();
-            accommodationFacilityDto.setFacilityName("test" + i + "facility" + j);
-            accommodationFacilityDto.setFacilityIsExist(IsTrue.YES.name());
-            accommodationFacilityDtos.add(accommodationFacilityDto);
+            FacilityDto facilityDto = new FacilityDto();
+            facilityDto.setName("test" + i + "facility" + j);
+            facilityDto.setIsExist(IsTrue.YES.name());
+            facilityDtos.add(facilityDto);
         }
-        return accommodationFacilityDtos;
+        return facilityDtos;
     }
 
     private List<MultipartFile> createTestStoreImageArray(int i) {

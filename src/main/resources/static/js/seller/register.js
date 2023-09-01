@@ -3,12 +3,12 @@ function request(){
     if(result == false){
         return false;
     }
-    var url = "/seller/accommodation";
 
     var form = $("form")[0];
     var formData = new FormData(form);
-    formData = makeFormData(formData);
+    makeFormData(formData);
 
+    var url = "/seller/accommodation";
     $.ajax({
         url      : url,
         type     : "POST",
@@ -39,16 +39,14 @@ function makeFormData(formData){
     addFormData(formData);
     addFacilityData(formData);
     var roomAmount = Number($("#roomAmount").val());
-    for(var i = 1; i < roomAmount+1; i++){
-        var roomObject = new Object();
-        roomObject["roomName"] = $("#roomName" + i).val();
-        roomObject["roomPrice"] = $("#roomPrice" + i).val();
-        roomObject["roomDetail"] = $("#roomDetail" + i).val();
-        roomObject["roomStatus"] = $("#roomStatus" + i).val();
-        roomObject["isAvailable"] = $("#isAvailable" + i).val();
-        addFormDataWithRoom(roomObject, i);
-        addRoomFacilityData(roomObject, i);
-        formData.append("room", roomObject);
+    for(var i = 0; i < roomAmount; i++){
+        formData.append("roomList[" + i + "].roomName", $("#roomName" + (i+1)).val());
+        formData.append("roomList[" + i + "].roomPrice", $("#roomPrice" + (i+1)).val());
+        formData.append("roomList[" + i + "].roomDetail", $("#roomDetail" + (i+1)).val());
+        formData.append("roomList[" + i + "].roomStatus", $("[name='roomStatus" + (i+1) + "']:checked").val());
+        formData.append("roomList[" + i + "].isAvailable", $("[name='isAvailable" + (i+1) + "']:checked").val());
+        addFormDataWithRoom(formData, i);
+        addRoomFacilityData(formData, i);
     }
 }
 

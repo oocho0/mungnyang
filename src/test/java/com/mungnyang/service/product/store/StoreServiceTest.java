@@ -3,9 +3,7 @@ package com.mungnyang.service.product.store;
 
 import com.mungnyang.constant.IsTrue;
 import com.mungnyang.constant.Status;
-import com.mungnyang.dto.product.accommodation.AccommodationFacilityDto;
-import com.mungnyang.dto.product.accommodation.room.CreateRoomDto;
-import com.mungnyang.dto.product.accommodation.room.RoomFacilityDto;
+import com.mungnyang.dto.product.accommodation.FacilityDto;
 import com.mungnyang.dto.product.store.CreateStoreDto;
 import com.mungnyang.entity.product.store.Store;
 import com.mungnyang.entity.product.store.StoreImage;
@@ -17,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -82,15 +79,15 @@ class StoreServiceTest {
         }
     }
 
-    private List<AccommodationFacilityDto> createAccommodationFacilityList(int i) {
-        List<AccommodationFacilityDto> accommodationFacilityDtos = new ArrayList<>();
+    private List<FacilityDto> createAccommodationFacilityList(int i) {
+        List<FacilityDto> facilityDtos = new ArrayList<>();
         for (int j = 0; j < 6; j++) {
-            AccommodationFacilityDto accommodationFacilityDto = new AccommodationFacilityDto();
-            accommodationFacilityDto.setFacilityName("test" + i + "facility" + j);
-            accommodationFacilityDto.setFacilityIsExist(IsTrue.YES.name());
-            accommodationFacilityDtos.add(accommodationFacilityDto);
+            FacilityDto facilityDto = new FacilityDto();
+            facilityDto.setName("test" + i + "facility" + j);
+            facilityDto.setIsExist(IsTrue.YES.name());
+            facilityDtos.add(facilityDto);
         }
-        return accommodationFacilityDtos;
+        return facilityDtos;
     }
 
     private List<MultipartFile> createTestStoreImageArray(int i) {

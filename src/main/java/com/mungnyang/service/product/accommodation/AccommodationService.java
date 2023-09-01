@@ -1,12 +1,11 @@
 package com.mungnyang.service.product.accommodation;
 
 import com.mungnyang.constant.Status;
-import com.mungnyang.dto.product.accommodation.AccommodationFacilityDto;
+import com.mungnyang.dto.product.accommodation.FacilityDto;
 import com.mungnyang.dto.product.accommodation.CreateAccommodationDto;
 import com.mungnyang.dto.product.accommodation.room.CreateRoomDto;
 import com.mungnyang.entity.fixedEntity.SmallCategory;
 import com.mungnyang.entity.product.accommodation.Accommodation;
-import com.mungnyang.entity.product.store.Store;
 import com.mungnyang.repository.product.accommodation.AccommodationRepository;
 import com.mungnyang.service.fixedEntity.CategoryService;
 import com.mungnyang.service.fixedEntity.StateCityService;
@@ -20,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -67,7 +65,7 @@ public class AccommodationService {
      */
     public void registerAccommodation(CreateAccommodationDto createAccommodationDto,
                                       List<MultipartFile> accommodationImageFileList,
-                                      List<AccommodationFacilityDto> accommodationFacilityList,
+                                      List<FacilityDto> accommodationFacilityList,
                                       List<CreateRoomDto> roomList) throws Exception {
         Accommodation accommodation = createAccommodation(createAccommodationDto);
         accommodationRepository.save(accommodation);

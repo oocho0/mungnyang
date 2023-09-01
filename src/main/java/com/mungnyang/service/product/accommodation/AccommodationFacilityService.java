@@ -1,7 +1,7 @@
 package com.mungnyang.service.product.accommodation;
 
 import com.mungnyang.constant.IsTrue;
-import com.mungnyang.dto.product.accommodation.AccommodationFacilityDto;
+import com.mungnyang.dto.product.accommodation.FacilityDto;
 import com.mungnyang.entity.product.Facility;
 import com.mungnyang.entity.product.accommodation.Accommodation;
 import com.mungnyang.entity.product.accommodation.AccommodationFacility;
@@ -27,13 +27,12 @@ public class AccommodationFacilityService {
      * @param accommodation 등록할 숙소 정보의 숙소 객체
      * @param accommodationFacilityList 페이지에 입력한 등록할 숙소 시설 정보 리스트
      */
-    public void saveAccommodationFacilities(Accommodation accommodation, List<AccommodationFacilityDto> accommodationFacilityList){
-        for (AccommodationFacilityDto accommodationFacilityDto : accommodationFacilityList) {
-            modelMapper.typeMap(AccommodationFacilityDto.class, Facility.class).addMappings(mapping -> {
-                mapping.using((Converter<String, IsTrue>) ctx -> StatusService.isTrueConverter(ctx.getSource())).map(AccommodationFacilityDto::getFacilityIsExist, Facility::setIsExist);
-                mapping.map(AccommodationFacilityDto::getFacilityName, Facility::setName);
+    public void saveAccommodationFacilities(Accommodation accommodation, List<FacilityDto> accommodationFacilityList){
+        for (FacilityDto facilityDto : accommodationFacilityList) {
+            modelMapper.typeMap(FacilityDto.class, Facility.class).addMappings(mapping -> {
+                mapping.using((Converter<String, IsTrue>) ctx -> StatusService.isTrueConverter(ctx.getSource())).map(FacilityDto::getIsExist, Facility::setIsExist);
             });
-            Facility createdFacility = modelMapper.map(accommodationFacilityDto, Facility.class);
+            Facility createdFacility = modelMapper.map(facilityDto, Facility.class);
             AccommodationFacility createdAccommodationFacility = new AccommodationFacility();
             createdAccommodationFacility.setFacility(createdFacility);
             createdAccommodationFacility.setAccommodation(accommodation);

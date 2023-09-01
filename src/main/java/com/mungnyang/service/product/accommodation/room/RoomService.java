@@ -1,10 +1,9 @@
 package com.mungnyang.service.product.accommodation.room;
 
 import com.mungnyang.constant.Booked;
-import com.mungnyang.constant.IsTrue;
 import com.mungnyang.constant.Status;
+import com.mungnyang.dto.product.accommodation.FacilityDto;
 import com.mungnyang.dto.product.accommodation.room.CreateRoomDto;
-import com.mungnyang.dto.product.accommodation.room.RoomFacilityDto;
 import com.mungnyang.entity.product.accommodation.Accommodation;
 import com.mungnyang.entity.product.accommodation.room.Room;
 import com.mungnyang.repository.product.accommodation.room.RoomRepository;
@@ -37,9 +36,9 @@ public class RoomService {
         for (CreateRoomDto createRoomDto : roomList) {
             Room createdRoom = createdRoom(accommodation, createRoomDto);
             roomRepository.save(createdRoom);
-            List<MultipartFile> roomImageFileList = createRoomDto.getRoomImageFile();
+            List<MultipartFile> roomImageFileList = createRoomDto.getImageFile();
             roomImageService.saveRoomImages(createdRoom, roomImageFileList);
-            List<RoomFacilityDto> roomFacilityList = createRoomDto.getRoomFacilityList();
+            List<FacilityDto> roomFacilityList = createRoomDto.getFacilityList();
             roomFacilityService.saveRoomFacility(createdRoom, roomFacilityList);
         }
     }

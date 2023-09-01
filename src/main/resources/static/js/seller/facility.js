@@ -61,35 +61,27 @@ function initFacility(i){
 }
 
 function addFacilityData(formData){
-    var facilityObject = new Object();
-    var num = Number($("[onclick='addFacility();']").attr("data-facilityIndex"));
-
-    for(var i = 1; i < num; i++){
-        facilityObject["facilityName"] = $("label [for='facility'"+i+"]").val();
-        if($("#facility"+i).prop("checked")){
-            facilityObject["facilityIsExist"] = "YES";
+    var num = Number($("[onclick='addFacility();']").closest("div").find("input").attr("data-facilityIndex"));
+    for(var i = 0; i < num -1; i++){
+        formData.append("accommodationFacilityList[" + i + "].name", $("#facility" + (i+1)).closest("div").find("label").text());
+        if($("#facility"+(i+1)).prop("checked")){
+            formData.append("accommodationFacilityList[" + i + "].isExist", "YES");
         }else{
-            facilityObject["facilityIsExist"] = "NO";
+            formData.append("accommodationFacilityList[" + i + "].isExist", "NO");
         }
-        formData.append("facility", facilityObject);
     }
 }
 
-function addRoomFacilityData(roomObject, roomNo){
-    var facilityIdPrefix = "room" + roomNo + "-facility";
-    var lastId = $("#room" + roomNo + " .row:last").find("input[type='text']:last").attr("id");
+function addRoomFacilityData(formData, j){
+    var facilityIdPrefix = "room" + (j+1) + "-facility";
+    var lastId = $("#room" + (j+1) + " .row:last").find("input[type='text']:last").attr("id");
     var lastIndex = Number($("#"+lastId).attr('data-facilityIndex'));
-    var roomFacility = new Object();
-    var array = new Array();
-    for(var i = 1; i < lastIndex; i++){
-
-        roomFacility["facilityName"] = $("label [for='"+facilityIdPrefix+i+"']").val();
-        if($("#"+facilityIdPrefix + i).prop("checked")){
-            roomFacility["facilityIsExist"] = "YES";
+    for(var i = 0; i < lastIndex -1; i++){
+        formData.append("roomList[" + j + "].facilityList[" + i + "].name", $("#"+facilityIdPrefix + (i+1)).closest("div").find("label").text());
+        if($("#"+facilityIdPrefix + (i+1)).prop("checked")){
+            formData.append("roomList[" + j + "].facilityList[" + i + "].isExist", "YES");
         }else{
-            roomFacility["facilityIsExist"] = "NO";
+            formData.append("roomList[" + j + "].facilityList[" + i + "].isExist", "NO");
         }
-        array.push(roomFacility);
     }
-    roomObject["roomFacilityList"] = array;
 }
