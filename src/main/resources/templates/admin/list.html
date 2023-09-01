@@ -5,6 +5,7 @@
     <style></style>
 </th:block>
 <th:block layout:fragment="script">
+    <script type="text/javascript" th:src="@{/js/loadOptions.js}"></script>
     <script type="text/javascript" th:inline="javascript"></script>
 </th:block>
 <div layout:fragment="content">
@@ -12,24 +13,51 @@
         <div class="p-5 text-center bg-body rounded-3">
             <h2 class="text-body-emphasis pb-5 border-bottom">편의 시설 관리</h2>
             <div class="container py-3 mx-3">
-                <table class="table table-striped table-hover">
-                    <thead>
-                    <tr>
-                        <th scope="col">No.</th>
-                        <th scope="col">편의 시설 명</th>
-                        <th scope="col">대분류</th>
-                        <th scope="col">소분류</th>
-                        <th scope="col">시/도</th>
-                        <th scope="col">시/군/구</th>
-                        <th scope="col">상태</th>
-                    </tr>
+                <div>
+                    <select class="form-select" id="bigCategory" aria-label="대분류 선택">
+                        <option selected>대분류 전체</option>
+                        <option th:each="bigCategory : ${bigCategories}" th:value="${bigCategory.bigCategoryId}" th:text="${bigCategory.name}"></option>
+                    </select>
+                    <select class="form-select" id="smallCategory" aria-label="소분류 선택" disabled>
+                        <option selected>소분류 전체</option>
+                    </select>
+                    <select class="form-select" id="state" aria-label="시/도 선택">
+                        <option selected>시/도 전체</option>
+                        <option th:each="state : ${states}" th:value="${state.stateId}" th:text="${state.name}"></option>
+                    </select>
+                    <select class="form-select" id="city" aria-label="시/군/구 선택" disabled>
+                        <option selected>시/군/구 전체</option>
+                    </select>
+                    <input type="text" class="form-control" id="storeName" placeholder="편의 시설 명으로 검색" aria-label="검색어 검색"/>
+                    <button type="button" class="btn btn-primary" onclick="search();">검색</button>
+                </div>
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">No.</th>
+                            <th scope="col">편의 시설 명</th>
+                            <th scope="col">대분류</th>
+                            <th scope="col">소분류</th>
+                            <th scope="col">시/도</th>
+                            <th scope="col">시/군/구</th>
+                            <th scope="col">상태</th>
+                            <th scope="col">후기 갯수</th>
+                        </tr>
                     </thead>
-                    <tbody th:each="">
-                        <th scope="row"></th>
-                        <td></td>
-                        <td></td>
+                    <tbody class="table-group-divider">
+                        <tr th:each="store, status : ${stores}">
+                            <th scope="row" th:text="${status.index + (page * 10)}"></th>
+                            <td th:text="${store.storeName}"></td>
+                            <td th:text="${store.bigCategoryName}"></td>
+                            <td th:text="${store.smallCategoryName}"></td>
+                            <td th:text="${store.stateName}"></td>
+                            <td th:text="${store.cityName}"></td>
+                            <td th:text="${(#strings.equals(store.storeStatus, 'OPEN') ? '영업중' : (#strings.equals(store.storeStatus, 'CLOSED') ? '폐업' : '휴업'))}"></td>
+                            <td th:text="${store.commentCount}"></td>
+                        </tr>
                     </tbody>
                 </table>
+
             </div>
         </div>
     </div>
