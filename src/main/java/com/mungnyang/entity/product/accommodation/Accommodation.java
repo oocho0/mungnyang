@@ -35,6 +35,9 @@ public class Accommodation extends WriterEntity implements Product {
     @Column
     private ProductAddress productAddress;
 
+    private String  checkInTime;
+    private String checkOutTime;
+
     @Lob
     private String accommodationDetail;
 

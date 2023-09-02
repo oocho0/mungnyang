@@ -121,6 +121,23 @@
                 <!--상세 정보-->
                 <div class="row g-3 align-items-center py-2">
                     <div class="col-2 text-end">
+                        <label class="col-form-label" for="checkInTime">체크인 시간</label>
+                    </div>
+                    <div class="col-3">
+                        <input type="time" id="checkInTime" name="checkInTime"
+                               data-error="체크인 시간이" class="form-control"/>
+                    </div>
+                    <div class="col-2 text-end">
+                        <label class="col-form-label" for="checkOutTime">체크아웃 시간</label>
+                    </div>
+                    <div class="col-3">
+                        <input type="time" id="checkOutTime" name="checkOutTime"
+                               data-error="체크아웃 시간이" class="form-control"/>
+                    </div>
+                </div>
+                <!--상세 정보-->
+                <div class="row g-3 align-items-center py-2">
+                    <div class="col-2 text-end">
                         <label class="col-form-label" for="accommodationDetail">상세 정보</label>
                     </div>
                     <div class="col-8">
@@ -165,7 +182,7 @@
                     </div>
                 </div>
                 <!--방 개수-->
-                <div class="row g-3 py-2">
+                <div class="row g-3 py-2 align-items-center">
                     <div class="col-2 text-end">
                         <label class="col-form-label" for="roomAmount">방 개수</label>
                     </div>

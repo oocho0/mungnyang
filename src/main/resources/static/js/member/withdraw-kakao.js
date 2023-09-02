@@ -17,12 +17,12 @@ function request(){
             alert('탈퇴가 완료되었습니다.');
             location.href='/';
         },
-        error : function(jqXHR, status, error){
-                if(jqXHR.status == '401'){
+        error : function(status, error){
+                if(status.status == '401'){
                 alert('로그인 후 이용해주세요');
                 location.href='/member/login';
             } else{
-                alert(jqXHR.responseText);
+                alert(status.responseText);
             }
         }
     });

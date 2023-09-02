@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -46,5 +47,11 @@ public class AccommodationController {
             return new ResponseEntity<ErrorMessage>(new ErrorMessage(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<String>("success", HttpStatus.OK);
+    }
+
+    @GetMapping("/accommodations")
+    public String loadListPage(Model model, Principal principal) {
+
+        return "seller/list";
     }
 }

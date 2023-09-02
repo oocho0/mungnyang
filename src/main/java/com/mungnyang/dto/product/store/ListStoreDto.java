@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class StoreListDto {
+public class ListStoreDto {
     private Long storeId;
     private String storeName;
     private String bigCategoryName;
@@ -14,10 +14,11 @@ public class StoreListDto {
     private String stateName;
     private String cityName;
     private String storeStatus;
+    private Float rate;
     private Long commentCount;
 
     @QueryProjection
-    public StoreListDto(Long storeId, String storeName, String bigCategoryName, String smallCategoryName, String stateName, String cityName, String storeStatus, Long commentCount) {
+    public ListStoreDto(Long storeId, String storeName, String bigCategoryName, String smallCategoryName, String stateName, String cityName, String storeStatus) {
         this.storeId = storeId;
         this.storeName = storeName;
         this.bigCategoryName = bigCategoryName;
@@ -25,6 +26,5 @@ public class StoreListDto {
         this.stateName = stateName;
         this.cityName = cityName;
         this.storeStatus = storeStatus;
-        this.commentCount = commentCount;
     }
 }

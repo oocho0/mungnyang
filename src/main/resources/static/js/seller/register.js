@@ -24,12 +24,12 @@ function request(){
             alert('등록이 완료되었습니다.');
             location.href='/seller/accommodations';
         },
-        error : function(jqXHR, status, error){
-                if(jqXHR.status == '401'){
+        error : function(status, error){
+            if(status.status == '401'){
                 alert('로그인 후 이용해주세요');
                 location.href='/member/login';
             } else{
-                alert(error);
+                alert(status.responseText);
             }
         }
     });
@@ -53,9 +53,9 @@ function makeFormData(formData){
 let resultObjectKeys = [];
 
 function checkStoreDtoForm(){
-    let resultObject = new Object();
+    let resultObject = {};
     const checkLabels = ["#accommodationName", "#smallCategoryId", "#addressZipcode",
-    "#addressMain", "#productAddressLat", "#productAddressLon"];
+    "#addressMain", "#productAddressLat", "#productAddressLon", "#checkInTime", "#checkOutTime"];
 
     if(resultObjectKeys.length != 0){
         $.each(resultObjectKeys, function(index, value){
@@ -106,7 +106,7 @@ function checkStoreDtoForm(){
             '</div>'));
         }
     });
-    if(resultObject[0] == null){
+    if(Object.keys(resultObject).length == 0){
         return true;
     }
     resultObjectKeys = Object.keys(resultObject);

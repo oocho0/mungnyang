@@ -19,5 +19,7 @@ public class CreateAccommodationDto {
     private String productAddressLat;
 
     private String accommodationDetail;
+    private String checkInTime;
+    private String checkOutTime;
     private String accommodationStatus;
 }

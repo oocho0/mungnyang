@@ -6,6 +6,7 @@
 </th:block>
 <th:block layout:fragment="script">
     <script type="text/javascript" th:src="@{/js/loadOptions.js}"></script>
+    <script type="text/javascript" th:src="@{/js/paging.js}"></script>
     <script type="text/javascript" th:inline="javascript"></script>
 </th:block>
 <div layout:fragment="content">
@@ -13,51 +14,111 @@
         <div class="p-5 text-center bg-body rounded-3">
             <h2 class="text-body-emphasis pb-5 border-bottom">편의 시설 관리</h2>
             <div class="container py-3 mx-3">
-                <div>
-                    <select class="form-select" id="bigCategory" aria-label="대분류 선택">
-                        <option selected>대분류 전체</option>
-                        <option th:each="bigCategory : ${bigCategories}" th:value="${bigCategory.bigCategoryId}" th:text="${bigCategory.name}"></option>
-                    </select>
-                    <select class="form-select" id="smallCategory" aria-label="소분류 선택" disabled>
-                        <option selected>소분류 전체</option>
-                    </select>
-                    <select class="form-select" id="state" aria-label="시/도 선택">
-                        <option selected>시/도 전체</option>
-                        <option th:each="state : ${states}" th:value="${state.stateId}" th:text="${state.name}"></option>
-                    </select>
-                    <select class="form-select" id="city" aria-label="시/군/구 선택" disabled>
-                        <option selected>시/군/구 전체</option>
-                    </select>
-                    <input type="text" class="form-control" id="storeName" placeholder="편의 시설 명으로 검색" aria-label="검색어 검색"/>
-                    <button type="button" class="btn btn-primary" onclick="search();">검색</button>
+                <div class="row mb-3 g-2 justify-content-center align-items-center">
+                    <div class="col-auto">
+                        <label for="bigCategory" class="col-form-label">조건 검색 : </label>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select" id="bigCategory" aria-label="대분류 선택">
+                            <option value="" selected>대분류 전체</option>
+                            <option th:each="bigCategory : ${bigCategories}" th:value="${bigCategory.bigCategoryId}"
+                                    th:text="${bigCategory.name}"></option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select" id="smallCategory" aria-label="소분류 선택" disabled>
+                            <option value="" selected>소분류 전체</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select" id="state" aria-label="시/도 선택">
+                            <option value="" selected>시/도 전체</option>
+                            <option th:each="state : ${states}" th:value="${state.stateId}"
+                                    th:text="${state.name}"></option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select" id="city" aria-label="시/군/구 선택" disabled>
+                            <option value="" selected>시/군/구 전체</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select" id="status" aria-label="영업 상태 선택">
+                            <option value="" selected>영업 상태 전체</option>
+                            <option value="OPEN">영업중</option>
+                            <option value="CLOSED">폐업</option>
+                            <option value="PAUSE">휴업</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" class="form-control" id="storeName" placeholder="편의 시설 명으로 검색"
+                               aria-label="검색어 검색"/>
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-primary" id="searchBtn">검색</button>
+                    </div>
                 </div>
                 <table class="table table-striped table-hover align-middle">
                     <thead class="table-light">
-                        <tr>
-                            <th scope="col">No.</th>
-                            <th scope="col">편의 시설 명</th>
-                            <th scope="col">대분류</th>
-                            <th scope="col">소분류</th>
-                            <th scope="col">시/도</th>
-                            <th scope="col">시/군/구</th>
-                            <th scope="col">상태</th>
-                            <th scope="col">후기 갯수</th>
-                        </tr>
+                    <tr>
+                        <th scope="col">No.</th>
+                        <th scope="col">편의 시설 명</th>
+                        <th scope="col">대분류</th>
+                        <th scope="col">소분류</th>
+                        <th scope="col">시/도</th>
+                        <th scope="col">시/군/구</th>
+                        <th scope="col">상태</th>
+                        <th scope="col">평점</th>
+                        <th scope="col">후기 갯수</th>
+                    </tr>
                     </thead>
                     <tbody class="table-group-divider">
-                        <tr th:each="store, status : ${stores}">
-                            <th scope="row" th:text="${status.index + (page * 10)}"></th>
-                            <td th:text="${store.storeName}"></td>
-                            <td th:text="${store.bigCategoryName}"></td>
-                            <td th:text="${store.smallCategoryName}"></td>
-                            <td th:text="${store.stateName}"></td>
-                            <td th:text="${store.cityName}"></td>
-                            <td th:text="${(#strings.equals(store.storeStatus, 'OPEN') ? '영업중' : (#strings.equals(store.storeStatus, 'CLOSED') ? '폐업' : '휴업'))}"></td>
-                            <td th:text="${store.commentCount}"></td>
-                        </tr>
+                    <tr th:if="${#lists.isEmpty(stores.content)}">
+                        <td colspan="9" class="text-center">검색 조건에 맞는 편의 시설이 없습니다.</td>
+                    </tr>
+                    <tr th:unless="${#lists.isEmpty(stores.content)}" th:each="store, status : ${stores.getContent()}">
+                        <th scope="row" th:text="${status.index + 1 + (stores.getNumber * 10)}"></th>
+                        <td><a class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" th:text="${store.storeName}" th:href="@{/admin/stores/{storeId}(storeId=${store.storeId})}"></a></td>
+                        <td th:text="${store.bigCategoryName}"></td>
+                        <td th:text="${store.smallCategoryName}"></td>
+                        <td th:text="${store.stateName}"></td>
+                        <td th:text="${store.cityName}"></td>
+                        <td th:text="${(#strings.equals(store.storeStatus, 'OPEN') ? '영업중' : (#strings.equals(store.storeStatus, 'CLOSED') ? '폐업' : '휴업'))}"></td>
+                        <td th:text="${#numbers.formatDecimal(store.rate, 1, 1)}"></td>
+                        <td th:text="${store.commentCount}"></td>
+                    </tr>
                     </tbody>
                 </table>
-
+                <nav th:with="startPage = ${(stores.number / stores.size ) * stores.size + 1},
+                                endPage = (${(stores.totalPages == 0) ? 1 : (startPage + stores.size - 1 < stores.totalPages ? (startPage + stores.size - 1) : stores.totalPages)})">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item" th:classappend="${stores.number <= stores.size} ? 'disabled'">
+                            <a class="page-link" th:onclick="page(0);" aria-label="first">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item" th:classappend="${stores.first} ? 'disabled'">
+                            <a class="page-link" th:onclick="page(' + ${stores.number - 1} + ');" aria-label="Previous">
+                                <span aria-hidden="true">&lt;</span>
+                            </a>
+                        </li>
+                        <li class="page-item" th:each="page: ${#numbers.sequence(startPage, endPage)}" th:classappend="${stores.number eq page-1} ? 'active' : ''">
+                            <a class="page-link" th:onclick="page(' + ${page-1} + ');" th:inline="text">
+                                [[${page}]]
+                            </a>
+                        </li>
+                        <li class="page-item" th:classappend="${stores.last} ? 'disabled'">
+                            <a class="page-link" th:onclick="page(' + ${stores.number + 1} + ');" aria-label="Next">
+                                <span aria-hidden="true">&gt;</span>
+                            </a>
+                        </li>
+                        <li class="page-item" th:classappend="${(stores.totalPages/stores.size) <= startPage} ? 'disabled'">
+                            <a class="page-link" th:onclick="page(' + ${stores.totalPages -1} + ');" aria-label="last">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>

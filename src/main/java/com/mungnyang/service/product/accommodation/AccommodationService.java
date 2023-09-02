@@ -1,14 +1,17 @@
 package com.mungnyang.service.product.accommodation;
 
 import com.mungnyang.constant.Status;
+import com.mungnyang.dto.product.accommodation.ListAccommodationDto;
 import com.mungnyang.dto.product.accommodation.FacilityDto;
 import com.mungnyang.dto.product.accommodation.CreateAccommodationDto;
 import com.mungnyang.dto.product.accommodation.room.CreateRoomDto;
 import com.mungnyang.entity.fixedEntity.SmallCategory;
+import com.mungnyang.entity.member.Member;
 import com.mungnyang.entity.product.accommodation.Accommodation;
 import com.mungnyang.repository.product.accommodation.AccommodationRepository;
 import com.mungnyang.service.fixedEntity.CategoryService;
 import com.mungnyang.service.fixedEntity.StateCityService;
+import com.mungnyang.service.member.MemberService;
 import com.mungnyang.service.product.StatusService;
 import com.mungnyang.service.product.accommodation.room.RoomService;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +36,7 @@ public class AccommodationService {
     private final AccommodationImageService accommodationImageService;
     private final AccommodationFacilityService accommodationFacilityService;
     private final RoomService roomService;
+    private final MemberService memberService;
 
     /**
      * 숙소 등록 시 필요한 소분류를 모델에 담아 전달
@@ -72,6 +76,12 @@ public class AccommodationService {
         accommodationImageService.saveAccommodationImages(accommodation, accommodationImageFileList);
         accommodationFacilityService.saveAccommodationFacilities(accommodation, accommodationFacilityList);
         roomService.saveRoom(accommodation, roomList);
+    }
+
+    public List<ListAccommodationDto> getAccommodationsForList(String email) {
+        Member signInMember = memberService.findMember(email);
+        
+        return null;
     }
 
     /**

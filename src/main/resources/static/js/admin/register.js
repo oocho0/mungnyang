@@ -23,12 +23,12 @@ function request(){
             alert('등록이 완료되었습니다.');
             location.href='/admin/stores';
         },
-        error : function(jqXHR, status, error){
-                if(jqXHR.status == '401'){
+        error : function(status, error){
+                if(status.status == '401'){
                 alert('로그인 후 이용해주세요');
                 location.href='/member/login';
             } else{
-                alert(error);
+                alert(status.responseText);
             }
         }
     });
@@ -58,9 +58,9 @@ function checkStoreDtoForm(){
         $("#input-image").closest("div").parent("div").next("div").remove();
     }
 
-    if($("#smallCategoryId").val() == "소분류 선택" || $("#smallCategoryId").val() == "" ||
-        $("#smallCategoryId").val() == null || $("#smallCategoryId option:selected").val() == "소분류 선택"){
-        resultObject["#smallCategoryId"] = $("#smallCategoryId").data('error') + " 입력되지 않았습니다.";
+    if($("#smallCategory").val() == "소분류 선택" || $("#smallCategory").val() == "" ||
+        $("#smallCategory").val() == null || $("#smallCategory option:selected").val() == "소분류 선택"){
+        resultObject["#smallCategory"] = $("#smallCategory").data('error') + " 입력되지 않았습니다.";
     }
 
     if($("#storeName").val().length > 50){
@@ -89,7 +89,7 @@ function checkStoreDtoForm(){
             '</div>'));
         }
     });
-    if(resultObject[0] == null){
+    if(Object.keys(resultObject).length == 0){
         return true;
     }
     resultObjectKeys = Object.keys(resultObject);

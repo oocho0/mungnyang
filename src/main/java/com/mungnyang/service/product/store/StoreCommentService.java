@@ -21,4 +21,13 @@ public class StoreCommentService {
         return storeCommentRepository.countStoreCommentByStore(storeId);
     }
 
+    /**
+     * 해당 Store의 평점 반환
+     * @param storeId 평점을 알고 싶은 Store
+     * @return Store의 평점
+     */
+    public Float getStoreRateByStoreId(Long storeId) {
+        return storeCommentRepository.findRateByStoreId(storeId);
+    }
+
 }

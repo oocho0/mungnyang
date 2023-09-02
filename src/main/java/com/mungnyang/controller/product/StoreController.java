@@ -3,7 +3,7 @@ package com.mungnyang.controller.product;
 import com.mungnyang.dto.ErrorMessage;
 import com.mungnyang.dto.product.SearchStoreFilter;
 import com.mungnyang.dto.product.store.CreateStoreDto;
-import com.mungnyang.dto.product.store.StoreListDto;
+import com.mungnyang.dto.product.store.ListStoreDto;
 import com.mungnyang.entity.fixedEntity.BigCategory;
 import com.mungnyang.entity.fixedEntity.State;
 import com.mungnyang.service.fixedEntity.CategoryService;
@@ -53,7 +53,7 @@ public class StoreController {
         return new ResponseEntity<String>("success", HttpStatus.OK);
     }
 
-    @GetMapping({"/stores", "/stores/{page}"})
+    @GetMapping("/stores")
     public String loadManagementPage(@ModelAttribute SearchStoreFilter searchStoreFilter,
                                      @PageableDefault(sort = "storeId", direction = Sort.Direction.DESC) Pageable pageable,
                                      Model model) {
@@ -61,8 +61,15 @@ public class StoreController {
         model.addAttribute("bigCategories", bigCategories);
         List<State> states = stateCityService.getAllStates();
         model.addAttribute("states", states);
-        Page<StoreListDto> findStore = storeService.findStoresByConditionsAndPage(searchStoreFilter, pageable);
+        Page<ListStoreDto> findStore = storeService.findStoresByConditionsAndPage(searchStoreFilter, pageable);
         model.addAttribute("stores", findStore);
         return "admin/list";
+    }
+
+    @GetMapping("/stores/{storeId}")
+    public String loadModifyPage(@PathVariable Long storeId, Model model) {
+        List<BigCategory> bigCategories = categoryService.getBigCategoriesForStore();
+        model.addAttribute("bigCategories", bigCategories);
+        return "admin/modify";
     }
 }

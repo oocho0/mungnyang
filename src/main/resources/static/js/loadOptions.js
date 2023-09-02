@@ -8,10 +8,10 @@ function loadSmallCategory() {
         $("#smallCategory").attr('disabled', true);
         $("#smallCategory").empty();
         if($("#bigCategory option:first").text() == "대분류 전체"){
-            $("#smallCategory").append(`<option selected>소분류 전체</option>`);
+            $("#smallCategory").append(${'<option value="" selected>소분류 전체</option>'});
         }
         if($("#bigCategory option:first").text() == "대분류 선택"){
-            $("#smallCategory").append(`<option selected>소분류 선택</option>`);
+            $("#smallCategory").append(${'<option value="" selected>소분류 선택</option>'});
         }
         var bigCategoryId = $("#bigCategory option:selected").val();
         if(bigCategoryId == "대분류 선택" || bigCategoryId == "대분류 전체"){
@@ -48,7 +48,7 @@ function loadCity() {
     $("#state").on("change", function(){
         $("#city").attr('disabled', true);
         $("#city").empty();
-        $("#city").append(`<option selected>시/군/구 전체</option>`);
+        $("#city").append(`<option value="" selected>시/군/구 전체</option>`);
         var stateId = $("#state option:selected").val();
         if(stateId == "시/도 전체"){
             return;

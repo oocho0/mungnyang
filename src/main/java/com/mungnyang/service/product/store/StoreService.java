@@ -3,7 +3,7 @@ package com.mungnyang.service.product.store;
 import com.mungnyang.constant.Status;
 import com.mungnyang.dto.product.SearchStoreFilter;
 import com.mungnyang.dto.product.store.CreateStoreDto;
-import com.mungnyang.dto.product.store.StoreListDto;
+import com.mungnyang.dto.product.store.ListStoreDto;
 import com.mungnyang.entity.product.store.Store;
 import com.mungnyang.repository.product.store.StoreRepository;
 import com.mungnyang.service.fixedEntity.CategoryService;
@@ -82,13 +82,14 @@ public class StoreService {
      * @return 페이지에 표시될 Store 정보
      */
     @Transactional(readOnly = true)
-    public Page<StoreListDto> findStoresByConditionsAndPage(SearchStoreFilter searchStoreFilter, Pageable pageable) {
-        Page<StoreListDto> storeListDtos = storeRepository.getStoreListDtoCriteriaPaging(searchStoreFilter, pageable);
-        for (StoreListDto storeListDto : storeListDtos) {
-            Long storeId = storeListDto.getStoreId();
-            storeListDto.setCommentCount(storeCommentService.getStoreCommentCountByStoreId(storeId));
+    public Page<ListStoreDto> findStoresByConditionsAndPage(SearchStoreFilter searchStoreFilter, Pageable pageable) {
+        Page<ListStoreDto> listStores = storeRepository.getStoreListDtoCriteriaPaging(searchStoreFilter, pageable);
+        for (ListStoreDto listStoreDto : listStores) {
+            Long storeId = listStoreDto.getStoreId();
+            listStoreDto.setCommentCount(storeCommentService.getStoreCommentCountByStoreId(storeId));
+            listStoreDto.setRate(storeCommentService.getStoreRateByStoreId(storeId));
         }
-        return storeListDtos;
+        return listStores;
     }
 
 }

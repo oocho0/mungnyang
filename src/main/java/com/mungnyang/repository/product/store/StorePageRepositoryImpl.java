@@ -2,15 +2,14 @@ package com.mungnyang.repository.product.store;
 
 import com.mungnyang.constant.Status;
 import com.mungnyang.dto.product.SearchStoreFilter;
-import com.mungnyang.dto.product.store.QStoreListDto;
-import com.mungnyang.dto.product.store.StoreListDto;
+import com.mungnyang.dto.product.store.ListStoreDto;
+import com.mungnyang.dto.product.store.QListStoreDto;
 import com.mungnyang.entity.fixedEntity.QBigCategory;
 import com.mungnyang.entity.fixedEntity.QCity;
 import com.mungnyang.entity.fixedEntity.QSmallCategory;
 import com.mungnyang.entity.fixedEntity.QState;
 import com.mungnyang.entity.product.store.QStore;
 import com.mungnyang.service.product.StatusService;
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -54,22 +53,22 @@ public class StorePageRepositoryImpl implements StorePageRepository{
     }
 
     @Override
-    public Page<StoreListDto> getStoreListDtoCriteriaPaging(SearchStoreFilter searchStoreFilter, Pageable pageable) {
+    public Page<ListStoreDto> getStoreListDtoCriteriaPaging(SearchStoreFilter searchStoreFilter, Pageable pageable) {
         QStore store = QStore.store;
         QCity city = QCity.city;
         QState state = QState.state;
         QSmallCategory smallCategory = QSmallCategory.smallCategory;
         QBigCategory bigCategory = QBigCategory.bigCategory;
 
-        Status storeStatus = StatusService.statusConverter(searchStoreFilter.getByStoreStatus());
+        Status storeStatus = searchStoreFilter.getByStoreStatus() == null ? null : StatusService.statusConverter(searchStoreFilter.getByStoreStatus());
 
-        List<StoreListDto> results = jpaQueryFactory.select(
-                        new QStoreListDto(store.storeId, store.storeName, bigCategory.name, smallCategory.name, state.name, city.name, store.storeStatus.stringValue(), null))
+        List<ListStoreDto> results = jpaQueryFactory.select(
+                        new QListStoreDto(store.storeId, store.storeName, bigCategory.name, smallCategory.name, state.name, city.name, store.storeStatus.stringValue()))
                 .from(store)
                 .join(store.city, city)
-                .join(store.city.state, state)
+                .join(city.state, state)
                 .join(store.smallCategory, smallCategory)
-                .join(store.smallCategory.bigCategory, bigCategory)
+                .join(smallCategory.bigCategory, bigCategory)
                 .where(searchByStoreStatus(storeStatus),
                         searchByCityId(searchStoreFilter.getByCity()),
                         searchByState(searchStoreFilter.getByState()),
