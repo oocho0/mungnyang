@@ -4,6 +4,7 @@ import com.mungnyang.dto.ErrorMessage;
 import com.mungnyang.dto.product.SearchStoreFilter;
 import com.mungnyang.dto.product.store.CreateStoreDto;
 import com.mungnyang.dto.product.store.ListStoreDto;
+import com.mungnyang.dto.product.store.ModifyStoreDto;
 import com.mungnyang.entity.fixedEntity.BigCategory;
 import com.mungnyang.entity.fixedEntity.State;
 import com.mungnyang.service.fixedEntity.CategoryService;
@@ -68,8 +69,8 @@ public class StoreController {
 
     @GetMapping("/stores/{storeId}")
     public String loadModifyPage(@PathVariable Long storeId, Model model) {
-        List<BigCategory> bigCategories = categoryService.getBigCategoriesForStore();
-        model.addAttribute("bigCategories", bigCategories);
+        ModifyStoreDto modifyStoreDto = storeService.findStoreByStoreId(storeId);
+        model.addAttribute("store", modifyStoreDto);
         return "admin/modify";
     }
 }

@@ -4,6 +4,7 @@ import com.mungnyang.constant.Status;
 import com.mungnyang.dto.product.accommodation.ListAccommodationDto;
 import com.mungnyang.dto.product.accommodation.FacilityDto;
 import com.mungnyang.dto.product.accommodation.CreateAccommodationDto;
+import com.mungnyang.dto.product.accommodation.ModifyAccommodationDto;
 import com.mungnyang.dto.product.accommodation.room.CreateRoomDto;
 import com.mungnyang.dto.product.accommodation.room.ListRoomDto;
 import com.mungnyang.entity.fixedEntity.SmallCategory;
@@ -52,6 +53,11 @@ public class AccommodationService {
         model.addAttribute("roomFacility", roomFacility);
     }
 
+    /**
+     * Accommodation 이름으로 Accommodation 찾기
+     * @param accommodationName
+     * @return
+     */
     public Accommodation findAccommodationByName(String accommodationName) {
         Accommodation findAccommodation = accommodationRepository.findByAccommodationName(accommodationName);
         if (findAccommodation == null) {
@@ -92,6 +98,21 @@ public class AccommodationService {
             listAccommodationDto.setRooms(roomDtoList);
         }
         return listAccommodationDtos;
+    }
+
+    public ModifyAccommodationDto findAccommodationByAccommodationId(Long accommodationId) {
+        ModifyAccommodationDto modifyAccommodationDto = getAccommodation(accommodationId);
+        modifyAccommodationDto.setAccommodationImageDtoList(accommodationImageService.findAccommodationImageDtos(accommodationId));
+        return modifyAccommodationDto;
+    }
+
+    private ModifyAccommodationDto getAccommodation(Long accommodationId) {
+        Accommodation findAccommodation = accommodationRepository.findById(accommodationId).orElseThrow(IllegalArgumentException::new);
+        modelMapper.typeMap(Accommodation.class, ModifyAccommodationDto.class).addMappings(mapping -> {
+            mapping.using((Converter<Status, String>) context -> StatusService.statusConverter(context.getSource())).map(Accommodation::getAccommodationStatus, ModifyAccommodationDto::setAccommodationStatus);
+            mapping.skip(ModifyAccommodationDto::setAccommodationImageDtoList);
+        });
+        return modelMapper.map(findAccommodation, ModifyAccommodationDto.class);
     }
 
     /**

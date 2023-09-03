@@ -63,8 +63,8 @@ class StoreServiceTest {
             createStoreDto.setProductAddressAddressMain("my house" + i);
             createStoreDto.setProductAddressAddressDetail("somewhere" + i);
             createStoreDto.setProductAddressAddressExtra("extra" + i);
-            createStoreDto.setProductAddressLat(String.valueOf(12.3456789 + i));
-            createStoreDto.setProductAddressLon(String.valueOf(98.7654321 - i));
+            createStoreDto.setProductAddressLat(12.3456789 + i);
+            createStoreDto.setProductAddressLon(98.7654321 - i);
             createStoreDto.setStoreDetail("details of test" + i);
             createStoreDto.setStoreStatus(Status.OPEN.name());
 

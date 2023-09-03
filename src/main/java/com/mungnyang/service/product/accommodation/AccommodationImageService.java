@@ -1,10 +1,12 @@
 package com.mungnyang.service.product.accommodation;
 
+import com.mungnyang.dto.product.accommodation.AccommodationImageDto;
 import com.mungnyang.entity.product.accommodation.Accommodation;
 import com.mungnyang.entity.product.accommodation.AccommodationImage;
 import com.mungnyang.repository.product.accommodation.AccommodationImageRepository;
 import com.mungnyang.service.product.ImageService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +20,7 @@ public class AccommodationImageService {
 
     private final AccommodationImageRepository accommodationImageRepository;
     private final ImageService imageService;
+    private final ModelMapper modelMapper;
 
     /**
      * AccommodationImage 저장
@@ -42,5 +45,14 @@ public class AccommodationImageService {
             throw new IllegalArgumentException();
         }
         return accommodationImages;
+    }
+
+    public List<AccommodationImageDto> findAccommodationImageDtos(Long accommodationId) {
+        List<AccommodationImage> findImages = accommodationImageRepository.findByAccommodationAccommodationIdOrderByAccommodationImageId(accommodationId);
+        List<AccommodationImageDto> accommodationImageDtoList = null;
+        for (AccommodationImage findImage : findImages) {
+            accommodationImageDtoList.add(modelMapper.map(findImage, AccommodationImageDto.class));
+        }
+        return accommodationImageDtoList;
     }
 }

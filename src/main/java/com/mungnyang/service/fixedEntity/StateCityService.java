@@ -42,4 +42,7 @@ public class StateCityService {
         return cityRepository.findCityByZipcodeStartLessThanEqualAndZipcodeEndGreaterThanEqual(zipcodeLong, zipcodeLong);
     }
 
+    public State findStateByStateId(Long stateId) {
+        return stateRepository.findById(stateId).orElseThrow(IllegalArgumentException::new);
+    }
 }

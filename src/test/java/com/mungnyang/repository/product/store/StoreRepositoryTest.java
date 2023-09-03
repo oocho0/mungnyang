@@ -62,8 +62,8 @@ class StoreRepositoryTest {
             storeDto.setProductAddressAddressZipcode(String.valueOf(12345+(i*100)));
             storeDto.setProductAddressAddressDetail("AddressDetail"+i);
             storeDto.setProductAddressAddressExtra("AddressExtra"+i);
-            storeDto.setProductAddressLat(String.valueOf(12.3567*(i*0.001)));
-            storeDto.setProductAddressLon(String.valueOf(22.3456*(i*0.001)));
+            storeDto.setProductAddressLat(12.3567*(i*0.001));
+            storeDto.setProductAddressLon(22.3456*(i*0.001));
             storeDto.setSmallCategoryId(9L);
 
             List<MultipartFile> multipartFileList_this = createTestStoreImageArray(i);

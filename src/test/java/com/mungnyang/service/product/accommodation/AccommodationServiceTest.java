@@ -88,8 +88,8 @@ class AccommodationServiceTest {
             createAccommodationDto.setProductAddressAddressMain("my house" + i);
             createAccommodationDto.setProductAddressAddressDetail("somewhere" + i);
             createAccommodationDto.setProductAddressAddressExtra("extra" + i);
-            createAccommodationDto.setProductAddressLat(String.valueOf(12.3456789 + i));
-            createAccommodationDto.setProductAddressLon(String.valueOf(98.7654321 - i));
+            createAccommodationDto.setProductAddressLat(12.3456789 + i);
+            createAccommodationDto.setProductAddressLon(98.7654321 - i);
             createAccommodationDto.setAccommodationDetail("details of test" + i);
             createAccommodationDto.setAccommodationStatus(Status.OPEN.name());
 

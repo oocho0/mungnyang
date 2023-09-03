@@ -25,45 +25,44 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class StorePageRepositoryImpl implements StorePageRepository{
+public class StorePageRepositoryImpl implements StorePageRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
+    private final QStore store = QStore.store;
+    private final QCity city = QCity.city;
+    private final QState state = QState.state;
+    private final QSmallCategory smallCategory = QSmallCategory.smallCategory;
+    private final QBigCategory bigCategory = QBigCategory.bigCategory;
+    private final QStoreComment storeComment = QStoreComment.storeComment;
+
     private BooleanExpression searchByStoreStatus(Status storeStatus) {
-        return storeStatus == null ? null : QStore.store.storeStatus.eq(storeStatus);
+        return storeStatus == null ? null : store.storeStatus.eq(storeStatus);
     }
 
     private BooleanExpression searchByCityId(Long cityId) {
-        return cityId == null ? null : QStore.store.city.cityId.eq(cityId);
+        return cityId == null ? null : store.city.cityId.eq(cityId);
     }
 
     private BooleanExpression searchByState(Long stateId) {
-        return stateId == null ? null : QStore.store.city.state.stateId.eq(stateId);
+        return stateId == null ? null : store.city.state.stateId.eq(stateId);
     }
 
     private BooleanExpression searchBySmallCategoryId(Long smallCategoryId) {
-        return smallCategoryId == null ? null : QStore.store.smallCategory.smallCategoryId.eq(smallCategoryId);
+        return smallCategoryId == null ? null : store.smallCategory.smallCategoryId.eq(smallCategoryId);
     }
 
     private BooleanExpression searchByBigCategoryId(Long bigCategoryId) {
-        return bigCategoryId == null ? null : QStore.store.smallCategory.bigCategory.bigCategoryId.eq(bigCategoryId);
+        return bigCategoryId == null ? null : store.smallCategory.bigCategory.bigCategoryId.eq(bigCategoryId);
     }
 
     private BooleanExpression searchByStoreName(String storeName) {
-        return StringUtils.isEmpty(storeName) ? null : QStore.store.storeName.like("%" + storeName + "%");
+        return StringUtils.isEmpty(storeName) ? null : store.storeName.like("%" + storeName + "%");
     }
 
     @Override
     public Page<ListStoreDto> getStoreListDtoCriteriaPaging(SearchStoreFilter searchStoreFilter, Pageable pageable) {
-        QStore store = QStore.store;
-        QCity city = QCity.city;
-        QState state = QState.state;
-        QSmallCategory smallCategory = QSmallCategory.smallCategory;
-        QBigCategory bigCategory = QBigCategory.bigCategory;
-        QStoreComment storeComment = QStoreComment.storeComment;
-
         Status storeStatus = searchStoreFilter.getByStoreStatus() == null ? null : StatusService.statusConverter(searchStoreFilter.getByStoreStatus());
-
         List<ListStoreDto> results = jpaQueryFactory.select(
                         new QListStoreDto(
                                 store.storeId,

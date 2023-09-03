@@ -4,6 +4,7 @@ import com.mungnyang.constant.Status;
 import com.mungnyang.dto.product.SearchStoreFilter;
 import com.mungnyang.dto.product.store.CreateStoreDto;
 import com.mungnyang.dto.product.store.ListStoreDto;
+import com.mungnyang.dto.product.store.ModifyStoreDto;
 import com.mungnyang.entity.product.store.Store;
 import com.mungnyang.repository.product.store.StoreRepository;
 import com.mungnyang.service.fixedEntity.CategoryService;
@@ -84,5 +85,26 @@ public class StoreService {
     @Transactional(readOnly = true)
     public Page<ListStoreDto> findStoresByConditionsAndPage(SearchStoreFilter searchStoreFilter, Pageable pageable) {
         return storeRepository.getStoreListDtoCriteriaPaging(searchStoreFilter, pageable);
+    }
+
+    /**
+     * 수정할 Store의 정보 가져오기
+     * @param storeId 수정할 Store의 일련번호
+     * @return 수정할 Store의 정보
+     */
+    @Transactional(readOnly = true)
+    public ModifyStoreDto findStoreByStoreId(Long storeId) {
+        ModifyStoreDto modifyStoreDto = getModifyStoreDto(storeId);
+        modifyStoreDto.setStoreImageDtoList(storeImageService.findStoreImageDtos(storeId));
+        return modifyStoreDto;
+    }
+
+    private ModifyStoreDto getModifyStoreDto(Long storeId) {
+        Store findStore = storeRepository.findById(storeId).orElseThrow(IllegalArgumentException::new);
+        modelMapper.typeMap(Store.class, ModifyStoreDto.class).addMappings(mapping -> {
+            mapping.using((Converter<Status, String>) ctx -> StatusService.statusConverter(ctx.getSource())).map(Store::getStoreStatus, ModifyStoreDto::setStoreStatus);
+            mapping.skip(ModifyStoreDto::setStoreImageDtoList);
+        });
+        return modelMapper.map(findStore, ModifyStoreDto.class);
     }
 }

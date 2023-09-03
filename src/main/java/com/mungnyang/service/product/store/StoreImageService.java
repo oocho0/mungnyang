@@ -1,10 +1,12 @@
 package com.mungnyang.service.product.store;
 
+import com.mungnyang.dto.product.store.StoreImageDto;
 import com.mungnyang.entity.product.store.Store;
 import com.mungnyang.entity.product.store.StoreImage;
 import com.mungnyang.repository.product.store.StoreImageRepository;
 import com.mungnyang.service.product.ImageService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +20,7 @@ public class StoreImageService {
 
     private final StoreImageRepository storeImageRepository;
     private final ImageService imageService;
+    private final ModelMapper modelMapper;
 
     /**
      * StoreImage 저장
@@ -48,6 +51,15 @@ public class StoreImageService {
             throw new IllegalArgumentException();
         }
         return findImages;
+    }
+
+    public List<StoreImageDto> findStoreImageDtos(Long storeId) {
+        List<StoreImage> findImages = storeImageRepository.findByStoreStoreIdOrderByStoreImageId(storeId);
+        List<StoreImageDto> storeImageDtoList = null;
+        for (StoreImage findImage : findImages) {
+            storeImageDtoList.add(modelMapper.map(findImage, StoreImageDto.class));
+        }
+        return storeImageDtoList;
     }
 
 }

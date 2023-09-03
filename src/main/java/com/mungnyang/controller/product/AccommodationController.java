@@ -1,10 +1,7 @@
 package com.mungnyang.controller.product;
 
 import com.mungnyang.dto.ErrorMessage;
-import com.mungnyang.dto.product.accommodation.AccommodationFacilityList;
-import com.mungnyang.dto.product.accommodation.FacilityDto;
-import com.mungnyang.dto.product.accommodation.CreateAccommodationDto;
-import com.mungnyang.dto.product.accommodation.ListAccommodationDto;
+import com.mungnyang.dto.product.accommodation.*;
 import com.mungnyang.dto.product.accommodation.room.CreateRoomDto;
 import com.mungnyang.dto.product.accommodation.room.RoomList;
 import com.mungnyang.service.product.accommodation.AccommodationService;
@@ -56,5 +53,12 @@ public class AccommodationController {
         List<ListAccommodationDto> findAccommodations = accommodationService.getAccommodationsForList(principal.getName());
         model.addAttribute("accommodations", findAccommodations);
         return "seller/list";
+    }
+
+    @GetMapping("/accommodations/{accommodationId}")
+    public String loadModifyPage(@PathVariable Long accommodationId, Model model) {
+        ModifyAccommodationDto findAccommodation = accommodationService.findAccommodationByAccommodationId(accommodationId);
+        model.addAttribute(accommodationId);
+        return "seller/modify";
     }
 }

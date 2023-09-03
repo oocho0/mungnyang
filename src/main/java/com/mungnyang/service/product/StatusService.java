@@ -23,6 +23,15 @@ public class StatusService {
     }
 
     /**
+     * modelMapper에서 Status타입의 status를 String으로 바꿈
+     * @param status 바꿀 Status 타입의 status
+     * @return 변환된 String
+     */
+    public static String statusConverter(Status status) {
+        return status == Status.OPEN ? Status.OPEN.name() : (status == Status.CLOSED ? Status.CLOSED.name() : Status.PAUSE.name());
+    }
+
+    /**
      * modelMapper에서 String타입의 isTrue를 IsTrue타입으로 바꿈
      * @param isTrue String타입의 isTrue
      * @return 변환된 IsTrue타입
