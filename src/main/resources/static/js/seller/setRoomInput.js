@@ -17,6 +17,8 @@ function setting(){
             var result = confirm("입력해둔 방 정보가 사라집니다.\n진행하시려면 '확인'버튼을 누르시고\n유지하시려면 '취소'버튼을 누르세요.");
             if(result){
                 for(var i = roomAmount+1; i<currentMaxNumber+1; i++){
+                    $("#roomStatus" + i + "input:checked").prop("checked", false);
+                    $("#roomStatus" + i + "Open").prop("checked", true);
                     $("#roomName" + i).val('');
                     $("#roomPrice" + i).val('');
                     $("#roomDetail" + i).val('');

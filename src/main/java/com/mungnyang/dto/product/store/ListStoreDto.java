@@ -18,7 +18,7 @@ public class ListStoreDto {
     private Long commentCount;
 
     @QueryProjection
-    public ListStoreDto(Long storeId, String storeName, String bigCategoryName, String smallCategoryName, String stateName, String cityName, String storeStatus) {
+    public ListStoreDto(Long storeId, String storeName, String bigCategoryName, String smallCategoryName, String stateName, String cityName, String storeStatus, Float rate, Long commentCount) {
         this.storeId = storeId;
         this.storeName = storeName;
         this.bigCategoryName = bigCategoryName;
@@ -26,5 +26,7 @@ public class ListStoreDto {
         this.stateName = stateName;
         this.cityName = cityName;
         this.storeStatus = storeStatus;
+        this.rate = rate;
+        this.commentCount = commentCount;
     }
 }

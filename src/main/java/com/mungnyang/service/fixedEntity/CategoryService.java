@@ -32,7 +32,7 @@ public class CategoryService {
      * @param bigCategoryId 조회할 대분류 id
      * @return
      */
-    public List<SmallCategory> getSmallCategoriesByBigCategoryId(Long bigCategoryId){
+    public List<SmallCategory> getSmallCategoriesWithOutThisBigCategoryId(Long bigCategoryId){
         return smallCategoryRepository.findByBigCategoryBigCategoryIdOrderBySmallCategoryIdAsc(bigCategoryId);
     }
 

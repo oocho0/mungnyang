@@ -84,7 +84,7 @@
                         <td th:text="${store.stateName}"></td>
                         <td th:text="${store.cityName}"></td>
                         <td th:text="${(#strings.equals(store.storeStatus, 'OPEN') ? '영업중' : (#strings.equals(store.storeStatus, 'CLOSED') ? '폐업' : '휴업'))}"></td>
-                        <td th:text="${#numbers.formatDecimal(store.rate, 1, 1)}"></td>
+                        <td th:text="${store.rate}"></td>
                         <td th:text="${store.commentCount}"></td>
                     </tr>
                     </tbody>

@@ -44,7 +44,6 @@ function makeFormData(formData){
         formData.append("roomList[" + i + "].roomPrice", $("#roomPrice" + (i+1)).val());
         formData.append("roomList[" + i + "].roomDetail", $("#roomDetail" + (i+1)).val());
         formData.append("roomList[" + i + "].roomStatus", $("[name='roomStatus" + (i+1) + "']:checked").val());
-        formData.append("roomList[" + i + "].isAvailable", $("[name='isAvailable" + (i+1) + "']:checked").val());
         addFormDataWithRoom(formData, i);
         addRoomFacilityData(formData, i);
     }

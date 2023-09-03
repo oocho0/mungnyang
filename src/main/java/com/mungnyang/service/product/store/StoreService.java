@@ -83,13 +83,6 @@ public class StoreService {
      */
     @Transactional(readOnly = true)
     public Page<ListStoreDto> findStoresByConditionsAndPage(SearchStoreFilter searchStoreFilter, Pageable pageable) {
-        Page<ListStoreDto> listStores = storeRepository.getStoreListDtoCriteriaPaging(searchStoreFilter, pageable);
-        for (ListStoreDto listStoreDto : listStores) {
-            Long storeId = listStoreDto.getStoreId();
-            listStoreDto.setCommentCount(storeCommentService.getStoreCommentCountByStoreId(storeId));
-            listStoreDto.setRate(storeCommentService.getStoreRateByStoreId(storeId));
-        }
-        return listStores;
+        return storeRepository.getStoreListDtoCriteriaPaging(searchStoreFilter, pageable);
     }
-
 }

@@ -7,8 +7,4 @@ import org.springframework.data.repository.query.Param;
 
 public interface StoreCommentRepository extends JpaRepository<StoreComment, Long> {
 
-    @Query("select count(sc) from StoreComment sc where sc.store.storeId = :storeId")
-    Long countStoreCommentByStore(@Param("storeId") Long storeId);
-
-    Float findRateByStoreId(Long storeId);
 }

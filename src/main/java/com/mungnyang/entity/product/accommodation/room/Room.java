@@ -1,6 +1,5 @@
 package com.mungnyang.entity.product.accommodation.room;
 
-import com.mungnyang.constant.Booked;
 import com.mungnyang.constant.Status;
 import com.mungnyang.entity.WriterEntity;
 import com.mungnyang.entity.product.Product;
@@ -32,8 +31,4 @@ public class Room extends WriterEntity implements Product {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status roomStatus;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Booked isAvailable;
 }

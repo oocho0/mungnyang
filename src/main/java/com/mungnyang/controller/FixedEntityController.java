@@ -21,7 +21,7 @@ public class FixedEntityController {
 
     @GetMapping("/category/{bigCategoryId}")
     public ResponseEntity<?> findSmallCategoryIds(@PathVariable Long bigCategoryId) {
-        List<SmallCategory> smallCategories = categoryService.getSmallCategoriesByBigCategoryId(bigCategoryId);
+        List<SmallCategory> smallCategories = categoryService.getSmallCategoriesWithOutThisBigCategoryId(bigCategoryId);
         return new ResponseEntity<List<SmallCategory>>(smallCategories, HttpStatus.OK);
     }
 

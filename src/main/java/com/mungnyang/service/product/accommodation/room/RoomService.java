@@ -1,9 +1,10 @@
 package com.mungnyang.service.product.accommodation.room;
 
-import com.mungnyang.constant.Booked;
 import com.mungnyang.constant.Status;
 import com.mungnyang.dto.product.accommodation.FacilityDto;
+import com.mungnyang.dto.product.accommodation.ListAccommodationDto;
 import com.mungnyang.dto.product.accommodation.room.CreateRoomDto;
+import com.mungnyang.dto.product.accommodation.room.ListRoomDto;
 import com.mungnyang.entity.product.accommodation.Accommodation;
 import com.mungnyang.entity.product.accommodation.room.Room;
 import com.mungnyang.repository.product.accommodation.room.RoomRepository;
@@ -53,8 +54,6 @@ public class RoomService {
         modelMapper.typeMap(CreateRoomDto.class, Room.class).addMappings(mapping -> {
             mapping.using((Converter<String, Status>) ctx -> StatusService.statusConverter(ctx.getSource()))
                     .map(CreateRoomDto::getRoomStatus, Room::setRoomStatus);
-            mapping.using((Converter<String, Booked>) ctx -> StatusService.isAvailableConverter(ctx.getSource()))
-                    .map(CreateRoomDto::getIsAvailable, Room::setIsAvailable);
             mapping.skip(Room::setRoomId);
             mapping.skip(Room::setAccommodation);
         });
@@ -74,5 +73,18 @@ public class RoomService {
             throw new IllegalArgumentException();
         }
         return rooms;
+    }
+
+    /**
+     * ListAccommodationDto에 들어갈 Room 객체 리스트 찾기
+     * @param listAccommodationDto 찾을 Accommodation 객체의 숙소 리스트 화면 Dto
+     * @return Room 객체 리스트
+     */
+    public List<ListRoomDto> findRoomListInfoByAccommodation(ListAccommodationDto listAccommodationDto) {
+        List<ListRoomDto> roomDtos = roomRepository.findListRoomDtoByAccommodationId(listAccommodationDto.getAccommodationId());
+        if (roomDtos.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        return roomDtos;
     }
 }

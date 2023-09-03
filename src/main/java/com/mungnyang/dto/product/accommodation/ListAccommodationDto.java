@@ -15,16 +15,18 @@ public class ListAccommodationDto {
     private String stateName;
     private String cityName;
     private String accommodationStatus;
-    private List<ListRoomDto> rooms;
     private Float rate;
     private Long commentCount;
+    private List<ListRoomDto> rooms;
 
     @QueryProjection
-    public ListAccommodationDto(Long accommodationId, String accommodationName, String stateName, String cityName, String accommodationStatus) {
+    public ListAccommodationDto(Long accommodationId, String accommodationName, String stateName, String cityName, String accommodationStatus, Float rate, Long commentCount) {
         this.accommodationId = accommodationId;
         this.accommodationName = accommodationName;
         this.stateName = stateName;
         this.cityName = cityName;
         this.accommodationStatus = accommodationStatus;
+        this.rate = rate;
+        this.commentCount = commentCount;
     }
 }

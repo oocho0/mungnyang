@@ -118,7 +118,7 @@
                                data-error="경도가" aria-label="경도" placeholder="경도">
                     </div>
                 </div>
-                <!--상세 정보-->
+                <!--체크인 체크아웃 정보-->
                 <div class="row g-3 align-items-center py-2">
                     <div class="col-2 text-end">
                         <label class="col-form-label" for="checkInTime">체크인 시간</label>
@@ -209,7 +209,7 @@
                             <div class="accordion-body border border-light-subtle">
                                 <!--방 상태-->
                                 <div class="row g-3 align-items-center py-2">
-                                    <div class="col-2 text-end">
+                                    <div class="col-3 text-end">
                                         <label class="col-form-label" th:for="|roomStatus${num}|">방 상태</label>
                                     </div>
                                     <div class="col-8 text-start">
@@ -224,26 +224,6 @@
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input roomAvailable" type="radio" value="PAUSE" th:name="|roomStatus${num}|" th:id="|roomStatus${num}Pause|">
                                             <label class="form-check-label" th:for="|roomStatus${num}Pause|">임시 폐쇄</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--방 예약 상태-->
-                                <div class="row g-3 align-items-center py-2">
-                                    <div class="col-2 text-end">
-                                        <label class="col-form-label" th:for="|isAvailable${num}|">방 예약 상태</label>
-                                    </div>
-                                    <div class="col-8 text-start roomAvailableTarget">
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" value="AVAILABLE" th:name="|isAvailable${num}|" th:id="|isAvailable${num}Available|" checked>
-                                            <label class="form-check-label" th:for="|isAvailable${num}Available|">예약 가능</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" value="BOOKED" th:name="|isAvailable${num}|" th:id="|isAvailable${num}Booked|">
-                                            <label class="form-check-label" th:for="|isAvailable${num}Booked|">예약됨</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" value="UNAVAILABLE" th:name="|isAvailable${num}|" th:id="|isAvailable${num}Unavailable|">
-                                            <label class="form-check-label" th:for="|isAvailable${num}Unavailable|">예약 불가</label>
                                         </div>
                                     </div>
                                 </div>

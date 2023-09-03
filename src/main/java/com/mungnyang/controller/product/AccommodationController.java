@@ -4,11 +4,13 @@ import com.mungnyang.dto.ErrorMessage;
 import com.mungnyang.dto.product.accommodation.AccommodationFacilityList;
 import com.mungnyang.dto.product.accommodation.FacilityDto;
 import com.mungnyang.dto.product.accommodation.CreateAccommodationDto;
+import com.mungnyang.dto.product.accommodation.ListAccommodationDto;
 import com.mungnyang.dto.product.accommodation.room.CreateRoomDto;
 import com.mungnyang.dto.product.accommodation.room.RoomList;
 import com.mungnyang.service.product.accommodation.AccommodationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -51,7 +53,8 @@ public class AccommodationController {
 
     @GetMapping("/accommodations")
     public String loadListPage(Model model, Principal principal) {
-
+        List<ListAccommodationDto> findAccommodations = accommodationService.getAccommodationsForList(principal.getName());
+        model.addAttribute("accommodations", findAccommodations);
         return "seller/list";
     }
 }

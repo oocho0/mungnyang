@@ -12,12 +12,75 @@
         <div class="p-5 text-center bg-body rounded-3">
             <h2 class="text-body-emphasis pb-5 border-bottom">숙소 관리</h2>
             <div class="container py-3">
-                <div class="p-3 text-center text-muted bg-body border border-dashed rounded-5" th:each="accommodation : ${accommodations}">
-                    <h3 class="mt-2 text-body-emphasis" th:text="${accommodation.accommodationName}"></h3>
-                    <p class="col-lg-6 mx-auto mb-4">
-                    </p>
-                    <button class="btn btn-primary px-5 mb-2" type="button">
-                        Call to action
+                <div class="p-3 text-center text-muted bg-body border border-dashed rounded-5"
+                     th:if="${#lists.isEmpty(accommodations)}">
+                    아직 숙소를 등록하지 않았습니다.
+                </div>
+                <div th:unless="${#lists.isEmpty(accommodations)}" class="p-3 text-center text-muted bg-body border border-dashed rounded-5"
+                     th:each="accommodation : ${accommodations}">
+                    <h3 class="mt-3 text-body-emphasis" th:text="${accommodation.accommodationName}">숙소 이름</h3>
+                    <div class="mt-3 row justify-content-center">
+                        <div class="col-auto row mx-2">
+                            <div class="col-auto">
+                                <div class="text-end">위치 :</div>
+                            </div>
+                            <div class="col-auto">
+                                <p class="text-start">
+                                    <span class="fw-semibold" th:text="${accommodation.stateName}">무슨시</span>
+                                    &nbsp;/&nbsp;
+                                    <span class="fw-semibold" th:text="${accommodation.cityName}">무슨구</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-auto row mx-2">
+                            <div class="col-auto">
+                                <div class="text-end">영업 상태 :</div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="text-start fw-semibold" th:text="${#strings.equals(accommodation.accommodationStatus, 'OPEN') ? '영업중' : (#strings.equals(accommodation.accommodationStatus, 'CLOSED') ? '폐업' : '휴업')}">상태</div>
+                            </div>
+                        </div>
+                        <div class="col-auto row mx-2">
+                            <div class="col-auto">
+                                <div class="text-end">평점 :</div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="text-start fw-semibold" th:text="${accommodation.rate} + ' 점'">5.0 점</div>
+                            </div>
+                        </div>
+                        <div class="col-auto row mx-2">
+                            <div class="col-auto">
+                                <div class="text-end">후기 갯수 :</div>
+                            </div>
+                            <div class="col-auto">
+                                <div class="text-start fw-semibold" th:text="${accommodation.commentCount} + ' 개'">백 개</div>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="mt-2 mx-auto table table-striped table-hover align-middle" style="width: 85%">
+                        <thead class="table-light">
+                        <tr>
+                            <th scope="col">No.</th>
+                            <th scope="col">방 명</th>
+                            <th scope="col">방 가격</th>
+                            <th scope="col">방 상태</th>
+                        </tr>
+                        </thead>
+                        <tbody class="table-group-divider">
+                        <tr th:each="room, status : ${accommodation.rooms}">
+                            <th scope="row" th:text="${status.index + 1}"></th>
+                            <td>
+                                <a class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+                                   th:text="${room.roomName}"
+                                   th:href="@{/admin/accommodations/{accommodationId}/{roomId}(accommodationId=${accommodation.accommodationId},roomId=${room.roomId})}"></a></td>
+                            <td th:text="${#numbers.formatInteger(room.roomPrice, 0, 'COMMA')} + ' 원'"></td>
+                            <td th:text="${#strings.equals(room.roomStatus, 'OPEN') ? '영업중' : (#strings.equals(room.roomStatus, 'CLOSED') ? '영구 폐쇄' : '임시 폐쇄')}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <button class="btn btn-secondary px-5 mb-2"
+                            th:onclick="|location.href='@{/seller/accommodations/{accommodationId}(accommodationId=${accommodation.accommodationId})}'|">
+                        숙소 정보 수정하기
                     </button>
                 </div>
             </div>

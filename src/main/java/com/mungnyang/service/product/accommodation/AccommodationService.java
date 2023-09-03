@@ -5,6 +5,7 @@ import com.mungnyang.dto.product.accommodation.ListAccommodationDto;
 import com.mungnyang.dto.product.accommodation.FacilityDto;
 import com.mungnyang.dto.product.accommodation.CreateAccommodationDto;
 import com.mungnyang.dto.product.accommodation.room.CreateRoomDto;
+import com.mungnyang.dto.product.accommodation.room.ListRoomDto;
 import com.mungnyang.entity.fixedEntity.SmallCategory;
 import com.mungnyang.entity.member.Member;
 import com.mungnyang.entity.product.accommodation.Accommodation;
@@ -17,6 +18,7 @@ import com.mungnyang.service.product.accommodation.room.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -29,21 +31,20 @@ import java.util.List;
 @Transactional
 public class AccommodationService {
 
-    private final CategoryService categoryService;
     private final ModelMapper modelMapper;
-    private final StateCityService stateCityService;
     private final AccommodationRepository accommodationRepository;
+    private final CategoryService categoryService;
+    private final StateCityService stateCityService;
     private final AccommodationImageService accommodationImageService;
     private final AccommodationFacilityService accommodationFacilityService;
     private final RoomService roomService;
-    private final MemberService memberService;
 
     /**
      * 숙소 등록 시 필요한 소분류를 모델에 담아 전달
      * @param model 전달할 모델
      */
     public void initializeStore(Model model) {
-        List<SmallCategory> smallCategoryList = categoryService.getSmallCategoriesByBigCategoryId(1L);
+        List<SmallCategory> smallCategoryList = categoryService.getSmallCategoriesWithOutThisBigCategoryId(1L);
         model.addAttribute("smallCategories", smallCategoryList);
         String[] accommodationFacility = {"24시간 리셉션", "반려견 운동장", "반려견 수영장", "주차", "무료 WiFi", "반려견 셀프 목욕", "조식"};
         model.addAttribute("accommodationFacility", accommodationFacility);
@@ -78,10 +79,19 @@ public class AccommodationService {
         roomService.saveRoom(accommodation, roomList);
     }
 
+    /**
+     * 숙소 관리 페이지에 나타낼 숙소 정보 가져오기
+     * @param email 로그인한 회원의 아이디
+     * @return List<숙소 정보>
+     */
+    @Transactional(readOnly = true)
     public List<ListAccommodationDto> getAccommodationsForList(String email) {
-        Member signInMember = memberService.findMember(email);
-        
-        return null;
+        List<ListAccommodationDto> listAccommodationDtos =  accommodationRepository.findListAccommodationDtoByCreatedByOrderByReqDateDesc(email);
+        for (ListAccommodationDto listAccommodationDto : listAccommodationDtos) {
+            List<ListRoomDto> roomDtoList = roomService.findRoomListInfoByAccommodation(listAccommodationDto);
+            listAccommodationDto.setRooms(roomDtoList);
+        }
+        return listAccommodationDtos;
     }
 
     /**

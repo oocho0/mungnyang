@@ -15,7 +15,6 @@ public class CreateRoomDto {
     private Integer roomPrice;
     private String roomDetail;
     private String roomStatus;
-    private String isAvailable;
 
     private List<MultipartFile> imageFile;
     private List<FacilityDto> facilityList;

@@ -9,6 +9,7 @@ import com.mungnyang.entity.fixedEntity.QCity;
 import com.mungnyang.entity.fixedEntity.QSmallCategory;
 import com.mungnyang.entity.fixedEntity.QState;
 import com.mungnyang.entity.product.store.QStore;
+import com.mungnyang.entity.product.store.QStoreComment;
 import com.mungnyang.service.product.StatusService;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -59,16 +60,29 @@ public class StorePageRepositoryImpl implements StorePageRepository{
         QState state = QState.state;
         QSmallCategory smallCategory = QSmallCategory.smallCategory;
         QBigCategory bigCategory = QBigCategory.bigCategory;
+        QStoreComment storeComment = QStoreComment.storeComment;
 
         Status storeStatus = searchStoreFilter.getByStoreStatus() == null ? null : StatusService.statusConverter(searchStoreFilter.getByStoreStatus());
 
         List<ListStoreDto> results = jpaQueryFactory.select(
-                        new QListStoreDto(store.storeId, store.storeName, bigCategory.name, smallCategory.name, state.name, city.name, store.storeStatus.stringValue()))
+                        new QListStoreDto(
+                                store.storeId,
+                                store.storeName,
+                                bigCategory.name,
+                                smallCategory.name,
+                                state.name,
+                                city.name,
+                                store.storeStatus.stringValue(),
+                                storeComment.comment.rate.avg().coalesce(0.0).floatValue(),
+                                storeComment.count()
+                        )
+                )
                 .from(store)
                 .join(store.city, city)
                 .join(city.state, state)
                 .join(store.smallCategory, smallCategory)
                 .join(smallCategory.bigCategory, bigCategory)
+                .leftJoin(storeComment).on(store.storeId.eq(storeComment.store.storeId))
                 .where(searchByStoreStatus(storeStatus),
                         searchByCityId(searchStoreFilter.getByCity()),
                         searchByState(searchStoreFilter.getByState()),
@@ -76,6 +90,7 @@ public class StorePageRepositoryImpl implements StorePageRepository{
                         searchByBigCategoryId(searchStoreFilter.getByBigCategory()),
                         searchByStoreName(searchStoreFilter.getByStoreName()))
                 .orderBy(store.storeId.desc())
+                .groupBy(store.storeId)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

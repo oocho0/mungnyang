@@ -115,7 +115,6 @@ class AccommodationServiceTest {
             createRoomDto.setRoomPrice(2000 * i * j);
             createRoomDto.setRoomDetail("detail of test " + i + "room" + j);
             createRoomDto.setRoomStatus(Status.OPEN.name());
-            createRoomDto.setIsAvailable(IsTrue.YES.name());
             List<FacilityDto> facilityDtoList = createRoomFacility(i, j);
             createRoomDto.setFacilityList(facilityDtoList);
             List<MultipartFile> roomImageDtoList = createTestStoreImageArray(i);

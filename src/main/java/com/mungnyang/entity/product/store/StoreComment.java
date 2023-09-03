@@ -19,7 +19,7 @@ public class StoreComment extends WriterEntity {
 
     @Embedded
     @Column
-    private Comment commentInfo;
+    private Comment comment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")

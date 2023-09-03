@@ -1,26 +1,3 @@
-$(document).ready(function(){
-    roomAvailable();
-})
-
-function roomAvailable(){
-    $(".roomAvailable").on("change", function(){
-        var value = $(event.target).closest(".col-8").find(".roomAvailable:checked").attr("value");
-        if(value == "OPEN"){
-            if($(event.target).closest(".accordion-body").find(".roomAvailableTarget").find("[value='AVAILABLE']").attr("disabled") == 'disabled'){
-                $(event.target).closest(".accordion-body").find(".roomAvailableTarget").find("[value='AVAILABLE']").removeAttr('disabled');
-                $(event.target).closest(".accordion-body").find(".roomAvailableTarget").find("[value='BOOKED']").removeAttr('disabled');
-                $(event.target).closest(".accordion-body").find(".roomAvailableTarget").find("[value='UNAVAILABLE']").prop("checked", false);
-                $(event.target).closest(".accordion-body").find(".roomAvailableTarget").find("[value='AVAILABLE']").prop("checked", true);
-            }
-            return false;
-        }
-        $(event.target).closest(".accordion-body").find(".roomAvailableTarget").find("[value='AVAILABLE']").prop("checked", false);
-        $(event.target).closest(".accordion-body").find(".roomAvailableTarget").find("[value='AVAILABLE']").attr("disabled", true);
-        $(event.target).closest(".accordion-body").find(".roomAvailableTarget").find("[value='BOOKED']").attr("disabled", true);
-        $(event.target).closest(".accordion-body").find(".roomAvailableTarget").find("[value='UNAVAILABLE']").prop("checked", true);
-    });
-}
-
 var fileArray = new Array();
 var maxFileAmount = 10;
 
