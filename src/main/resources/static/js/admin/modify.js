@@ -3,10 +3,10 @@ function request(){
     if(result == false){
         return false;
     }
-    var url = "/admin/store";
+    var url = "/admin/stores/"+$("#storeId").val();
 
     var formData = new FormData($("form")[0]);
-    addFormData(formData);
+    addImageToFormData(formData);
 
     $.ajax({
         url      : url,
@@ -16,8 +16,11 @@ function request(){
         data : formData,
         encType : "multipart/form-data",
         cache   : false,
+        beforeSend : function(){
+
+        },
         success  : function(result, status){
-            alert('등록이 완료되었습니다.');
+            alert('수정이 완료되었습니다.');
             location.href='/admin/stores';
         },
         error : function(status, error){
@@ -35,8 +38,7 @@ let resultObjectKeys = [];
 
 function checkStoreDtoForm(){
     let resultObject = new Object();
-    const checkLabels = ["#storeName", "#addressZipcode",
-    "#addressMain", "#productAddressLat", "#productAddressLon"];
+    const checkLabels = ["#storeName", "#addressZipcode", "#addressMain", "#productAddressLat", "#productAddressLon"];
 
     if(resultObjectKeys.length != 0){
         $.each(resultObjectKeys, function(index, value){
@@ -55,8 +57,8 @@ function checkStoreDtoForm(){
         $("#input-image").closest("div").parent("div").next("div").remove();
     }
 
-    if($("#smallCategory").val() == null || $("#smallCategory").val() == "0" ||
-        $("#smallCategory").val() == 0 || $("#smallCategory option:selected").val() == "0" || $("#smallCategory option:selected").val() == 0){
+    if($("#smallCategory").val() == "소분류 선택" || $("#smallCategory").val() == "" ||
+        $("#smallCategory").val() == null || $("#smallCategory option:selected").val() == "소분류 선택"){
         resultObject["#smallCategory"] = $("#smallCategory").data('error') + " 입력되지 않았습니다.";
     }
 
@@ -64,16 +66,7 @@ function checkStoreDtoForm(){
         resultObject["#storeName"] = "50자 이내로 작성해주세요.";
     }
 
-    var files = getFileArray();
-    var count = 0;
-    for(var i = 0; i < files.length; i++){
-        if(files[i].is_delete == true){
-            count++;
-        }
-    };
-    if(files == null || files.length == count){
-        resultObject["#input-image"] = "이미지를 1개 이상 업로드해주세요."
-    }
+    checkImages(resultObject);
 
     $.each(resultObject, function(key, value){
         if($(key).closest("div").parent("div").next("div").find(".error").text().length == 0){

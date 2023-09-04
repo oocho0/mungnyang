@@ -59,10 +59,10 @@ class AccommodationServiceTest {
     void 숙소를_등록하여_입력한_정보가_올바른지_확인한다() {
         //given - BeforeEach
         //when
-        Accommodation findAccommodation = accommodationService.findAccommodationByName(testDto.getAccommodationName());
-        List<AccommodationImage> findAccommodationImages = accommodationImageService.findAccommodationImageByAccommodation(findAccommodation);
+        Accommodation findAccommodation = accommodationService.getAccommodationByAccommodationName(testDto.getAccommodationName());
+        List<AccommodationImage> findAccommodationImages = accommodationImageService.getAccommodationImageListByAccommodation(findAccommodation);
         List<AccommodationFacility> findAccommodationFacilities = accommodationFacilityService.findAccommodationFacilityByAccommodation(findAccommodation);
-        List<Room> findRooms = roomService.findRoomByAccommodation(findAccommodation);
+        List<Room> findRooms = roomService.getRoomListByAccommodation(findAccommodation);
         List<RoomFacility> roomFacilities = roomFacilityService.findRoomFacilityByRoom(findRooms.get(0));
         List<RoomImage> roomImages = roomImageService.findRoomImageByRoom(findRooms.get(0));
 

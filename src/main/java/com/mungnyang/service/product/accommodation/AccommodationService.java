@@ -8,18 +8,15 @@ import com.mungnyang.dto.product.accommodation.ModifyAccommodationDto;
 import com.mungnyang.dto.product.accommodation.room.CreateRoomDto;
 import com.mungnyang.dto.product.accommodation.room.ListRoomDto;
 import com.mungnyang.entity.fixedEntity.SmallCategory;
-import com.mungnyang.entity.member.Member;
 import com.mungnyang.entity.product.accommodation.Accommodation;
 import com.mungnyang.repository.product.accommodation.AccommodationRepository;
 import com.mungnyang.service.fixedEntity.CategoryService;
 import com.mungnyang.service.fixedEntity.StateCityService;
-import com.mungnyang.service.member.MemberService;
 import com.mungnyang.service.product.StatusService;
 import com.mungnyang.service.product.accommodation.room.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -44,8 +41,8 @@ public class AccommodationService {
      * 숙소 등록 시 필요한 소분류를 모델에 담아 전달
      * @param model 전달할 모델
      */
-    public void initializeStore(Model model) {
-        List<SmallCategory> smallCategoryList = categoryService.getSmallCategoriesWithOutThisBigCategoryId(1L);
+    public void initializeCreateAccommodationPage(Model model) {
+        List<SmallCategory> smallCategoryList = categoryService.getSmallCategoryListByBigCategoryId(1L);
         model.addAttribute("smallCategories", smallCategoryList);
         String[] accommodationFacility = {"24시간 리셉션", "반려견 운동장", "반려견 수영장", "주차", "무료 WiFi", "반려견 셀프 목욕", "조식"};
         model.addAttribute("accommodationFacility", accommodationFacility);
@@ -58,7 +55,7 @@ public class AccommodationService {
      * @param accommodationName
      * @return
      */
-    public Accommodation findAccommodationByName(String accommodationName) {
+    public Accommodation getAccommodationByAccommodationName(String accommodationName) {
         Accommodation findAccommodation = accommodationRepository.findByAccommodationName(accommodationName);
         if (findAccommodation == null) {
             throw new IllegalStateException();
@@ -82,7 +79,7 @@ public class AccommodationService {
         accommodationRepository.save(accommodation);
         accommodationImageService.saveAccommodationImages(accommodation, accommodationImageFileList);
         accommodationFacilityService.saveAccommodationFacilities(accommodation, accommodationFacilityList);
-        roomService.saveRoom(accommodation, roomList);
+        roomService.saveRoomList(accommodation, roomList);
     }
 
     /**
@@ -91,28 +88,29 @@ public class AccommodationService {
      * @return List<숙소 정보>
      */
     @Transactional(readOnly = true)
-    public List<ListAccommodationDto> getAccommodationsForList(String email) {
+    public List<ListAccommodationDto> getListAccommodationDtoListByCreatedBy(String email) {
         List<ListAccommodationDto> listAccommodationDtos =  accommodationRepository.findListAccommodationDtoByCreatedByOrderByReqDateDesc(email);
         for (ListAccommodationDto listAccommodationDto : listAccommodationDtos) {
-            List<ListRoomDto> roomDtoList = roomService.findRoomListInfoByAccommodation(listAccommodationDto);
+            List<ListRoomDto> roomDtoList = roomService.getListRoomDtoListByListAccommodationDto(listAccommodationDto);
             listAccommodationDto.setRooms(roomDtoList);
         }
         return listAccommodationDtos;
     }
 
-    public ModifyAccommodationDto findAccommodationByAccommodationId(Long accommodationId) {
-        ModifyAccommodationDto modifyAccommodationDto = getAccommodation(accommodationId);
-        modifyAccommodationDto.setAccommodationImageDtoList(accommodationImageService.findAccommodationImageDtos(accommodationId));
-        return modifyAccommodationDto;
-    }
-
-    private ModifyAccommodationDto getAccommodation(Long accommodationId) {
+    /**
+     * 수정할 숙소 정보 가져오기
+     * @param accommodationId 수정할 숙소 일련번호
+     * @return ModifyAccommodationDto
+     */
+    public ModifyAccommodationDto getModifyAccommodationDtoByAccommodationId(Long accommodationId) {
         Accommodation findAccommodation = accommodationRepository.findById(accommodationId).orElseThrow(IllegalArgumentException::new);
         modelMapper.typeMap(Accommodation.class, ModifyAccommodationDto.class).addMappings(mapping -> {
             mapping.using((Converter<Status, String>) context -> StatusService.statusConverter(context.getSource())).map(Accommodation::getAccommodationStatus, ModifyAccommodationDto::setAccommodationStatus);
             mapping.skip(ModifyAccommodationDto::setAccommodationImageDtoList);
         });
-        return modelMapper.map(findAccommodation, ModifyAccommodationDto.class);
+        ModifyAccommodationDto modifyAccommodationDto = modelMapper.map(findAccommodation, ModifyAccommodationDto.class);
+        modifyAccommodationDto.setAccommodationImageDtoList(accommodationImageService.getAccommodationImageDtoListByAccommodationId(accommodationId));
+        return modifyAccommodationDto;
     }
 
     /**

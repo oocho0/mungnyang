@@ -1,9 +1,7 @@
 package com.mungnyang.service.product.store;
 
 
-import com.mungnyang.constant.IsTrue;
 import com.mungnyang.constant.Status;
-import com.mungnyang.dto.product.accommodation.FacilityDto;
 import com.mungnyang.dto.product.store.CreateStoreDto;
 import com.mungnyang.entity.product.store.Store;
 import com.mungnyang.entity.product.store.StoreImage;
@@ -43,7 +41,7 @@ class StoreServiceTest {
         //given - BeforeEach
         //when
         Store findStore = storeService.findStoreByName(testDto.getStoreName());
-        List<StoreImage> findStoreImages = storeImageService.findStoreImages(findStore);
+        List<StoreImage> findStoreImages = storeImageService.getStoreImageListByStore(findStore);
 
         //then
         assertThat(findStore.getStoreName()).isEqualTo(testDto.getStoreName());

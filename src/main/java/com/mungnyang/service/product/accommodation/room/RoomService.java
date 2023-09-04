@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,15 +34,19 @@ public class RoomService {
      * @param accommodation Room 참조할 Accommodation
      * @param roomList 페이지에 입력된 Room 정보 리스트
      */
-    public void saveRoom(Accommodation accommodation, List<CreateRoomDto> roomList) throws Exception {
+    public void saveRoomList(Accommodation accommodation, List<CreateRoomDto> roomList) throws Exception {
         for (CreateRoomDto createRoomDto : roomList) {
-            Room createdRoom = createdRoom(accommodation, createRoomDto);
-            roomRepository.save(createdRoom);
-            List<MultipartFile> roomImageFileList = createRoomDto.getImageFile();
-            roomImageService.saveRoomImages(createdRoom, roomImageFileList);
-            List<FacilityDto> roomFacilityList = createRoomDto.getFacilityList();
-            roomFacilityService.saveRoomFacility(createdRoom, roomFacilityList);
+            saveRoomList(accommodation, createRoomDto);
         }
+    }
+
+    private void saveRoomList(Accommodation accommodation, CreateRoomDto createRoomDto) throws Exception {
+        Room createdRoom = createdRoom(accommodation, createRoomDto);
+        roomRepository.save(createdRoom);
+        List<MultipartFile> roomImageFileList = createRoomDto.getImageFile();
+        roomImageService.saveRoomImages(createdRoom, roomImageFileList);
+        List<FacilityDto> roomFacilityList = createRoomDto.getFacilityList();
+        roomFacilityService.saveRoomFacility(createdRoom, roomFacilityList);
     }
 
     /**
@@ -67,7 +72,7 @@ public class RoomService {
      * @param accommodation 찾을 Accommodation 객체
      * @return 찾은 Room 리스트 없으면 예외 발생
      */
-    public List<Room> findRoomByAccommodation(Accommodation accommodation) {
+    public List<Room> getRoomListByAccommodation(Accommodation accommodation) {
         List<Room> rooms = roomRepository.findByAccommodationAccommodationIdOrderByRoomId(accommodation.getAccommodationId());
         if (rooms.isEmpty()) {
             throw new IllegalArgumentException();
@@ -80,10 +85,17 @@ public class RoomService {
      * @param listAccommodationDto 찾을 Accommodation 객체의 숙소 리스트 화면 Dto
      * @return Room 객체 리스트
      */
-    public List<ListRoomDto> findRoomListInfoByAccommodation(ListAccommodationDto listAccommodationDto) {
-        List<ListRoomDto> roomDtos = roomRepository.findListRoomDtoByAccommodationId(listAccommodationDto.getAccommodationId());
-        if (roomDtos.isEmpty()) {
+    public List<ListRoomDto> getListRoomDtoListByListAccommodationDto(ListAccommodationDto listAccommodationDto) {
+        List<Room> rooms = roomRepository.findByAccommodationAccommodationIdOrderByRoomId(listAccommodationDto.getAccommodationId());
+        if (rooms.isEmpty()) {
             throw new IllegalArgumentException();
+        }
+        List<ListRoomDto> roomDtos = new ArrayList<>();
+        for (Room room : rooms) {
+            modelMapper.typeMap(Room.class, ListRoomDto.class).addMappings(mapping -> {
+                mapping.using((Converter<Status, String>) ctx -> StatusService.statusConverter(ctx.getSource())).map(Room::getRoomStatus, ListRoomDto::setRoomStatus);
+            });
+            roomDtos.add(modelMapper.map(room, ListRoomDto.class));
         }
         return roomDtos;
     }

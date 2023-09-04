@@ -6,6 +6,7 @@ import com.mungnyang.entity.product.Product;
 import com.mungnyang.entity.product.ProductAddress;
 import com.mungnyang.entity.fixedEntity.SmallCategory;
 import com.mungnyang.entity.WriterEntity;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -14,8 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 
-import java.io.IOException;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -27,7 +25,7 @@ public class ImageService {
     /**
      * 신규 이미지 저장
      * @param product Store/Accommodation/Room 타입에 참조할 이미지 저장
-     * @param imageFile 저장할 이미지 파일 MulipartFile
+     * @param imageFile 저장할 이미지 파일 MultipartFile
      * @param i 저장할 이미지의 index
      * @return 저장된 이미지 객체
      * @throws Exception
@@ -54,11 +52,26 @@ public class ImageService {
                 savePath = path.getRoomImagePath();
             }
             imageName = fileIOService.uploadFile(savePath, originalFileName, imageFile.getBytes());
-            imageUrl = "/image/" + product.getClass().getName().toLowerCase() + "/" + imageName;
+            imageUrl = "/image/" + product.getClass().getSimpleName().toLowerCase() + "/" + imageName;
         }
         image.setName(imageName);
         image.setFileName(originalFileName);
         image.setUrl(imageUrl);
         return image;
+    }
+
+    public void deleteImage(Product product, Image image) throws Exception {
+        String savedPath = "";
+        if (product instanceof Store) {
+            savedPath = path.getStoreImagePath();
+        }
+        if (product instanceof Accommodation) {
+            savedPath = path.getAccomImagePath();
+        }
+        if (product instanceof Room) {
+            savedPath = path.getRoomImagePath();
+        }
+        savedPath += "/" + image.getName();
+        fileIOService.deleteFile(savedPath);
     }
 }

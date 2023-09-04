@@ -15,14 +15,6 @@ public class CategoryService {
     private final BigCategoryRepository bigCategoryRepository;
     private final SmallCategoryRepository smallCategoryRepository;
 
-    /**
-     * 모든 대분류를 Big_category_id의 오름차순으로 정렬 조회
-     * @return
-     */
-    public List<BigCategory> getAllBigCategories() {
-        return bigCategoryRepository.findAllByOrderByBigCategoryIdAsc();
-    }
-
     public BigCategory getBigCategoriesById(Long bigCategoryId) {
         return bigCategoryRepository.findById(bigCategoryId).orElseThrow(IllegalArgumentException::new);
     }
@@ -32,7 +24,7 @@ public class CategoryService {
      * @param bigCategoryId 조회할 대분류 id
      * @return
      */
-    public List<SmallCategory> getSmallCategoriesWithOutThisBigCategoryId(Long bigCategoryId){
+    public List<SmallCategory> getSmallCategoryListByBigCategoryId(Long bigCategoryId){
         return smallCategoryRepository.findByBigCategoryBigCategoryIdOrderBySmallCategoryIdAsc(bigCategoryId);
     }
 

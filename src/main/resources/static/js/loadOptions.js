@@ -8,10 +8,10 @@ function loadSmallCategory() {
         $("#smallCategory").attr('disabled', true);
         $("#smallCategory").empty();
         if($("#bigCategory option:first").text() == "대분류 전체"){
-            $("#smallCategory").append(${'<option value="" selected>소분류 전체</option>'});
+            $("#smallCategory").append($('<option value="" selected>소분류 전체</option>'));
         }
         if($("#bigCategory option:first").text() == "대분류 선택"){
-            $("#smallCategory").append(${'<option value="" selected>소분류 선택</option>'});
+            $("#smallCategory").append($('<option value="" selected>소분류 선택</option>'));
         }
         var bigCategoryId = $("#bigCategory option:selected").val();
         if(bigCategoryId == "대분류 선택" || bigCategoryId == "대분류 전체"){

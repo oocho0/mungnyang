@@ -7,7 +7,6 @@ import com.mungnyang.dto.product.accommodation.room.RoomList;
 import com.mungnyang.service.product.accommodation.AccommodationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -28,12 +27,12 @@ public class AccommodationController {
 
     @GetMapping("/accommodation")
     public String loadRegisterPage(Model model) {
-        accommodationService.initializeStore(model);
+        accommodationService.initializeCreateAccommodationPage(model);
         return "seller/register";
     }
 
     @PostMapping("/accommodation")
-    public ResponseEntity<?> receiveData(CreateAccommodationDto createAccommodationDto,
+    public ResponseEntity<?> registerAccommodation(CreateAccommodationDto createAccommodationDto,
                                          @RequestPart("imageFile")
                                          List<MultipartFile> accommodationImageFileList,
                                          @ModelAttribute AccommodationFacilityList accommodationFacilityList,
@@ -50,14 +49,14 @@ public class AccommodationController {
 
     @GetMapping("/accommodations")
     public String loadListPage(Model model, Principal principal) {
-        List<ListAccommodationDto> findAccommodations = accommodationService.getAccommodationsForList(principal.getName());
+        List<ListAccommodationDto> findAccommodations = accommodationService.getListAccommodationDtoListByCreatedBy(principal.getName());
         model.addAttribute("accommodations", findAccommodations);
         return "seller/list";
     }
 
     @GetMapping("/accommodations/{accommodationId}")
     public String loadModifyPage(@PathVariable Long accommodationId, Model model) {
-        ModifyAccommodationDto findAccommodation = accommodationService.findAccommodationByAccommodationId(accommodationId);
+        ModifyAccommodationDto findAccommodation = accommodationService.getModifyAccommodationDtoByAccommodationId(accommodationId);
         model.addAttribute(accommodationId);
         return "seller/modify";
     }

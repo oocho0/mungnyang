@@ -39,7 +39,7 @@ public class AccommodationImageService {
         }
     }
 
-    public List<AccommodationImage> findAccommodationImageByAccommodation(Accommodation accommodation) {
+    public List<AccommodationImage> getAccommodationImageListByAccommodation(Accommodation accommodation) {
         List<AccommodationImage> accommodationImages = accommodationImageRepository.findByAccommodationAccommodationIdOrderByAccommodationImageId(accommodation.getAccommodationId());
         if (accommodationImages.isEmpty()) {
             throw new IllegalArgumentException();
@@ -47,7 +47,7 @@ public class AccommodationImageService {
         return accommodationImages;
     }
 
-    public List<AccommodationImageDto> findAccommodationImageDtos(Long accommodationId) {
+    public List<AccommodationImageDto> getAccommodationImageDtoListByAccommodationId(Long accommodationId) {
         List<AccommodationImage> findImages = accommodationImageRepository.findByAccommodationAccommodationIdOrderByAccommodationImageId(accommodationId);
         List<AccommodationImageDto> accommodationImageDtoList = null;
         for (AccommodationImage findImage : findImages) {

@@ -23,5 +23,4 @@ public class ModifyStoreDto {
     private Double productAddressLat;
     private String storeDetail;
     private String storeStatus;
-    private List<StoreImageDto> storeImageDtoList;
 }
