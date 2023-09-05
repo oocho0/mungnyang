@@ -74,7 +74,7 @@ function addFacilityData(formData){
 
 function addRoomFacilityData(formData, j){
     var facilityIdPrefix = "room" + (j+1) + "-facility";
-    var lastId = $("#room" + (j+1) + " .row:last").find("input[type='text']:last").attr("id");
+    var lastId = $("#room" + (j+1) + " .row:eq(-2)").find("input[type='text']:last").attr("id");
     var lastIndex = Number($("#"+lastId).attr('data-facilityIndex'));
     for(var i = 0; i < lastIndex -1; i++){
         formData.append("roomList[" + j + "].facilityList[" + i + "].name", $("#"+facilityIdPrefix + (i+1)).closest("div").find("label").text());

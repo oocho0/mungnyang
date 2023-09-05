@@ -6,7 +6,7 @@ function addFile(selectedFiles) {
     fileWorks(eventId, "image-file", selectedFiles, "#explain-image", fileArray, "#image-list", "#input-image", "deleteFile");
 }
 
-var roomFileArray = [[],[],[],[],[],[],[]];
+var roomFileArray = [[],[],[],[],[],[],[],[],[],[]];
 
 function addRoomFile(selectedFiles){
     var eventId = $(event.target).attr("id");

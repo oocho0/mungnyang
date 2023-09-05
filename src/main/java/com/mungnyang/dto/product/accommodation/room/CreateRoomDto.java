@@ -18,4 +18,5 @@ public class CreateRoomDto {
 
     private List<MultipartFile> imageFile;
     private List<FacilityDto> facilityList;
+    private List<InitializeReservationRoomDto> reservationList;
 }

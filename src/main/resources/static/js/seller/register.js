@@ -46,6 +46,7 @@ function makeFormData(formData){
         formData.append("roomList[" + i + "].roomStatus", $("[name='roomStatus" + (i+1) + "']:checked").val());
         addFormDataWithRoom(formData, i);
         addRoomFacilityData(formData, i);
+        addBookingDate(formData, i);
     }
 }
 

@@ -1,9 +1,3 @@
-$(document).ready(function(){
-    for(var i = 2; i < 11; i++){
-        $("#room"+i).hide();
-    }
-    setting();
-});
 function setting(){
     $("#roomAmount").on("change", function(){
         var roomAmount = Number($("#roomAmount").val());

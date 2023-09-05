@@ -3,12 +3,14 @@ package com.mungnyang.service.product.accommodation.room;
 import com.mungnyang.constant.Status;
 import com.mungnyang.dto.product.accommodation.FacilityDto;
 import com.mungnyang.dto.product.accommodation.ListAccommodationDto;
+import com.mungnyang.dto.product.accommodation.room.InitializeReservationRoomDto;
 import com.mungnyang.dto.product.accommodation.room.CreateRoomDto;
 import com.mungnyang.dto.product.accommodation.room.ListRoomDto;
 import com.mungnyang.entity.product.accommodation.Accommodation;
 import com.mungnyang.entity.product.accommodation.room.Room;
 import com.mungnyang.repository.product.accommodation.room.RoomRepository;
 import com.mungnyang.service.product.StatusService;
+import com.mungnyang.service.service.ReservationRoomService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -28,6 +30,7 @@ public class RoomService {
     private final ModelMapper modelMapper;
     private final RoomImageService roomImageService;
     private final RoomFacilityService roomFacilityService;
+    private final ReservationRoomService reservationRoomService;
 
     /**
      * Room, RoomFacility, RoomImage 신규 저장
@@ -47,6 +50,8 @@ public class RoomService {
         roomImageService.saveRoomImages(createdRoom, roomImageFileList);
         List<FacilityDto> roomFacilityList = createRoomDto.getFacilityList();
         roomFacilityService.saveRoomFacility(createdRoom, roomFacilityList);
+        List<InitializeReservationRoomDto> initializeReservationRoomDtoList = createRoomDto.getReservationList();
+        reservationRoomService.saveReservationRoom(createdRoom, initializeReservationRoomDtoList);
     }
 
     /**
