@@ -12,7 +12,7 @@ class image {
 $(document).ready(function(){
     $("#explain-image").hide();
     var lastIndex = $("#input-image").attr("data-imageIndex");
-    for(var i = 0; i < lastIndex; i++){
+    for(var i = 0; i < lastIndex+1; i++){
         fileArray.push(new image($("#image-file" + i).attr("data-id"), null));
     }
 });
@@ -90,15 +90,19 @@ function checkImages(resultObject){
             count++;
         }
     }
-    if(fileArray.length == count || $("#explain-image").is(":visible")){
+    if(fileArray.length == count || fileArray.length == 0){
         resultObject["#input-image"] = "이미지를 1개 이상 업로드해주세요.";
     }
 }
 
 function addImageToFormData(formData){
     for(var i = 0; i < fileArray.length; i++){
-        formData.append("imageList["+i+"].imageId", fileArray[i].id);
+        if(fileArray[i].id != null ){
+            formData.append("imageList["+i+"].imageId", fileArray[i].id);
+        }
         formData.append("imageList["+i+"].isDelete", fileArray[i].is_delete);
-        formData.append("imageList["+i+"].imageFile", fileArray[i].imageFile);
+        if(fileArray[i].imageFile != null){
+            formData.append("imageList["+i+"].imageFile", fileArray[i].imageFile);
+        }
     }
 }

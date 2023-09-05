@@ -62,7 +62,7 @@ public class StorePageRepositoryImpl implements StorePageRepository {
 
     @Override
     public Page<ListStoreDto> getStoreListDtoCriteriaPaging(SearchStoreFilter searchStoreFilter, Pageable pageable) {
-        Status storeStatus = searchStoreFilter.getByStoreStatus() == null ? null : StatusService.statusConverter(searchStoreFilter.getByStoreStatus());
+        Status storeStatus = (searchStoreFilter.getByStoreStatus()==null || searchStoreFilter.getByStoreStatus().equals("")) ? null : StatusService.statusConverter(searchStoreFilter.getByStoreStatus());
         List<ListStoreDto> results = jpaQueryFactory.select(
                         new QListStoreDto(
                                 store.storeId,

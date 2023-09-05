@@ -39,7 +39,11 @@ public class StateCityService {
      */
     public City getMatchedCity(String zipcode){
         Long zipcodeLong = Long.parseLong(zipcode);
-        return cityRepository.findCityByZipcodeStartLessThanEqualAndZipcodeEndGreaterThanEqual(zipcodeLong, zipcodeLong);
+        City findCity = cityRepository.findByZipcode(zipcodeLong, zipcodeLong);
+        if (findCity == null) {
+            throw new IllegalArgumentException();
+        }
+        return findCity;
     }
 
     public State findStateByStateId(Long stateId) {

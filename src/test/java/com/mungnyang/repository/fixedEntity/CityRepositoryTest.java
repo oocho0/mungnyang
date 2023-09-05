@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -20,8 +18,10 @@ class CityRepositoryTest {
     @Test
     @DisplayName("zipcode로 City 찾기")
     void zipcode를_넣으면_올바른_City를_반환한다(){
-        City city = cityRepository.findCityByZipcodeStartLessThanEqualAndZipcodeEndGreaterThanEqual(7072L, 7072L);
-        assertThat(city.getName()).isEqualTo("동작구");
+        String test = "1234";
+        Long encodingTest = Long.parseLong(test);
+        City city = cityRepository.findByZipcode(encodingTest, encodingTest);
+        assertThat(city.getName()).isEqualTo("강북구");
     }
 
 }

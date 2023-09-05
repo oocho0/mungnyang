@@ -53,7 +53,7 @@ let resultObjectKeys = [];
 
 function checkStoreDtoForm(){
     let resultObject = {};
-    const checkLabels = ["#accommodationName", "#smallCategoryId", "#addressZipcode",
+    const checkLabels = ["#accommodationName", "#addressZipcode",
     "#addressMain", "#productAddressLat", "#productAddressLon", "#checkInTime", "#checkOutTime"];
 
     if(resultObjectKeys.length != 0){
@@ -68,9 +68,6 @@ function checkStoreDtoForm(){
             resultObject[value] = $(value).data('error') + " 입력되지 않았습니다.";
         }
     });
-    if($("#input-image").closest("div").parent("div").next("div").find(".error").text().length != 0){
-        $("#input-image").closest("div").parent("div").next("div").remove();
-    }
 
     if($("#accommodationName").val().length > 50){
         resultObject["#accommodationName"] = "50자 이내로 작성해주세요.";

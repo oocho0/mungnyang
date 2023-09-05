@@ -41,11 +41,12 @@ public class StoreService {
 
     /**
      * 신규 편의 시설 등록하기
-     * @param createStoreDto 페이지에 입력한 편의 시설 정보
+     *
+     * @param createStoreDto     페이지에 입력한 편의 시설 정보
      * @param storeImageFileList 페이지에 입력한 편의 시설 이미지들
      * @throws Exception
      */
-    public void registerStore(CreateStoreDto createStoreDto, List<MultipartFile> storeImageFileList) throws Exception{
+    public void registerStore(CreateStoreDto createStoreDto, List<MultipartFile> storeImageFileList) throws Exception {
         Store store = createStore(createStoreDto);
         storeRepository.save(store);
         storeImageService.saveStoreImages(store, storeImageFileList);
@@ -53,7 +54,8 @@ public class StoreService {
 
     /**
      * 편의 시설 수정 화면 초기화
-     * @param model 편의 시설 수정 화면에 렌더링할 Model
+     *
+     * @param model          편의 시설 수정 화면에 렌더링할 Model
      * @param modifyStoreDto 화면에 나타낼 편의 시설 정보
      */
     public void initializeModifyStorePage(Model model, ModifyStoreDto modifyStoreDto) {
@@ -65,6 +67,7 @@ public class StoreService {
 
     /**
      * storeName으로 Store 찾기
+     *
      * @param name 찾을 Store의 이름
      * @return Null이면 예외 발생
      */
@@ -78,8 +81,9 @@ public class StoreService {
 
     /**
      * 원하는 조건에 해당하는 Store의 정보를 page에 맞게 반환
+     *
      * @param searchStoreFilter 원하는 조건
-     * @param pageable 해당 page
+     * @param pageable          해당 page
      * @return 페이지에 표시될 Store 정보
      */
     @Transactional(readOnly = true)
@@ -89,6 +93,7 @@ public class StoreService {
 
     /**
      * 수정할 Store의 정보 가져오기
+     *
      * @param storeId 수정할 Store의 일련번호
      * @return 수정할 Store의 정보
      */
@@ -103,32 +108,37 @@ public class StoreService {
 
     /**
      * 편의 시설 정보 수정
-     * @param storeId 수정할 편의 시설의 일련번호
+     *
+     * @param storeId        수정할 편의 시설의 일련번호
      * @param modifyStoreDto 수정할 편의 시설의 정보
-     * @param imageDtoList 수정할 편의 시설의 이미지 리스트
+     * @param imageDtoList   수정할 편의 시설의 이미지 리스트
      */
     public void updateStore(Long storeId, ModifyStoreDto modifyStoreDto, List<ModifyImageDto> imageDtoList) throws Exception {
         Store savedStore = getStoreByStoreId(storeId);
-        modelMapper.typeMap(ModifyStoreDto.class, Store.class).addMappings(mapping -> {
-            mapping.using((Converter<String , Status>) ctx -> StatusService.statusConverter(ctx.getSource())).map(ModifyStoreDto::getStoreStatus, Store::setStoreStatus);
-            mapping.skip(Store::setStoreId);
-            mapping.skip(Store::setSmallCategory);
-            mapping.skip(Store::setCity);
-        });
-        modelMapper.map(modifyStoreDto, savedStore);
+        savedStore.setStoreName(modifyStoreDto.getStoreName());
         savedStore.setSmallCategory(categoryService.getSmallCategoryBySmallCategoryId(modifyStoreDto.getSmallCategorySmallCategoryId()));
-        savedStore.setCity(stateCityService.getMatchedCity(modifyStoreDto.getProductAddressAddressZipcode()));
+        City matchedCity = stateCityService.getMatchedCity(modifyStoreDto.getProductAddressAddressZipcode());
+        savedStore.setCity(matchedCity);
+        savedStore.getProductAddress().getAddress().setZipcode(modifyStoreDto.getProductAddressAddressZipcode());
+        savedStore.getProductAddress().getAddress().setMain(modifyStoreDto.getProductAddressAddressMain());
+        savedStore.getProductAddress().getAddress().setDetail(modifyStoreDto.getProductAddressAddressDetail());
+        savedStore.getProductAddress().getAddress().setExtra(modifyStoreDto.getProductAddressAddressExtra());
+        savedStore.getProductAddress().setLat(modifyStoreDto.getProductAddressLat());
+        savedStore.getProductAddress().setLon(modifyStoreDto.getProductAddressLon());
+        savedStore.setStoreDetail(modifyStoreDto.getStoreDetail());
+        savedStore.setStoreStatus(StatusService.statusConverter(modifyStoreDto.getStoreStatus()));
         storeImageService.updateStoreImages(savedStore, imageDtoList);
     }
 
     /**
      * 편의 시설 생성
+     *
      * @param createStoreDto 페이지에 입력한 편의 시설체 정보
      * @return 생성된 편의 시설 객체
      */
     private Store createStore(CreateStoreDto createStoreDto) {
         modelMapper.typeMap(CreateStoreDto.class, Store.class).addMappings(mapping -> {
-            mapping.using((Converter<String , Status>) ctx -> StatusService.statusConverter(ctx.getSource())).map(CreateStoreDto::getStoreStatus, Store::setStoreStatus);
+            mapping.using((Converter<String, Status>) ctx -> StatusService.statusConverter(ctx.getSource())).map(CreateStoreDto::getStoreStatus, Store::setStoreStatus);
             mapping.skip(Store::setStoreId);
             mapping.skip(Store::setSmallCategory);
             mapping.skip(Store::setCity);
@@ -141,10 +151,23 @@ public class StoreService {
 
     /**
      * StoreId로 Store 찾기
+     *
      * @param storeId 찾을 Store의 Id
      * @return Store가 없으면 예외 반환
      */
-    private Store getStoreByStoreId(Long storeId) {
+    public Store getStoreByStoreId(Long storeId) {
         return storeRepository.findById(storeId).orElseThrow(IllegalArgumentException::new);
+    }
+
+    /**
+     * 편의 시설 삭제 시 모든 정보 제거
+     * @param storeId 삭제할 편의 시설 일련번호
+     * @throws Exception
+     */
+    public void deleteStore(Long storeId) throws Exception {
+        Store savedStore = getStoreByStoreId(storeId);
+        storeImageService.deleteAllStoreImage(savedStore);
+        storeCommentService.deleteAllStoreComments(savedStore);
+        storeRepository.delete(savedStore);
     }
 }

@@ -35,8 +35,7 @@ let resultObjectKeys = [];
 
 function checkStoreDtoForm(){
     let resultObject = new Object();
-    const checkLabels = ["#storeName", "#addressZipcode",
-    "#addressMain", "#productAddressLat", "#productAddressLon"];
+    const checkLabels = ["#storeName", "#addressZipcode", "#addressMain", "#productAddressLat", "#productAddressLon"];
 
     if(resultObjectKeys.length != 0){
         $.each(resultObjectKeys, function(index, value){
@@ -51,12 +50,8 @@ function checkStoreDtoForm(){
             resultObject[value] = $(value).data('error') + " 입력되지 않았습니다.";
         }
     });
-    if($("#input-image").closest("div").parent("div").next("div").find(".error").text().length != 0){
-        $("#input-image").closest("div").parent("div").next("div").remove();
-    }
 
-    if($("#smallCategory").val() == null || $("#smallCategory").val() == "0" ||
-        $("#smallCategory").val() == 0 || $("#smallCategory option:selected").val() == "0" || $("#smallCategory option:selected").val() == 0){
+    if($("#smallCategory").is(":disabled") == true || $("#smallCategory option:selected").text() == "소분류 선택"){
         resultObject["#smallCategory"] = $("#smallCategory").data('error') + " 입력되지 않았습니다.";
     }
 

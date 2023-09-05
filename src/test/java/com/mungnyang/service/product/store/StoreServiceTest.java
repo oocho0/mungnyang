@@ -2,9 +2,12 @@ package com.mungnyang.service.product.store;
 
 
 import com.mungnyang.constant.Status;
+import com.mungnyang.dto.product.ModifyImageDto;
 import com.mungnyang.dto.product.store.CreateStoreDto;
+import com.mungnyang.dto.product.store.ModifyStoreDto;
 import com.mungnyang.entity.product.store.Store;
 import com.mungnyang.entity.product.store.StoreImage;
+import com.mungnyang.service.fixedEntity.StateCityService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,8 +34,51 @@ class StoreServiceTest {
     @Autowired
     private StoreImageService storeImageService;
 
+    @Autowired
+    private StateCityService stateCityService;
+
     private CreateStoreDto testDto;
     private List<MultipartFile> testImageList;
+
+    @Test
+    @DisplayName("편의 시설 수정하기")
+    @WithMockUser(username = "admin@abc.com", roles = "ADMIN")
+    void 등록된_편의시설을_수정한다(){
+        Store savedStore = storeService.findStoreByName(testDto.getStoreName());
+        List<StoreImage> savedStoreImages = storeImageService.getStoreImageListByStore(savedStore);
+
+        ModifyStoreDto modifyStoreDto = new ModifyStoreDto();
+        modifyStoreDto.setStoreId(savedStore.getStoreId());
+        modifyStoreDto.setStoreName("test1수정");
+        modifyStoreDto.setSmallCategorySmallCategoryId(9L);
+        modifyStoreDto.setProductAddressAddressZipcode("1234");
+        modifyStoreDto.setProductAddressAddressMain("수정 주소 메인");
+        modifyStoreDto.setProductAddressAddressDetail("수정 주소 상세");
+        modifyStoreDto.setProductAddressAddressExtra("수정 주소 추가");
+        modifyStoreDto.setProductAddressLat(34.56);
+        modifyStoreDto.setProductAddressLon(67.89);
+        modifyStoreDto.setStoreDetail("수정 상세 정보");
+        modifyStoreDto.setStoreStatus(Status.PAUSE.name());
+        List<ModifyImageDto> modifyImageDtoList = new ArrayList<>();
+        int i = 0;
+        for (ModifyImageDto modifyImageDto : modifyImageDtoList) {
+            modifyImageDto = new ModifyImageDto();
+            modifyImageDto.setImageId(savedStoreImages.get(i++).getStoreImageId());
+            modifyImageDto.setIsDelete("N");
+            modifyImageDto.setImageFile(null);
+        }
+
+        try {
+            storeService.updateStore(savedStore.getStoreId(), modifyStoreDto, modifyImageDtoList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Store checkStore = storeService.getStoreByStoreId(savedStore.getStoreId());
+        assertThat(checkStore.getStoreName()).isEqualTo(modifyStoreDto.getStoreName());
+        assertThat(checkStore.getCity()).isEqualTo(stateCityService.getMatchedCity(modifyStoreDto.getProductAddressAddressZipcode()));
+
+    }
 
     @Test
     @DisplayName("편의 시설 등록하기")

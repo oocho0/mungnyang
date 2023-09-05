@@ -90,6 +90,18 @@ public class StoreController {
         try {
             storeService.updateStore(storeId, modifyStoreDto, modifyImageDtoList);
         } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<ErrorMessage>(new ErrorMessage(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<String>("success", HttpStatus.OK);
+    }
+
+    @DeleteMapping("/stores/{storeId}")
+    public ResponseEntity<?> deleteStore(@PathVariable Long storeId) {
+        try {
+            storeService.deleteStore(storeId);
+        } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<ErrorMessage>(new ErrorMessage(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<String>("success", HttpStatus.OK);

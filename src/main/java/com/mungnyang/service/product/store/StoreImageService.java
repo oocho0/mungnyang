@@ -79,6 +79,7 @@ public class StoreImageService {
                     isRepImageDelete = true;
                 }
                 imageService.deleteImage(store, savedImage.getImage());
+                storeImageRepository.delete(savedImage);
             }
             if (modifyImageDto.getImageId() == null) {
                 StoreImage newStoreImage = new StoreImage();
@@ -90,6 +91,14 @@ public class StoreImageService {
         if (isRepImageDelete) {
             List<StoreImage> currentImages = storeImageRepository.findByStoreStoreIdOrderByStoreImageId(store.getStoreId());
             currentImages.get(0).getImage().setIsRepresentative(IsTrue.YES);
+        }
+    }
+
+    public void deleteAllStoreImage(Store store) throws Exception {
+        List<StoreImage> savedStoreImages = getStoreImageListByStore(store);
+        for (StoreImage savedStoreImage : savedStoreImages) {
+            imageService.deleteImage(store, savedStoreImage.getImage());
+            storeImageRepository.delete(savedStoreImage);
         }
     }
 

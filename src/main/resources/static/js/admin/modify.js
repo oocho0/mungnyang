@@ -10,7 +10,7 @@ function request(){
 
     $.ajax({
         url      : url,
-        type     : "POST",
+        type     : "PUT",
         processData : false,
         contentType : false,
         data : formData,
@@ -53,12 +53,8 @@ function checkStoreDtoForm(){
             resultObject[value] = $(value).data('error') + " 입력되지 않았습니다.";
         }
     });
-    if($("#input-image").closest("div").parent("div").next("div").find(".error").text().length != 0){
-        $("#input-image").closest("div").parent("div").next("div").remove();
-    }
 
-    if($("#smallCategory").val() == "소분류 선택" || $("#smallCategory").val() == "" ||
-        $("#smallCategory").val() == null || $("#smallCategory option:selected").val() == "소분류 선택"){
+    if($("#smallCategory").is(":disabled") == true || $("#smallCategory option:selected").text() == "소분류 선택"){
         resultObject["#smallCategory"] = $("#smallCategory").data('error') + " 입력되지 않았습니다.";
     }
 
@@ -84,4 +80,37 @@ function checkStoreDtoForm(){
     }
     resultObjectKeys = Object.keys(resultObject);
     return false;
+}
+
+function deleteStore(){
+
+    var result = confirm("정말 삭제하시겠습니까?\n삭제하시려면 '확인'버튼을 누르시고\n취소하시려면 '취소'버튼을 누르세요.")
+    if(!result){
+        return false;
+    }
+    var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
+    var url = "/admin/stores/"+$("#storeId").val();
+
+    $.ajax({
+        url      : url,
+        type     : "DELETE",
+        cache   : false,
+        beforeSend : function(xhr){
+            /* 데이터를 전송하기 전에 헤더에 csrf값을 설정 */
+            xhr.setRequestHeader(header, token);
+        },
+        success  : function(result, status){
+            alert('삭제가 완료되었습니다.');
+            location.href='/admin/stores';
+        },
+        error : function(status, error){
+                if(status.status == '401'){
+                alert('로그인 후 이용해주세요');
+                location.href='/member/login';
+            } else{
+                alert(status.responseText);
+            }
+        }
+    });
 }
