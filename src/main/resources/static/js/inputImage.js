@@ -102,7 +102,7 @@ function addFormData(formData){
         if(fileArray[i].is_delete == true){
             continue;
         }
-        formData.append("imageFile", fileArray[i]);
+        formData.append("imageList[" + i + "]", fileArray[i]);
     }
 }
 
@@ -113,7 +113,7 @@ function addFormDataWithRoom(formData, i){
         if(roomFileArray[i][j].is_delete == true){
             continue;
         }
-        formData.append("roomList[" + i + "].imageFile["+k+"]", roomFileArray[i][j]);
+        formData.append("roomList[" + i + "].imageList["+k+"]", roomFileArray[i][j]);
         k++;
     }
 }
@@ -123,7 +123,7 @@ function getFileArray(){
     return fileArray;
 }
 
-function accommodationImageCheck(resultObject){
+function singleImageCheck(resultObject){
     imageCheck(fileArray, resultObject, "#input-image");
 }
 

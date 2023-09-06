@@ -1,7 +1,10 @@
 package com.mungnyang.dto.product.store;
 
+import com.mungnyang.dto.product.ModifyImageDto;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,4 +24,5 @@ public class ModifyStoreDto {
     private Double productAddressLat;
     private String storeDetail;
     private String storeStatus;
+    private List<ModifyImageDto> imageList;
 }

@@ -1,7 +1,6 @@
 package com.mungnyang.entity.product.accommodation;
 
 import com.mungnyang.entity.WriterEntity;
-import com.mungnyang.entity.product.Facility;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,9 +16,7 @@ public class AccommodationFacility extends WriterEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long accommodationFacilityId;
 
-    @Embedded
-    @Column
-    private Facility facility;
+    private String facilityName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accommodation_id")

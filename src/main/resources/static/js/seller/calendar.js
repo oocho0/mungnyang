@@ -1,7 +1,7 @@
 class book {
-    constructor(startDate, endDate, title) {
-        this.startDate = startDate;
-        this.endDate = endDate;
+    constructor(checkInDate, checkOutDate, title) {
+        this.checkInDate = checkInDate;
+        this.checkOutDate = checkOutDate;
         this.title = title;
     }
 }
@@ -15,28 +15,28 @@ document.addEventListener('DOMContentLoaded', function() {
         timeZone: 'KST',
         initialView: 'multiMonthYear',
         multiMonthMaxColumns: 1,
-        editable: true,
+        editable: false,
         locale: 'ko',
         selectable: true,
         displayEventTime: false,
         select: function(info){
             var now = moment();
-            var startDate = moment(info.start);
-            startDate.set({'hour': 15, 'minute': 0, 'second': 0, 'millisecond': 0});
-            var endDate = moment(info.end);
-            endDate.subtract(1, "days");
-            endDate.set({'hour': 11, 'minute': 0, 'second': 0, 'millisecond': 0});
-            if(startDate.date() != endDate.date() && startDate.isSameOrAfter(now, "day") && endDate.isSameOrAfter(now, "day")){
-                if(!validate(startDate, endDate)){
+            var checkInDate = moment(info.start);
+            checkInDate.set({'hour': 15, 'minute': 0, 'second': 0, 'millisecond': 0});
+            var checkOutDate = moment(info.end);
+            checkOutDate.subtract(1, "days");
+            checkOutDate.set({'hour': 11, 'minute': 0, 'second': 0, 'millisecond': 0});
+            if(checkInDate.date() != checkOutDate.date() && checkInDate.isSameOrAfter(now, "day") && checkOutDate.isSameOrAfter(now, "day")){
+                if(!validate(checkInDate, checkOutDate)){
                     return false;
                 }
                 var description = "예약" + eventCount++;
-                initialBooked.push(new book(startDate, endDate, description));
+                initialBooked.push(new book(checkInDate, checkOutDate, description));
                 calendar.addEvent({
                     title: '예약됨',
                     id: description,
-                    start: startDate.toDate(),
-                    end: endDate.toDate()
+                    start: checkInDate.toDate(),
+                    end: checkOutDate.toDate()
                 });
                 console.log(initialBooked);
             }
@@ -57,25 +57,25 @@ document.addEventListener('DOMContentLoaded', function() {
     calendar.render();
 });
 
-function validate(startDate, endDate){
+function validate(checkInDate, checkOutDate){
     if(initialBooked.length > 0){
         for(var i=0; i<initialBooked.length; i++){
-            if(startDate.isSame(initialBooked[i].startDate, "day")){
+            if(checkInDate.isSame(initialBooked[i].checkInDate, "day")){
                 return false;
             }
-            if(endDate.isSame(initialBooked[i].endDate, "day")){
+            if(checkOutDate.isSame(initialBooked[i].checkOutDate, "day")){
                 return false;
             }
-            if(startDate.isBetween(initialBooked[i].startDate, initialBooked[i].endDate, "day")){
+            if(checkInDate.isBetween(initialBooked[i].checkInDate, initialBooked[i].checkOutDate, "day")){
                 return false;
             }
-            if(endDate.isBetween(initialBooked[i].startDate, initialBooked[i].endDate, "day")){
+            if(checkOutDate.isBetween(initialBooked[i].checkInDate, initialBooked[i].checkOutDate, "day")){
                 return false;
             }
-            if(initialBooked[i].startDate.isBetween(startDate, endDate, "day")){
+            if(initialBooked[i].checkInDate.isBetween(checkInDate, checkOutDate, "day")){
                 return false;
             }
-            if(initialBooked[i].endDate.isBetween(startDate, endDate, "day")){
+            if(initialBooked[i].checkOutDate.isBetween(checkInDate, checkOutDate, "day")){
                 return false;
             }
         }
@@ -84,9 +84,11 @@ function validate(startDate, endDate){
     return true;
 }
 
-function addBookingDate(formData){
+function addReservationList(formData){
     for(var i = 0; i < initialBooked.length; i++){
-        formData.append("bookedList[" + i + "].startDate", initialBooked[i].startDate);
-        formData.append("bookedList[" + i + "].endDate", initialBooked[i].endDate);
+        var parsedCheckInDate = initialBooked[i].checkInDate.add("9","hours");
+        var parsedCheckOutDate = initialBooked[i].checkOutDate.add("9","hours");
+        formData.append("reservationList[" + i + "].checkInDate", parsedCheckInDate.format("YYYY-MM-DD[T]HH:mm:ss"));
+        formData.append("reservationList[" + i + "].checkOutDate", parsedCheckOutDate.format("YYYY-MM-DD[T]HH:mm:ss"));
     }
 }

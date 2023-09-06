@@ -171,21 +171,13 @@
                     <div class="col-2 text-end">
                         <label class="col-form-label">숙소 시설</label>
                     </div>
-                    <div class="col-4 text-start" id="odd">
-                        <div class="form-check form-switch" th:each="num : ${#numbers.sequence(1,7,2)}">
-                            <input class="form-check-input facility" type="checkbox" role="switch" th:id="|facility${num}|" th:data-facilityIndex="${num}"/>
-                            <label class="form-check-label" th:for="|facility${num}|" th:text="${accommodationFacility[num-1]}"></label>
-                        </div>
-                    </div>
-                    <div class="col-4 text-start"  id="even">
-                        <div class="form-check form-switch" th:each="num : ${#numbers.sequence(2,6,2)}">
-                            <input class="form-check-input facility" type="checkbox" role="switch" th:id="|facility${num}|" th:data-facilityIndex="${num}"/>
-                            <label class="form-check-label" th:for="|facility${num}|" th:text="${accommodationFacility[num-1]}"></label>
-                        </div>
+                    <div class="col-4 text-start">
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control" aria-label="숙소 시설" id="facility8" placeholder="추가 숙소 시설" th:data-facilityIndex="8">
+                            <input type="text" class="form-control" data-error="숙소 시설이" aria-label="숙소 시설" id="facility0" placeholder="숙소 시설을 추가하세요." th:data-facilityIndex="0">
                             <button class="btn btn-outline-secondary" type="button" onclick="addFacility();">추가</button>
                         </div>
+                    </div>
+                    <div class="col-4 text-start">
                     </div>
                 </div>
                 <!--방 개수-->
@@ -290,21 +282,13 @@
                                     <div class="col-3 text-end">
                                         <label class="col-form-label">방 시설</label>
                                     </div>
-                                    <div class="col-4 text-start" th:id="|odd${num}|">
-                                        <div class="form-check form-switch" th:each="facNum : ${#numbers.sequence(1,7,2)}">
-                                            <input th:class="|form-check-input roomFacility${num}|" type="checkbox" role="switch" th:id="|room${num}-facility${facNum}|" th:data-facilityIndex="${facNum}"/>
-                                            <label class="form-check-label" th:for="|room${num}-facility${facNum}|" th:text="${roomFacility[facNum-1]}"></label>
-                                        </div>
-                                    </div>
-                                    <div class="col-4 text-start" th:id="|even${num}|">
-                                        <div class="form-check form-switch" th:each="facNum : ${#numbers.sequence(2,6,2)}">
-                                            <input th:class="|form-check-input roomFacility${num}|" type="checkbox" role="switch" th:id="|room${num}-facility${facNum}|" th:data-facilityIndex="${facNum}"/>
-                                            <label class="form-check-label" th:for="|room${num}-facility${facNum}|" th:text="${roomFacility[facNum-1]}"></label>
-                                        </div>
+                                    <div class="col-4 text-start">
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control" aria-label="숙소 시설" th:id="|room${num}-facility8|" placeholder="추가 숙소 시설" th:data-facilityIndex="8">
+                                            <input type="text" class="form-control" data-error="방 시설이" aria-label="방 시설" th:id="|room${num}-facility0|" placeholder="방 시설을 추가하세요." th:data-facilityIndex="0">
                                             <button class="btn btn-outline-secondary" type="button" onclick="addRoomFacility();">추가</button>
                                         </div>
+                                    </div>
+                                    <div class="col-4 text-start">
                                     </div>
                                 </div>
                                 <!--방 예약-->

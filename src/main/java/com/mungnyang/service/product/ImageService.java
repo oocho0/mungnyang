@@ -27,7 +27,7 @@ public class ImageService {
      * @param product Store/Accommodation/Room 타입에 참조할 이미지 저장
      * @param imageFile 저장할 이미지 파일 MultipartFile
      * @param i 저장할 이미지의 index
-     * @return 저장된 이미지 객체
+     * @return 저장된 Image 엔티티
      * @throws Exception
      */
     public Image createImage(Product product, MultipartFile imageFile, int i) throws Exception {
@@ -60,6 +60,12 @@ public class ImageService {
         return image;
     }
 
+    /**
+     * 이미지 삭제
+     * @param product Store/Accommodation/Room 타입에 참조된 이미지 삭제
+     * @param image 삭제할 이미지 엔티티
+     * @throws Exception
+     */
     public void deleteImage(Product product, Image image) throws Exception {
         String savedPath = "";
         if (product instanceof Store) {

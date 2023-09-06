@@ -1,11 +1,11 @@
 package com.mungnyang.service.product.accommodation.room;
 
 import com.mungnyang.constant.Status;
-import com.mungnyang.dto.product.accommodation.FacilityDto;
 import com.mungnyang.dto.product.accommodation.ListAccommodationDto;
 import com.mungnyang.dto.product.accommodation.room.InitializeReservationRoomDto;
 import com.mungnyang.dto.product.accommodation.room.CreateRoomDto;
 import com.mungnyang.dto.product.accommodation.room.ListRoomDto;
+import com.mungnyang.dto.product.accommodation.room.ModifyRoomDto;
 import com.mungnyang.entity.product.accommodation.Accommodation;
 import com.mungnyang.entity.product.accommodation.room.Room;
 import com.mungnyang.repository.product.accommodation.room.RoomRepository;
@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -33,22 +34,28 @@ public class RoomService {
     private final ReservationRoomService reservationRoomService;
 
     /**
-     * Room, RoomFacility, RoomImage 신규 저장
+     * 신규 숙소 등록 화면에서 온 정보로 Room, RoomFacility, RoomImage 신규 저장
      * @param accommodation Room 참조할 Accommodation
      * @param roomList 페이지에 입력된 Room 정보 리스트
      */
     public void saveRoomList(Accommodation accommodation, List<CreateRoomDto> roomList) throws Exception {
         for (CreateRoomDto createRoomDto : roomList) {
-            saveRoomList(accommodation, createRoomDto);
+            saveRoom(accommodation, createRoomDto);
         }
     }
 
-    private void saveRoomList(Accommodation accommodation, CreateRoomDto createRoomDto) throws Exception {
+    /**
+     * 하나의 Room의 RoomFacility들, RoomImage들 저장
+     * @param accommodation 해당 숙소
+     * @param createRoomDto 페이지에 입력된 Room 정보 리스트
+     * @throws Exception
+     */
+    public void saveRoom(Accommodation accommodation, CreateRoomDto createRoomDto) throws Exception {
         Room createdRoom = createdRoom(accommodation, createRoomDto);
         roomRepository.save(createdRoom);
-        List<MultipartFile> roomImageFileList = createRoomDto.getImageFile();
+        List<MultipartFile> roomImageFileList = createRoomDto.getImageList();
         roomImageService.saveRoomImages(createdRoom, roomImageFileList);
-        List<FacilityDto> roomFacilityList = createRoomDto.getFacilityList();
+        List<String> roomFacilityList = createRoomDto.getFacilityList();
         roomFacilityService.saveRoomFacility(createdRoom, roomFacilityList);
         List<InitializeReservationRoomDto> initializeReservationRoomDtoList = createRoomDto.getReservationList();
         reservationRoomService.saveReservationRoom(createdRoom, initializeReservationRoomDtoList);
@@ -74,11 +81,10 @@ public class RoomService {
 
     /**
      * Accommodation 객체로 Room 객체 리스트 반환
-     * @param accommodation 찾을 Accommodation 객체
      * @return 찾은 Room 리스트 없으면 예외 발생
      */
-    public List<Room> getRoomListByAccommodation(Accommodation accommodation) {
-        List<Room> rooms = roomRepository.findByAccommodationAccommodationIdOrderByRoomId(accommodation.getAccommodationId());
+    public List<Room> getRoomListByAccommodationId(Long accommodationId) {
+        List<Room> rooms = roomRepository.findByAccommodationAccommodationIdOrderByRoomId(accommodationId);
         if (rooms.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -88,13 +94,10 @@ public class RoomService {
     /**
      * ListAccommodationDto에 들어갈 Room 객체 리스트 찾기
      * @param listAccommodationDto 찾을 Accommodation 객체의 숙소 리스트 화면 Dto
-     * @return Room 객체 리스트
+     * @return Room 엔티티 리스트
      */
     public List<ListRoomDto> getListRoomDtoListByListAccommodationDto(ListAccommodationDto listAccommodationDto) {
-        List<Room> rooms = roomRepository.findByAccommodationAccommodationIdOrderByRoomId(listAccommodationDto.getAccommodationId());
-        if (rooms.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        List<Room> rooms = getRoomListByAccommodationId(listAccommodationDto.getAccommodationId());
         List<ListRoomDto> roomDtos = new ArrayList<>();
         for (Room room : rooms) {
             modelMapper.typeMap(Room.class, ListRoomDto.class).addMappings(mapping -> {
@@ -103,5 +106,44 @@ public class RoomService {
             roomDtos.add(modelMapper.map(room, ListRoomDto.class));
         }
         return roomDtos;
+    }
+
+    /**
+     * RoomId로 수정 화면에 나타낼 방 정보 찾기
+     * @param roomId 해당 방 일련번호
+     * @return 수정 화면에 나타낼 ModifyRoomDto
+     */
+    public ModifyRoomDto getModifyRoomDtoByRoomId(Long roomId) {
+        Room savedRoom = getRoomByRoomId(roomId);
+        return ModifyRoomDto.builder()
+                .accommodationId(savedRoom.getAccommodation().getAccommodationId())
+                .roomId(savedRoom.getRoomId())
+                .roomName(savedRoom.getRoomName())
+                .roomPrice(savedRoom.getRoomPrice())
+                .roomStatus(StatusService.statusConverter(savedRoom.getRoomStatus()))
+                .imageList(roomImageService.getModifyImageDtoListByRoomId(roomId))
+                .facilityList(roomFacilityService.getFacilityDtoListByRoomId(roomId))
+                .reservationList(reservationRoomService.getReservationRoomDtoListByRoomId(roomId))
+                .build();
+    }
+
+    /**
+     * RoomId로 Room 찾기
+     * @param roomId 해당 방의 일련번호
+     * @return 해당 방 엔티티
+     */
+    public Room getRoomByRoomId(Long roomId) {
+        return roomRepository.findById(roomId).orElseThrow(IllegalArgumentException::new);
+    }
+
+    /**
+     * Url로 넘어온 accommodationId와 roomId의 accommodationId가 동일한지 판단해서 다르면 문제임
+     * @param accommodationId Url로 넘어온 accommodationId
+     * @param roomId Url로 넘어온 roomId
+     * @return 동일하지 않으면 true, 동일하면 문제없으므로 false
+     */
+    public boolean isNotOneOfAccommodationRoom(Long accommodationId, Long roomId) {
+        Room savedRoom = getRoomByRoomId(roomId);
+        return !Objects.equals(accommodationId, savedRoom.getAccommodation().getAccommodationId());
     }
 }

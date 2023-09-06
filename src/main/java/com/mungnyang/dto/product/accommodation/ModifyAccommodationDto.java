@@ -1,5 +1,6 @@
 package com.mungnyang.dto.product.accommodation;
 
+import com.mungnyang.dto.product.ModifyImageDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,5 +23,6 @@ public class ModifyAccommodationDto {
     private String checkOutTime;
     private String accommodationDetail;
     private String accommodationStatus;
-    private List<AccommodationImageDto> accommodationImageDtoList;
+    private List<ModifyImageDto> imageList;
+    private List<FacilityDto> facilityList;
 }

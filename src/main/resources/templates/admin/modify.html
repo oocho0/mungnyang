@@ -24,7 +24,7 @@
       <h2 class="text-body-emphasis pb-5 border-bottom">편의 시설 정보 수정</h2>
       <div class="container py-3 mx-3">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-        <input type="hidden" id="storeId" th:value="*{storeId}"/>
+        <input type="hidden" id="storeId" th:field="*{storeId}"/>
         <!--편의 시설 상태-->
         <div class="row g-3 align-items-center py-2">
           <div class="col-2 text-end">
@@ -141,12 +141,12 @@
           </div>
           <div class="col-5">
             <input type="file" multiple="multiple" id="input-image" class="form-control" aria-label="사진"
-                   th:data-imageIndex="${#lists.size(storeImages) - 1}" aria-describedby="explain-image" onchange="addFile(this);"/>
+                   th:data-imageIndex="${#lists.size(store.imageList) - 1}" aria-describedby="explain-image" onchange="addFile(this);"/>
           </div>
           <div class="col-5 text-start" id="image-list" >
             <span class="form-text" id="explain-image">.gif, .jpg, .png 형식만 최대 10장까지 가능<br>최대 파일 용량은 100MB<br>파일명 100자 이하 가능</span>
-            <div th:each="storeImage, status : ${storeImages}" th:id="image-file + ${status.index}" th:data-id="${storeImage.storeImageId}" class="image-file-list">
-              <span th:text="${storeImage.imageFileName}"></span>
+            <div th:each="storeImage, status : *{imageList}" th:id="image-file + ${status.index}" th:data-id="*{imageList.imageId}" class="image-file-list">
+              <span th:text="${imageList.imageFileName}"></span>
               <a class="delete" style="cursor: pointer; text-decoration : none; color:inherit;" th:onclick="|deleteFile(${status.index});|">✖</a>
             </div>
           </div>

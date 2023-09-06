@@ -2,7 +2,6 @@ package com.mungnyang.service.product.store;
 
 import com.mungnyang.constant.IsTrue;
 import com.mungnyang.dto.product.ModifyImageDto;
-import com.mungnyang.dto.product.store.StoreImageDto;
 import com.mungnyang.entity.product.store.Store;
 import com.mungnyang.entity.product.store.StoreImage;
 import com.mungnyang.repository.product.store.StoreImageRepository;
@@ -27,7 +26,6 @@ public class StoreImageService {
 
     /**
      * StoreImage 저장
-     *
      * @param store              저장할 StoreImage의 Store
      * @param storeImageFileList 저장할 StoreImage들
      * @throws Exception
@@ -44,11 +42,11 @@ public class StoreImageService {
 
     /**
      * Store로 Store의 이미지 리스트 찾기
-     * @param store 찾을 Store
+     * @param storeId 해당 방의 일련번호
      * @return 해당 Store의 이미지 List
      */
-    public List<StoreImage> getStoreImageListByStore(Store store) {
-        List<StoreImage> findImages = storeImageRepository.findByStoreStoreIdOrderByStoreImageId(store.getStoreId());
+    public List<StoreImage> getStoreImageListByStoreId(Long storeId) {
+        List<StoreImage> findImages = storeImageRepository.findByStoreStoreIdOrderByStoreImageId(storeId);
         if (findImages.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -56,19 +54,28 @@ public class StoreImageService {
     }
 
     /**
-     * 수정 페이지에 출력될 StoreImageDto 리스트 반환
+     * 수정 페이지에 출력될 이미지 정보 리스트 찾기
      * @param storeId 찾을 Store의 일련번호
-     * @return Store의 이미지 리스트 반환
+     * @return ModifyImageDto 리스트
      */
-    public List<StoreImageDto> getStoreImageDtoListByStoreId(Long storeId) {
+    public List<ModifyImageDto> getModifyImageDtoListByStoreId(Long storeId) {
         List<StoreImage> findImages = storeImageRepository.findByStoreStoreIdOrderByStoreImageId(storeId);
-        List<StoreImageDto> storeImageDtoList = new ArrayList<>();
+        List<ModifyImageDto> storeImageDtoList = new ArrayList<>();
         for (StoreImage findImage : findImages) {
-            storeImageDtoList.add(modelMapper.map(findImage, StoreImageDto.class));
+            storeImageDtoList.add(ModifyImageDto.builder()
+                    .imageId(findImage.getStoreImageId())
+                    .imageFileName(findImage.getImage().getFileName())
+                    .build());
         }
         return storeImageDtoList;
     }
 
+    /**
+     * 편의 시설 이미지 수정
+     * @param store 해당 편의 시설
+     * @param imageDtoList 수정 페이지에 입력된 수정 이미지 정보
+     * @throws Exception
+     */
     public void updateStoreImages(Store store, List<ModifyImageDto> imageDtoList) throws Exception {
         boolean isRepImageDelete = false;
         for (ModifyImageDto modifyImageDto : imageDtoList) {
@@ -94,8 +101,13 @@ public class StoreImageService {
         }
     }
 
+    /**
+     * 해당 Store의 모든 이미지 삭제
+     * @param store 해당 편의 시설 엔티티 객체
+     * @throws Exception
+     */
     public void deleteAllStoreImage(Store store) throws Exception {
-        List<StoreImage> savedStoreImages = getStoreImageListByStore(store);
+        List<StoreImage> savedStoreImages = getStoreImageListByStoreId(store.getStoreId());
         for (StoreImage savedStoreImage : savedStoreImages) {
             imageService.deleteImage(store, savedStoreImage.getImage());
             storeImageRepository.delete(savedStoreImage);

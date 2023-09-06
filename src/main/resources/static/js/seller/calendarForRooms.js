@@ -91,9 +91,11 @@ function validate(checkInDate, checkOutDate, i){
     return true;
 }
 
-function addBookingDate(formData, i){
+function addReservationList(formData, i){
     for(var j = 0; j < initialBooked[i].length; j++){
-        formData.append("roomList[" + i + "].reservationList[" + j + "].checkInDate", initialBooked[i][j].checkInDate.format("YYYY-MM-DD[T]HH:mm:ss"));
-        formData.append("roomList[" + i + "].reservationList[" + j + "].checkOutDate", initialBooked[i][j].checkOutDate.format("YYYY-MM-DD[T]HH:mm:ss"));
+        var parsedCheckInDate = initialBooked[i][j].checkInDate.add("9","hours");
+        var parsedCheckOutDate = initialBooked[i][j].checkOutDate.add("9","hours");
+        formData.append("roomList[" + i + "].reservationList[" + j + "].checkInDate", parsedCheckInDate.format("YYYY-MM-DD[T]HH:mm:ss"));
+        formData.append("roomList[" + i + "].reservationList[" + j + "].checkOutDate", parsedCheckOutDate.format("YYYY-MM-DD[T]HH:mm:ss"));
     }
 }

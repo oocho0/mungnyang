@@ -1,13 +1,9 @@
 package com.mungnyang.controller.product;
 
-import com.mungnyang.dto.ErrorMessage;
-import com.mungnyang.dto.product.ModifyImageDto;
-import com.mungnyang.dto.product.ModifyImageList;
 import com.mungnyang.dto.product.SearchStoreFilter;
 import com.mungnyang.dto.product.store.CreateStoreDto;
 import com.mungnyang.dto.product.store.ListStoreDto;
 import com.mungnyang.dto.product.store.ModifyStoreDto;
-import com.mungnyang.dto.product.store.StoreImageDto;
 import com.mungnyang.entity.fixedEntity.BigCategory;
 import com.mungnyang.entity.fixedEntity.State;
 import com.mungnyang.service.fixedEntity.CategoryService;
@@ -25,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -35,10 +30,8 @@ import java.util.List;
 public class StoreController {
 
     private final StoreService storeService;
-    private final MemberService memberService;
     private final CategoryService categoryService;
     private final StateCityService stateCityService;
-    private final StoreImageService storeImageService;
 
     @GetMapping("/store")
     public String loadRegisterPage(Model model) {
@@ -48,15 +41,13 @@ public class StoreController {
     }
 
     @PostMapping("/store")
-    public ResponseEntity<?> registerStore(CreateStoreDto createStoreDto,
-                                           @RequestPart("imageFile")
-                                           List<MultipartFile> storeImageFileList) {
+    public ResponseEntity<String> registerStore(@ModelAttribute CreateStoreDto createStoreDto) {
         try {
-            storeService.registerStore(createStoreDto, storeImageFileList);
+            storeService.registerStore(createStoreDto);
         } catch (Exception e) {
-            return new ResponseEntity<ErrorMessage>(new ErrorMessage(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<String>("success", HttpStatus.OK);
+        return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
     @GetMapping("/stores")
@@ -76,34 +67,29 @@ public class StoreController {
     public String loadModifyPage(@PathVariable Long storeId, Model model) {
         ModifyStoreDto modifyStoreDto = storeService.getModifyStoreDtoByStoreId(storeId);
         model.addAttribute("store", modifyStoreDto);
-        List<StoreImageDto> storeImageDtoList = storeImageService.getStoreImageDtoListByStoreId(storeId);
-        model.addAttribute("storeImages", storeImageDtoList);
         storeService.initializeModifyStorePage(model, modifyStoreDto);
         return "admin/modify";
     }
 
     @PutMapping("/stores/{storeId}")
-    public ResponseEntity<?> updateStore(@PathVariable Long storeId,
-                                         @ModelAttribute ModifyStoreDto modifyStoreDto,
-                                         @ModelAttribute ModifyImageList imageList) {
-        List<ModifyImageDto> modifyImageDtoList = imageList.getImageList();
+    public ResponseEntity<String> updateStore(@PathVariable Long storeId, @ModelAttribute ModifyStoreDto modifyStoreDto) {
         try {
-            storeService.updateStore(storeId, modifyStoreDto, modifyImageDtoList);
+            storeService.updateStore(storeId, modifyStoreDto);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<ErrorMessage>(new ErrorMessage(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<String>("success", HttpStatus.OK);
+        return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
     @DeleteMapping("/stores/{storeId}")
-    public ResponseEntity<?> deleteStore(@PathVariable Long storeId) {
+    public ResponseEntity<String> deleteStore(@PathVariable Long storeId) {
         try {
             storeService.deleteStore(storeId);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<ErrorMessage>(new ErrorMessage(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<String>("success", HttpStatus.OK);
+        return new ResponseEntity<>("success", HttpStatus.OK);
     }
 }

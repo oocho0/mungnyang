@@ -77,10 +77,15 @@
                             <td th:text="${#strings.equals(room.roomStatus, 'OPEN') ? '영업중' : (#strings.equals(room.roomStatus, 'CLOSED') ? '영구 폐쇄' : '임시 폐쇄')}"></td>
                         </tr>
                         </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="4"><button class="btn btn-warning" type="button" onclick="||location.href='@{/seller/accommodations/{accommodationId}/room(accommodationId=${accommodation.accommodationId})}'">방 추가</button></td>
+                        </tr>
+                        </tfoot>
                     </table>
                     <button class="btn btn-secondary px-5 mb-2"
                             th:onclick="|location.href='@{/seller/accommodations/{accommodationId}(accommodationId=${accommodation.accommodationId})}'|">
-                        숙소 정보 수정하기
+                        숙소 정보 수정
                     </button>
                 </div>
             </div>

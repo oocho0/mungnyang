@@ -8,7 +8,7 @@ function request(){
     var formData = new FormData(form);
     makeFormData(formData);
 
-    var url = "/seller/accommodation";
+    var url = "/seller/accommodations/" + $("#accommodationId").val() + "/room";
     $.ajax({
         url      : url,
         type     : "POST",
@@ -38,24 +38,14 @@ function request(){
 function makeFormData(formData){
     addFormData(formData);
     addFacilityData(formData);
-    var roomAmount = Number($("#roomAmount").val());
-    for(var i = 0; i < roomAmount; i++){
-        formData.append("roomList[" + i + "].roomName", $("#roomName" + (i+1)).val());
-        formData.append("roomList[" + i + "].roomPrice", $("#roomPrice" + (i+1)).val());
-        formData.append("roomList[" + i + "].roomDetail", $("#roomDetail" + (i+1)).val());
-        formData.append("roomList[" + i + "].roomStatus", $("[name='roomStatus" + (i+1) + "']:checked").val());
-        addFormDataWithRoom(formData, i);
-        addRoomFacilityData(formData, i);
-        addReservationList(formData, i);
-    }
+    addReservationList(formData);
 }
 
 let resultObjectKeys = [];
 
 function checkForm(){
     let resultObject = {};
-    const checkLabels = ["#accommodationName", "#addressZipcode",
-    "#addressMain", "#productAddressLat", "#productAddressLon", "#checkInTime", "#checkOutTime"];
+    const checkLabels = ["#roomName", "#roomPrice"];
 
     if(resultObjectKeys.length != 0){
         $.each(resultObjectKeys, function(index, value){
@@ -70,29 +60,10 @@ function checkForm(){
         }
     });
 
-    if($("#accommodationName").val().length > 50){
+    if($("#roomName").val().length > 50){
         resultObject["#accommodationName"] = "50자 이내로 작성해주세요.";
     }
     singleImageCheck(resultObject);
-    checkFacility(resultObject);
-
-    var roomAmount = Number($("#roomAmount").val());
-    const checkRoomLabels = ["#roomName", "#roomPrice"];
-    for (var i = 1; i < roomAmount+1; i++){
-        $.each(checkRoomLabels, function(index, value){
-            if($(value + i).val() == "" || $(value + i).val() == null){
-                resultObject[value + i] = $(value + i).data('error') + " 입력되지 않았습니다.";
-            }
-        });
-
-        if($("#roomName" + i).val().length > 50){
-            resultObject["#roomName" + i] = "50자 이내로 작성해주세요.";
-        }
-
-        roomImageCheck(i, resultObject);
-        checkRoomFacility(resultObject, i);
-    }
-
 
     $.each(resultObject, function(key, value){
         if($(key).closest("div").parent("div").next("div").find(".error").text().length == 0){
@@ -111,4 +82,3 @@ function checkForm(){
     resultObjectKeys = Object.keys(resultObject);
     return false;
 }
-

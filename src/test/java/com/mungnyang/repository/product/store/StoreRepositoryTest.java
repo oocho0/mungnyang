@@ -67,8 +67,9 @@ class StoreRepositoryTest {
             storeDto.setSmallCategoryId(9L);
 
             List<MultipartFile> multipartFileList_this = createTestStoreImageArray(i);
+            storeDto.setImageList(multipartFileList_this);
             try {
-                storeService.registerStore(storeDto, multipartFileList_this);
+                storeService.registerStore(storeDto);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

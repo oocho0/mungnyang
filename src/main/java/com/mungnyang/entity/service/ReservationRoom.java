@@ -20,7 +20,7 @@ public class ReservationRoom extends WriterEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long BookingRoomId;
+    private Long reservationRoomId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")

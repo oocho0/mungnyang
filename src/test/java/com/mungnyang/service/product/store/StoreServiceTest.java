@@ -45,7 +45,7 @@ class StoreServiceTest {
     @WithMockUser(username = "admin@abc.com", roles = "ADMIN")
     void 등록된_편의시설을_수정한다(){
         Store savedStore = storeService.findStoreByName(testDto.getStoreName());
-        List<StoreImage> savedStoreImages = storeImageService.getStoreImageListByStore(savedStore);
+        List<StoreImage> savedStoreImages = storeImageService.getStoreImageListByStoreId(savedStore.getStoreId());
 
         ModifyStoreDto modifyStoreDto = new ModifyStoreDto();
         modifyStoreDto.setStoreId(savedStore.getStoreId());
@@ -67,9 +67,10 @@ class StoreServiceTest {
             modifyImageDto.setIsDelete("N");
             modifyImageDto.setImageFile(null);
         }
+        modifyStoreDto.setImageList(modifyImageDtoList);
 
         try {
-            storeService.updateStore(savedStore.getStoreId(), modifyStoreDto, modifyImageDtoList);
+            storeService.updateStore(savedStore.getStoreId(), modifyStoreDto);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -87,7 +88,7 @@ class StoreServiceTest {
         //given - BeforeEach
         //when
         Store findStore = storeService.findStoreByName(testDto.getStoreName());
-        List<StoreImage> findStoreImages = storeImageService.getStoreImageListByStore(findStore);
+        List<StoreImage> findStoreImages = storeImageService.getStoreImageListByStoreId(findStore.getStoreId());
 
         //then
         assertThat(findStore.getStoreName()).isEqualTo(testDto.getStoreName());
@@ -113,7 +114,8 @@ class StoreServiceTest {
             createStoreDto.setStoreStatus(Status.OPEN.name());
 
             List<MultipartFile> multipartFileList_this = createTestStoreImageArray(i);
-            storeService.registerStore(createStoreDto, multipartFileList_this);
+            createStoreDto.setImageList(multipartFileList_this);
+            storeService.registerStore(createStoreDto);
 
             if (i == 1) {
                 testDto = createStoreDto;

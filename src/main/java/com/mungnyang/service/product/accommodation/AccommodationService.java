@@ -2,12 +2,9 @@ package com.mungnyang.service.product.accommodation;
 
 import com.mungnyang.constant.Status;
 import com.mungnyang.dto.product.accommodation.ListAccommodationDto;
-import com.mungnyang.dto.product.accommodation.FacilityDto;
 import com.mungnyang.dto.product.accommodation.CreateAccommodationDto;
 import com.mungnyang.dto.product.accommodation.ModifyAccommodationDto;
-import com.mungnyang.dto.product.accommodation.room.CreateRoomDto;
 import com.mungnyang.dto.product.accommodation.room.ListRoomDto;
-import com.mungnyang.entity.fixedEntity.SmallCategory;
 import com.mungnyang.entity.product.accommodation.Accommodation;
 import com.mungnyang.repository.product.accommodation.AccommodationRepository;
 import com.mungnyang.service.fixedEntity.CategoryService;
@@ -19,8 +16,6 @@ import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -38,22 +33,9 @@ public class AccommodationService {
     private final RoomService roomService;
 
     /**
-     * 숙소 등록 시 필요한 소분류를 모델에 담아 전달
-     * @param model 전달할 모델
-     */
-    public void initializeCreateAccommodationPage(Model model) {
-        List<SmallCategory> smallCategoryList = categoryService.getSmallCategoryListByBigCategoryId(1L);
-        model.addAttribute("smallCategories", smallCategoryList);
-        String[] accommodationFacility = {"24시간 리셉션", "반려견 운동장", "반려견 수영장", "주차", "무료 WiFi", "반려견 셀프 목욕", "조식"};
-        model.addAttribute("accommodationFacility", accommodationFacility);
-        String[] roomFacility = {"객실 무료 WiFi", "에어컨", "개별 바베큐", "스파", "반려견 욕실 용품", "반려견 드라이룸", "냉장고"};
-        model.addAttribute("roomFacility", roomFacility);
-    }
-
-    /**
      * Accommodation 이름으로 Accommodation 찾기
-     * @param accommodationName
-     * @return
+     * @param accommodationName 해당 숙소 이름
+     * @return Accommodation 엔티티 객체
      */
     public Accommodation getAccommodationByAccommodationName(String accommodationName) {
         Accommodation findAccommodation = accommodationRepository.findByAccommodationName(accommodationName);
@@ -66,26 +48,20 @@ public class AccommodationService {
     /**
      * 신규 숙소 등록하기
      * @param createAccommodationDto 페이지에 입력한 숙소 정보
-     * @param accommodationImageFileList 페이지에 입력한 숙소 이미지 리스트
-     * @param accommodationFacilityList 페이지에 입력한 숙소 시설 리스트
-     * @param roomList 페이지에 입력한 방 정보 리스트
      * @throws Exception
      */
-    public void registerAccommodation(CreateAccommodationDto createAccommodationDto,
-                                      List<MultipartFile> accommodationImageFileList,
-                                      List<FacilityDto> accommodationFacilityList,
-                                      List<CreateRoomDto> roomList) throws Exception {
+    public void registerAccommodation(CreateAccommodationDto createAccommodationDto) throws Exception {
         Accommodation accommodation = createAccommodation(createAccommodationDto);
         accommodationRepository.save(accommodation);
-        accommodationImageService.saveAccommodationImages(accommodation, accommodationImageFileList);
-        accommodationFacilityService.saveAccommodationFacilities(accommodation, accommodationFacilityList);
-        roomService.saveRoomList(accommodation, roomList);
+        accommodationImageService.saveAccommodationImages(accommodation, createAccommodationDto.getImageList());
+        accommodationFacilityService.saveAccommodationFacilities(accommodation, createAccommodationDto.getFacilityList());
+        roomService.saveRoomList(accommodation, createAccommodationDto.getRoomList());
     }
 
     /**
      * 숙소 관리 페이지에 나타낼 숙소 정보 가져오기
      * @param email 로그인한 회원의 아이디
-     * @return List<숙소 정보>
+     * @return ListAccommodationDto 리스트
      */
     @Transactional(readOnly = true)
     public List<ListAccommodationDto> getListAccommodationDtoListByCreatedBy(String email) {
@@ -103,20 +79,44 @@ public class AccommodationService {
      * @return ModifyAccommodationDto
      */
     public ModifyAccommodationDto getModifyAccommodationDtoByAccommodationId(Long accommodationId) {
-        Accommodation findAccommodation = accommodationRepository.findById(accommodationId).orElseThrow(IllegalArgumentException::new);
+        Accommodation findAccommodation = getAccommodationByAccommodationId(accommodationId);
         modelMapper.typeMap(Accommodation.class, ModifyAccommodationDto.class).addMappings(mapping -> {
             mapping.using((Converter<Status, String>) context -> StatusService.statusConverter(context.getSource())).map(Accommodation::getAccommodationStatus, ModifyAccommodationDto::setAccommodationStatus);
-            mapping.skip(ModifyAccommodationDto::setAccommodationImageDtoList);
+            mapping.skip(ModifyAccommodationDto::setImageList);
+            mapping.skip(ModifyAccommodationDto::setFacilityList);
         });
         ModifyAccommodationDto modifyAccommodationDto = modelMapper.map(findAccommodation, ModifyAccommodationDto.class);
-        modifyAccommodationDto.setAccommodationImageDtoList(accommodationImageService.getAccommodationImageDtoListByAccommodationId(accommodationId));
+        modifyAccommodationDto.setImageList(accommodationImageService.getModifyImageDtoListByAccommodationId(accommodationId));
+        modifyAccommodationDto.setFacilityList(accommodationFacilityService.getFacilityDtoListByAccommodationId(accommodationId));
         return modifyAccommodationDto;
     }
 
     /**
+     * AccommodationId로 Accommodation 객체 찾기
+     * @param accommodationId 찾을 Accommodation의 일련번호
+     * @return Accommodation 엔티티
+     */
+    public Accommodation getAccommodationByAccommodationId(Long accommodationId) {
+        return accommodationRepository.findById(accommodationId).orElseThrow(IllegalArgumentException::new);
+    }
+
+    /**
+     * 현재 접속 회원의 아이디와 해당 숙소의 작성자가 동일하지 않으면 문제가 있음
+     * @param accommodationId 해당 숙소의 일련번호
+     * @param email 현재 접속 회원의 아이디이자 이메일
+     * @return 동일하지 않으면 true, 동일하면 문제없으므로 false
+     */
+    public boolean isNotWrittenByPrinciple(Long accommodationId, String email) {
+        Accommodation savedAccommodation = getAccommodationByAccommodationId(accommodationId);
+        return !email.equals(savedAccommodation.getCreatedBy());
+    }
+
+
+
+    /**
      * 숙소 생성
      * @param createAccommodationDto 페이지에 입력한 숙소 정보
-     * @return 생성된 숙소 객체
+     * @return 생성된 Accommodation 엔티티
      */
     private Accommodation createAccommodation(CreateAccommodationDto createAccommodationDto) {
         modelMapper.typeMap(CreateAccommodationDto.class, Accommodation.class).addMappings(mapping -> {

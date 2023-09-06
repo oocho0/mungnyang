@@ -1,6 +1,5 @@
 package com.mungnyang.service.product.store;
 
-import com.mungnyang.entity.product.store.Store;
 import com.mungnyang.entity.product.store.StoreComment;
 import com.mungnyang.repository.product.store.StoreCommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,15 +13,25 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StoreCommentService {
     private final StoreCommentRepository storeCommentRepository;
-    public void deleteAllStoreComments(Store store) {
-        List<StoreComment> savedStoreComments = getStoreCommentListByStore(store);
+
+    /**
+     * 해당 방의 모든 후기 삭제
+     * @param storeId 해당 방 일련번호
+     */
+    public void deleteAllStoreComments(Long storeId) {
+        List<StoreComment> savedStoreComments = getStoreCommentListByStoreId(storeId);
         for (StoreComment savedStoreComment : savedStoreComments) {
             storeCommentRepository.delete(savedStoreComment);
         }
     }
 
-    private List<StoreComment> getStoreCommentListByStore(Store store) {
-        List<StoreComment> findStoreComments = storeCommentRepository.findByStoreStoreIdOrderByStoreCommentId(store.getStoreId());
+    /**
+     * StoreId로 후기 리스트 찾기
+     * @param storeId 해당 방 일련번호
+     * @return 해당 방의 StoreComment 엔티티 리스트
+     */
+    private List<StoreComment> getStoreCommentListByStoreId(Long storeId) {
+        List<StoreComment> findStoreComments = storeCommentRepository.findByStoreStoreIdOrderByStoreCommentId(storeId);
         if (findStoreComments == null) {
             throw new IllegalArgumentException();
         }
