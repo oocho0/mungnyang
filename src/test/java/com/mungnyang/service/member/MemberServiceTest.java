@@ -6,7 +6,6 @@ import com.mungnyang.constant.Url;
 import com.mungnyang.dto.member.CreateMemberDto;
 import com.mungnyang.dto.member.UpdateMemberDto;
 import com.mungnyang.entity.member.Member;
-import com.mungnyang.service.member.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,7 +53,7 @@ class MemberServiceTest {
     void 먼저_저장된_테스트_객체가_잘_저장되어있는지_객체를_찾아_값을_확인한다() {
         //given - @BeforeEach
         //when
-        Member savedMember = memberService.findMember(testDto.getEmail());
+        Member savedMember = memberService.getMemberByMemberEmail(testDto.getEmail());
         //then
         assertThat(savedMember.getName()).isEqualTo(testDto.getName());
         assertThat(savedMember.getTel()).isEqualTo(testDto.getTel());
@@ -102,7 +100,7 @@ class MemberServiceTest {
     @Test
     @DisplayName("회원 정보 로딩 테스트")
     void 먼저_저장된_테스트_객체를_찾아와_다시_MemberDto로_변환했을떄_올바르게_변환되었는지_값을_확인한다() {
-        Member findMember = memberService.findMember(testDto.getEmail());
+        Member findMember = memberService.getMemberByMemberEmail(testDto.getEmail());
         UpdateMemberDto mappingMemberDto = memberService.of(findMember);
         assertThat(mappingMemberDto.getMemberType()).isEqualTo(testDto.getMemberType());
         assertThat(mappingMemberDto.getEmail()).isEqualTo(testDto.getEmail());
@@ -112,13 +110,13 @@ class MemberServiceTest {
     @Test
     @DisplayName("회원 수정 테스트")
     void 먼저_저장된_테스트_객체를_찾아와_다시_수정해서_올바르게_변환되었는지_값을_확인하고_변환되면_안되는_값이_변하지_않았는지_확인한다(){
-        Member findMember = memberService.findMember(testDto.getEmail());
+        Member findMember = memberService.getMemberByMemberEmail(testDto.getEmail());
         UpdateMemberDto updateMemberDto = memberService.of(findMember);
         updateMemberDto.setEmail("test2@abc.com");
         updateMemberDto.setName("수정테스트");
         updateMemberDto.setAddressZipcode("4321");
         memberService.updateMember(updateMemberDto, findMember);
-        Member updatedMember = memberService.findMember(testDto.getEmail());
+        Member updatedMember = memberService.getMemberByMemberEmail(testDto.getEmail());
         assertThat(updatedMember.getEmail()).isEqualTo(testDto.getEmail());
         assertThat(updatedMember.getName()).isEqualTo("수정테스트");
         assertThat(updatedMember.getAddress().getZipcode()).isEqualTo("4321");

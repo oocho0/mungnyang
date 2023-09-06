@@ -1,15 +1,15 @@
 package com.mungnyang.service.product.store;
 
 import com.mungnyang.constant.Status;
-import com.mungnyang.dto.product.ModifyImageDto;
 import com.mungnyang.dto.product.SearchStoreFilter;
 import com.mungnyang.dto.product.store.CreateStoreDto;
 import com.mungnyang.dto.product.store.ListStoreDto;
 import com.mungnyang.dto.product.store.ModifyStoreDto;
+import com.mungnyang.entity.Address;
 import com.mungnyang.entity.fixedEntity.BigCategory;
 import com.mungnyang.entity.fixedEntity.City;
 import com.mungnyang.entity.fixedEntity.SmallCategory;
-import com.mungnyang.entity.fixedEntity.State;
+import com.mungnyang.entity.product.ProductAddress;
 import com.mungnyang.entity.product.store.Store;
 import com.mungnyang.repository.product.store.StoreRepository;
 import com.mungnyang.service.fixedEntity.CategoryService;
@@ -23,7 +23,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -41,7 +40,8 @@ public class StoreService {
 
     /**
      * 신규 편의 시설 등록하기
-     * @param createStoreDto     페이지에 입력한 편의 시설 정보
+     *
+     * @param createStoreDto 페이지에 입력한 편의 시설 정보
      * @throws Exception
      */
     public void registerStore(CreateStoreDto createStoreDto) throws Exception {
@@ -52,6 +52,7 @@ public class StoreService {
 
     /**
      * 편의 시설 수정 화면 초기화
+     *
      * @param model          편의 시설 수정 화면에 렌더링할 Model
      * @param modifyStoreDto 화면에 나타낼 편의 시설 정보
      */
@@ -64,6 +65,7 @@ public class StoreService {
 
     /**
      * storeName으로 Store 찾기
+     *
      * @param name 찾을 Store의 이름
      * @return Null이면 예외 발생
      */
@@ -77,6 +79,7 @@ public class StoreService {
 
     /**
      * 원하는 조건에 해당하는 Store의 정보를 page에 맞게 반환
+     *
      * @param searchStoreFilter 원하는 조건
      * @param pageable          해당 page
      * @return 페이지에 표시될 Store 정보 ListStoreDto의 페이징 객체
@@ -88,6 +91,7 @@ public class StoreService {
 
     /**
      * 수정할 Store의 정보 가져오기
+     *
      * @param storeId 수정할 Store의 일련번호
      * @return 수정할 Store의 ModifyStoreDTO
      */
@@ -105,6 +109,7 @@ public class StoreService {
 
     /**
      * 편의 시설 정보 수정
+     *
      * @param storeId        수정할 편의 시설의 일련번호
      * @param modifyStoreDto 수정할 편의 시설의 정보
      */
@@ -114,12 +119,16 @@ public class StoreService {
         savedStore.setSmallCategory(categoryService.getSmallCategoryBySmallCategoryId(modifyStoreDto.getSmallCategorySmallCategoryId()));
         City matchedCity = stateCityService.getMatchedCity(modifyStoreDto.getProductAddressAddressZipcode());
         savedStore.setCity(matchedCity);
-        savedStore.getProductAddress().getAddress().setZipcode(modifyStoreDto.getProductAddressAddressZipcode());
-        savedStore.getProductAddress().getAddress().setMain(modifyStoreDto.getProductAddressAddressMain());
-        savedStore.getProductAddress().getAddress().setDetail(modifyStoreDto.getProductAddressAddressDetail());
-        savedStore.getProductAddress().getAddress().setExtra(modifyStoreDto.getProductAddressAddressExtra());
-        savedStore.getProductAddress().setLat(modifyStoreDto.getProductAddressLat());
-        savedStore.getProductAddress().setLon(modifyStoreDto.getProductAddressLon());
+        savedStore.setProductAddress(ProductAddress.builder()
+                .address(Address.builder()
+                        .zipcode(modifyStoreDto.getProductAddressAddressZipcode())
+                        .main(modifyStoreDto.getProductAddressAddressMain())
+                        .detail(modifyStoreDto.getProductAddressAddressDetail())
+                        .extra(modifyStoreDto.getProductAddressAddressExtra())
+                        .build())
+                .Lon(modifyStoreDto.getProductAddressLon())
+                .Lat(modifyStoreDto.getProductAddressLat())
+                .build());
         savedStore.setStoreDetail(modifyStoreDto.getStoreDetail());
         savedStore.setStoreStatus(StatusService.statusConverter(modifyStoreDto.getStoreStatus()));
         storeImageService.updateStoreImages(savedStore, modifyStoreDto.getImageList());
@@ -127,6 +136,7 @@ public class StoreService {
 
     /**
      * 편의 시설 생성
+     *
      * @param createStoreDto 페이지에 입력한 편의 시설체 정보
      * @return 생성된 Store 엔티티
      */
@@ -145,6 +155,7 @@ public class StoreService {
 
     /**
      * StoreId로 Store 찾기
+     *
      * @param storeId 찾을 Store의 Id
      * @return Store가 없으면 예외 반환
      */
@@ -154,6 +165,7 @@ public class StoreService {
 
     /**
      * 편의 시설 삭제 시 모든 정보 제거
+     *
      * @param storeId 삭제할 편의 시설 일련번호
      * @throws Exception
      */

@@ -9,8 +9,8 @@ import lombok.Setter;
 @Setter
 @Builder
 @AllArgsConstructor
-public class FacilityDto {
+public class ModifyFacilityDto {
     private Long facilityId;
     private String facilityName;
-    private Long includedId;
+    private String isDelete;
 }

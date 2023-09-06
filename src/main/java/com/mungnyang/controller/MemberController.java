@@ -123,7 +123,7 @@ public class MemberController {
 
     @GetMapping("/pre-logout")
     public String logout(Principal principal) {
-        Member signInMember = memberService.findMember(principal.getName());
+        Member signInMember = memberService.getMemberByMemberEmail(principal.getName());
         if (signInMember.getMemberType().equals(MemberType.KAKAO)) {
             return "redirect:" + kakaoService.getKakaologoutRequestURI();
         }
@@ -135,7 +135,7 @@ public class MemberController {
         if (success != null && success.equals("Y")) {
             model.addAttribute("success", "성공적으로 수정되었습니다.");
         }
-        Member signInMember = memberService.findMember(principal.getName());
+        Member signInMember = memberService.getMemberByMemberEmail(principal.getName());
         UpdateMemberDto updateMemberDto = memberService.of(signInMember);
         model.addAttribute("updateMemberDto", updateMemberDto);
         UpdatePasswordDto updatePasswordDto = new UpdatePasswordDto();
@@ -147,7 +147,7 @@ public class MemberController {
     public String modifyInfo(@ModelAttribute @Valid UpdateMemberDto updateMemberDto, BindingResult bindingResult,
                              @ModelAttribute UpdatePasswordDto updatePasswordDto, @PathVariable String changePwOrNot,
                              Principal principal, Model model) {
-        Member signInMember = memberService.findMember(principal.getName());
+        Member signInMember = memberService.getMemberByMemberEmail(principal.getName());
         if (changePwOrNot.equals("Y")) {
             List<String> result = memberService.updatePassword(updatePasswordDto, signInMember);
             if (result != null) {
@@ -164,7 +164,7 @@ public class MemberController {
 
     @GetMapping("/pre-withdraw")
     public String recheckWithdraw(Principal principal, SessionStatus sessionStatus) {
-        Member signInMember = memberService.findMember(principal.getName());
+        Member signInMember = memberService.getMemberByMemberEmail(principal.getName());
         if (signInMember.getMemberType().equals(MemberType.KAKAO)) {
             return "member/withdraw-kakao";
         }
@@ -173,7 +173,7 @@ public class MemberController {
 
     @DeleteMapping("/withdraw-kakao")
     public ResponseEntity<String> withdrawKakaoMember(Principal principal) {
-        Member signInMember = memberService.findMember(principal.getName());
+        Member signInMember = memberService.getMemberByMemberEmail(principal.getName());
         String result = kakaoService.withdrawRequest(signInMember.getEmail());
         if (result != null) {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
@@ -185,7 +185,7 @@ public class MemberController {
 
     @PostMapping("/withdraw")
     public ResponseEntity<String> withdraw(@RequestBody Map<String, String> bodyMap, Principal principal) {
-        Member signInMember = memberService.findMember(principal.getName());
+        Member signInMember = memberService.getMemberByMemberEmail(principal.getName());
         List<String> result = memberService.checkPasswordBeforeWithdraw(bodyMap.get("inputPassword"), signInMember);
         if (result != null) {
             return new ResponseEntity<>(result.get(1), HttpStatus.BAD_REQUEST);

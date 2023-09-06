@@ -8,6 +8,8 @@ import java.util.Objects;
 @Getter
 @Setter
 @Embeddable
+@Builder
+@AllArgsConstructor
 public class Address {
     private String zipcode;
     private String main;

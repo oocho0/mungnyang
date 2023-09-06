@@ -70,7 +70,11 @@ public class AccommodationController {
         if (accommodationService.isNotWrittenByPrinciple(accommodationId, principal.getName())) {
             return new ResponseEntity<>("변경 권한이 없습니다.", HttpStatus.FORBIDDEN);
         }
-
+        try {
+            accommodationService.updateAccommodation(accommodationId, modifyAccommodationDto);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
@@ -79,6 +83,11 @@ public class AccommodationController {
                                                       Principal principal) {
         if (accommodationService.isNotWrittenByPrinciple(accommodationId, principal.getName())) {
             return new ResponseEntity<>("삭제 권한이 없습니다.", HttpStatus.FORBIDDEN);
+        }
+        try {
+            accommodationService.deleteAccommodation(accommodationId);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
@@ -129,6 +138,11 @@ public class AccommodationController {
         if (roomService.isNotOneOfAccommodationRoom(accommodationId, roomId)) {
             return new ResponseEntity<>("잘못된 경로 입니다.", HttpStatus.BAD_REQUEST);
         }
+        try {
+            roomService.updateRoom(roomId, modifyRoomDto);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
@@ -139,6 +153,11 @@ public class AccommodationController {
         }
         if (roomService.isNotOneOfAccommodationRoom(accommodationId, roomId)) {
             return new ResponseEntity<>("잘못된 경로 입니다.", HttpStatus.BAD_REQUEST);
+        }
+        try {
+            roomService.deleteRoom(roomId);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>("success", HttpStatus.OK);
     }

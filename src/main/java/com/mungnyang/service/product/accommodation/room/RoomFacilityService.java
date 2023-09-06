@@ -1,6 +1,6 @@
 package com.mungnyang.service.product.accommodation.room;
 
-import com.mungnyang.dto.product.accommodation.FacilityDto;
+import com.mungnyang.dto.product.accommodation.ModifyFacilityDto;
 import com.mungnyang.entity.product.accommodation.room.Room;
 import com.mungnyang.entity.product.accommodation.room.RoomFacility;
 import com.mungnyang.repository.product.accommodation.room.RoomFacilityRepository;
@@ -18,7 +18,6 @@ import java.util.List;
 public class RoomFacilityService {
 
     private final RoomFacilityRepository roomFacilityRepository;
-    private final ModelMapper modelMapper;
 
     /**
      * 신규 RoomFacility 등록
@@ -52,16 +51,57 @@ public class RoomFacilityService {
      * @param roomId 해당 방의 일련번호
      * @return 해당 방의 방 시설 FacilityDto 리스트
      */
-    public List<FacilityDto> getFacilityDtoListByRoomId(Long roomId) {
+    public List<ModifyFacilityDto> getFacilityDtoListByRoomId(Long roomId) {
         List<RoomFacility> roomFacilityList = getRoomFacilityListByRoomId(roomId);
-        List<FacilityDto> facilityDtoList = new ArrayList<>();
+        List<ModifyFacilityDto> modifyFacilityDtoList = new ArrayList<>();
         for (RoomFacility roomFacility : roomFacilityList) {
-            facilityDtoList.add(FacilityDto.builder()
+            modifyFacilityDtoList.add(ModifyFacilityDto.builder()
                             .facilityId(roomFacility.getRoomFacilityId())
                             .facilityName(roomFacility.getFacilityName())
-                            .includedId(roomFacility.getRoom().getRoomId())
                     .build());
         }
-        return facilityDtoList;
+        return modifyFacilityDtoList;
+    }
+
+    /**
+     * 방 시설 정보 수정하기
+     * @param room 해당 방
+     * @param facilityList 수정할 방 정보 리스트
+     */
+    public void updateRoomFacility(Room room, List<ModifyFacilityDto> facilityList) {
+        for (ModifyFacilityDto modifyFacilityDto : facilityList) {
+            if (modifyFacilityDto.getIsDelete().equals("Y")) {
+                Long facilityId = modifyFacilityDto.getFacilityId();
+                RoomFacility savedFacility = getRoomFacilityByRoomFacilityId(facilityId);
+                roomFacilityRepository.delete(savedFacility);
+                continue;
+            }
+            if (modifyFacilityDto.getFacilityId() == null) {
+                RoomFacility newFacility = new RoomFacility();
+                newFacility.setFacilityName(modifyFacilityDto.getFacilityName());
+                newFacility.setRoom(room);
+                roomFacilityRepository.save(newFacility);
+            }
+        }
+    }
+
+    /**
+     * 모든 방 시설 삭제 하기
+     * @param roomId 해당 방 일련번호
+     */
+    public void deleteAllRoomFacilities(Long roomId) {
+        List<RoomFacility> savedFacilities = getRoomFacilityListByRoomId(roomId);
+        for (RoomFacility savedFacility : savedFacilities) {
+            roomFacilityRepository.delete(savedFacility);
+        }
+    }
+
+    /**
+     * 방 시설 번호로 방 시설 찾기
+     * @param roomFacilityId 해당 방 일련번호
+     * @return RoomFacility 엔티티
+     */
+    private RoomFacility getRoomFacilityByRoomFacilityId(Long roomFacilityId) {
+        return roomFacilityRepository.findById(roomFacilityId).orElseThrow(IllegalArgumentException::new);
     }
 }

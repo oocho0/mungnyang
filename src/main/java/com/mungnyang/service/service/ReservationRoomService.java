@@ -60,6 +60,14 @@ public class ReservationRoomService {
         return reservationRoomDtoList;
     }
 
+    public void updateReservationRoom(Long roomId, List<ReservationRoomDto> reservationList) {
+
+    }
+
+    public void deleteReservationRoom(Long roomId) {
+
+    }
+
     /**
      * RoomId로 reservation-room 엔티티 리스트 찾기
      * @param roomId 해당 방의 일련번호

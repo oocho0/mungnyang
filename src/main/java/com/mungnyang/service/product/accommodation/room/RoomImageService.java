@@ -1,7 +1,7 @@
 package com.mungnyang.service.product.accommodation.room;
 
+import com.mungnyang.constant.IsTrue;
 import com.mungnyang.dto.product.ModifyImageDto;
-import com.mungnyang.dto.product.accommodation.room.ModifyRoomDto;
 import com.mungnyang.entity.product.accommodation.room.Room;
 import com.mungnyang.entity.product.accommodation.room.RoomImage;
 import com.mungnyang.repository.product.accommodation.room.RoomImageRepository;
@@ -65,5 +65,59 @@ public class RoomImageService {
                     .build());
         }
         return modifyImageDtoList;
+    }
+
+    /**
+     * 방 이미지 수정하기
+     * @param room 해당 방
+     * @param imageList 수정 페이지에 입력된 수정 이미지 정보
+     * @throws Exception
+     */
+    public void updateRoomImage(Room room, List<ModifyImageDto> imageList) throws Exception {
+        boolean isRepImageDelete = false;
+        for (ModifyImageDto modifyImageDto : imageList) {
+            if (modifyImageDto.getIsDelete().equals("Y")) {
+                Long imageId = modifyImageDto.getImageId();
+                RoomImage savedImage = getRoomImageByRoomImageId(imageId);
+                if (savedImage.getImage().getIsRepresentative() == IsTrue.YES) {
+                    isRepImageDelete = true;
+                }
+                imageService.deleteImage(room, savedImage.getImage());
+                roomImageRepository.delete(savedImage);
+                continue;
+            }
+            if (modifyImageDto.getImageId() == null) {
+                RoomImage newImage = new RoomImage();
+                newImage.setRoom(room);
+                newImage.setImage(imageService.createImage(room, modifyImageDto.getImageFile(), 1));
+                roomImageRepository.save(newImage);
+            }
+        }
+        if (isRepImageDelete) {
+            List<RoomImage> currentImages = getRoomImageListByRoomId(room.getRoomId());
+            currentImages.get(0).getImage().setIsRepresentative(IsTrue.YES);
+        }
+    }
+
+    /**
+     * 모든 방 이미지 삭제
+     * @param room 해당 방
+     * @throws Exception
+     */
+    public void deleteAllRoomImages(Room room) throws Exception {
+        List<RoomImage> savedRoomImages = getRoomImageListByRoomId(room.getRoomId());
+        for (RoomImage savedRoomImage : savedRoomImages) {
+            imageService.deleteImage(room, savedRoomImage.getImage());
+            roomImageRepository.delete(savedRoomImage);
+        }
+    }
+
+    /**
+     * 숙소 이미지 일련번호로 숙소 이미지 찾기
+     * @param roomImageId 숙소 이미지 일련번호
+     * @return RoomImage 엔티티
+     */
+    private RoomImage getRoomImageByRoomImageId(Long roomImageId) {
+        return roomImageRepository.findById(roomImageId).orElseThrow(IllegalArgumentException::new);
     }
 }

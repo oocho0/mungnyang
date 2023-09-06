@@ -1,7 +1,7 @@
 package com.mungnyang.dto.product.accommodation.room;
 
 import com.mungnyang.dto.product.ModifyImageDto;
-import com.mungnyang.dto.product.accommodation.FacilityDto;
+import com.mungnyang.dto.product.accommodation.ModifyFacilityDto;
 import com.mungnyang.dto.service.ReservationRoomDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +22,6 @@ public class ModifyRoomDto {
     private String roomDetail;
     private String roomStatus;
     private List<ModifyImageDto> imageList;
-    private List<FacilityDto> facilityList;
+    private List<ModifyFacilityDto> facilityList;
     private List<ReservationRoomDto> reservationList;
 }

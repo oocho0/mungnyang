@@ -35,7 +35,7 @@ public class MemberService {
      * @return Member 객체
      */
     @Transactional(readOnly = true)
-    public Member findMember(Long memberId) {
+    public Member getMemberByMemberId(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(IllegalArgumentException::new);
     }
 
@@ -46,8 +46,12 @@ public class MemberService {
      * @return Member 객체
      */
     @Transactional(readOnly = true)
-    public Member findMember(String email) {
-        return memberRepository.findByEmail(email);
+    public Member getMemberByMemberEmail(String email) {
+        Member member = memberRepository.findByEmail(email);
+        if (member == null) {
+            throw new IllegalArgumentException();
+        }
+        return member;
     }
 
     /**
@@ -63,8 +67,9 @@ public class MemberService {
 
     /**
      * 카카오 회원 회원 아이디 중복 확인 후, 회원 DB에 저장하기
+     *
      * @param kakaoMemberDto 페이지에 입력된 회원 정보
-     * @param password 카카오 회원 비밀번호
+     * @param password       카카오 회원 비밀번호
      */
     public void saveMember(KakaoMemberDto kakaoMemberDto, String password) {
         Member member = createMember(kakaoMemberDto);
@@ -81,7 +86,7 @@ public class MemberService {
      * @param member 중복 확인할 회원 객체
      */
     private void validateDuplicateMember(Member member) {
-        Member findMember = memberRepository.findByEmail(member.getEmail());
+        Member findMember = getMemberByMemberEmail(member.getEmail());
         if (findMember != null) {
             throw new IllegalStateException("이미 가입된 회원 입니다.");
         }
@@ -100,16 +105,16 @@ public class MemberService {
         modelMapper.typeMap(CreateMemberDto.class, Member.class).addMappings(mapping -> {
             mapping.using(
                     (Converter<String, String>) ctx -> encodedPassword(ctx.getSource())
-                    ).map(CreateMemberDto::getPassword, Member::setPassword);
+            ).map(CreateMemberDto::getPassword, Member::setPassword);
             mapping.using(
                     (Converter<String, Role>) ctx ->
                             StringUtils.equals(ctx.getSource(), Role.ADMIN.name()) ? Role.ADMIN :
                                     (StringUtils.equals(ctx.getSource(), Role.SELLER.name()) ? Role.SELLER : Role.USER)
-                    ).map(CreateMemberDto::getRole, Member::setRole);
+            ).map(CreateMemberDto::getRole, Member::setRole);
             mapping.using(
                     (Converter<String, MemberType>) ctx ->
                             StringUtils.equals(ctx.getSource(), MemberType.KAKAO.name()) ? MemberType.KAKAO : MemberType.NORMAL
-                    ).map(CreateMemberDto::getMemberType, Member::setMemberType);
+            ).map(CreateMemberDto::getMemberType, Member::setMemberType);
             mapping.skip(Member::setMemberId);
         });
         return modelMapper.map(createMemberDto, Member.class);
@@ -166,10 +171,10 @@ public class MemberService {
         String newPassword = updatePasswordDto.getNewPassword();
         String rightPassword = signInMember.getPassword();
         List<String> result = new ArrayList<>();
-        if (isWrongInputPassword(inputPassword, rightPassword, result)){
+        if (isWrongInputPassword(inputPassword, rightPassword, result)) {
             return result;
         }
-        if (!(newPassword.length() > 7 &&newPassword.length() < 17)) {
+        if (!(newPassword.length() > 7 && newPassword.length() < 17)) {
             result.add("emptyNewPassword");
             result.add("비밀번호 형식에 맞게 입력해주세요.");
             return result;
@@ -191,11 +196,12 @@ public class MemberService {
 
     /**
      * 계정 탈퇴 전에 비밀번호 확인
+     *
      * @param inputPassword 입력한 비밀번호
-     * @param signInMember 로그인한 회원 계정 정보
+     * @param signInMember  로그인한 회원 계정 정보
      * @return 올바르지 않으면 result에 결과 반환
      */
-    public List<String> checkPasswordBeforeWithdraw(String inputPassword, Member signInMember){
+    public List<String> checkPasswordBeforeWithdraw(String inputPassword, Member signInMember) {
         String rightPassword = signInMember.getPassword();
         List<String> result = new ArrayList<>();
         if (isWrongInputPassword(inputPassword, rightPassword, result)) {
@@ -206,22 +212,23 @@ public class MemberService {
 
     /**
      * 회원 삭제
+     *
      * @param member
      */
-
     public void withdrawMember(Member member) {
         memberRepository.delete(member);
     }
 
     /**
      * 입력한 비밀번호가 올바르지 않는지 확인
+     *
      * @param inputPassword 입력한 비밀번호
      * @param rightPassword 회원 계정의 비밀번호
-     * @param result 결과를 담을 리스트
+     * @param result        결과를 담을 리스트
      * @return 올바르지 않으면 true
      */
 
-    private boolean isWrongInputPassword(String inputPassword, String rightPassword, List<String> result){
+    private boolean isWrongInputPassword(String inputPassword, String rightPassword, List<String> result) {
         if (isNullPassword(inputPassword)) {
             result.add("wrongPassword");
             result.add("현재 비밀번호를 입력하지 않았습니다.");
@@ -237,6 +244,7 @@ public class MemberService {
 
     /**
      * 비밀번호가 옳은지 확인
+     *
      * @param inputPassword 입력한 비밀번호
      * @param rightPassword 회원 계정의 비밀번호
      * @return 맞으면 true 틀리면 false
@@ -267,7 +275,7 @@ public class MemberService {
                     (Converter<MemberType, String>) ctx ->
                             ctx.getSource().equals(MemberType.KAKAO) ?
                                     MemberType.KAKAO.name() : MemberType.NORMAL.name()
-                    ).map(Member::getMemberType, UpdateMemberDto::setMemberType);
+            ).map(Member::getMemberType, UpdateMemberDto::setMemberType);
         });
         return modelMapper.map(member, UpdateMemberDto.class);
     }
@@ -277,7 +285,7 @@ public class MemberService {
      */
     @PostConstruct
     public void init() {
-        if (memberRepository.findByEmail("admin@abc.com") == null) {
+        if (getMemberByMemberEmail("admin@abc.com") == null) {
             CreateMemberDto admin = new CreateMemberDto();
             admin.setName("관리자");
             admin.setEmail("admin@abc.com");
@@ -291,7 +299,7 @@ public class MemberService {
             admin.setMemberType(MemberType.NORMAL.name());
             saveMember(admin);
         }
-        if (memberRepository.findByEmail("seller@abc.com") == null) {
+        if (getMemberByMemberEmail("seller@abc.com") == null) {
             CreateMemberDto seller = new CreateMemberDto();
             seller.setName("판매자");
             seller.setEmail("seller@abc.com");
@@ -305,7 +313,7 @@ public class MemberService {
             seller.setMemberType(MemberType.NORMAL.name());
             saveMember(seller);
         }
-        if (memberRepository.findByEmail("user@abc.com") == null) {
+        if (getMemberByMemberEmail("user@abc.com") == null) {
             CreateMemberDto user = new CreateMemberDto();
             user.setName("사용자");
             user.setEmail("user@abc.com");

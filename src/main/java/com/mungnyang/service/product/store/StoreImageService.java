@@ -41,25 +41,12 @@ public class StoreImageService {
     }
 
     /**
-     * Store로 Store의 이미지 리스트 찾기
-     * @param storeId 해당 방의 일련번호
-     * @return 해당 Store의 이미지 List
-     */
-    public List<StoreImage> getStoreImageListByStoreId(Long storeId) {
-        List<StoreImage> findImages = storeImageRepository.findByStoreStoreIdOrderByStoreImageId(storeId);
-        if (findImages.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-        return findImages;
-    }
-
-    /**
      * 수정 페이지에 출력될 이미지 정보 리스트 찾기
      * @param storeId 찾을 Store의 일련번호
      * @return ModifyImageDto 리스트
      */
     public List<ModifyImageDto> getModifyImageDtoListByStoreId(Long storeId) {
-        List<StoreImage> findImages = storeImageRepository.findByStoreStoreIdOrderByStoreImageId(storeId);
+        List<StoreImage> findImages = getStoreImageListByStoreId(storeId);
         List<ModifyImageDto> storeImageDtoList = new ArrayList<>();
         for (StoreImage findImage : findImages) {
             storeImageDtoList.add(ModifyImageDto.builder()
@@ -72,7 +59,7 @@ public class StoreImageService {
 
     /**
      * 편의 시설 이미지 수정
-     * @param store 해당 편의 시설
+     * @param store 해당 편의 시설 엔티티
      * @param imageDtoList 수정 페이지에 입력된 수정 이미지 정보
      * @throws Exception
      */
@@ -81,22 +68,23 @@ public class StoreImageService {
         for (ModifyImageDto modifyImageDto : imageDtoList) {
             if(modifyImageDto.getIsDelete().equals("Y")){
                 Long imageId = modifyImageDto.getImageId();
-                StoreImage savedImage = storeImageRepository.findById(imageId).orElseThrow(IllegalArgumentException::new);
+                StoreImage savedImage = getStoreImageByStoreImageId(imageId);
                 if (savedImage.getImage().getIsRepresentative() == IsTrue.YES) {
                     isRepImageDelete = true;
                 }
                 imageService.deleteImage(store, savedImage.getImage());
                 storeImageRepository.delete(savedImage);
+                continue;
             }
             if (modifyImageDto.getImageId() == null) {
-                StoreImage newStoreImage = new StoreImage();
-                newStoreImage.setStore(store);
-                newStoreImage.setImage(imageService.createImage(store, modifyImageDto.getImageFile(), 1));
-                storeImageRepository.save(newStoreImage);
+                StoreImage newImage = new StoreImage();
+                newImage.setStore(store);
+                newImage.setImage(imageService.createImage(store, modifyImageDto.getImageFile(), 1));
+                storeImageRepository.save(newImage);
             }
         }
         if (isRepImageDelete) {
-            List<StoreImage> currentImages = storeImageRepository.findByStoreStoreIdOrderByStoreImageId(store.getStoreId());
+            List<StoreImage> currentImages = getStoreImageListByStoreId(store.getStoreId());
             currentImages.get(0).getImage().setIsRepresentative(IsTrue.YES);
         }
     }
@@ -114,4 +102,25 @@ public class StoreImageService {
         }
     }
 
+    /**
+     * StoreImageId로 StoreImage 찾기
+     * @param storeImageId 해당 방 이미지의 일련번호
+     * @return StoreImage 엔티티
+     */
+    private StoreImage getStoreImageByStoreImageId(Long storeImageId) {
+        return storeImageRepository.findById(storeImageId).orElseThrow(IllegalArgumentException::new);
+    }
+
+    /**
+     * Store로 Store의 이미지 리스트 찾기
+     * @param storeId 해당 방의 일련번호
+     * @return 해당 Store의 이미지 List
+     */
+    private List<StoreImage> getStoreImageListByStoreId(Long storeId) {
+        List<StoreImage> findImages = storeImageRepository.findByStoreStoreIdOrderByStoreImageId(storeId);
+        if (findImages.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        return findImages;
+    }
 }

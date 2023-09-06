@@ -11,6 +11,8 @@ import java.util.Objects;
 @Getter
 @Setter
 @Embeddable
+@Builder
+@AllArgsConstructor
 public class ProductAddress {
 
     private Double Lon;

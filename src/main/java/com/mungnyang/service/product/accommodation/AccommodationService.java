@@ -5,7 +5,11 @@ import com.mungnyang.dto.product.accommodation.ListAccommodationDto;
 import com.mungnyang.dto.product.accommodation.CreateAccommodationDto;
 import com.mungnyang.dto.product.accommodation.ModifyAccommodationDto;
 import com.mungnyang.dto.product.accommodation.room.ListRoomDto;
+import com.mungnyang.entity.Address;
+import com.mungnyang.entity.product.ProductAddress;
 import com.mungnyang.entity.product.accommodation.Accommodation;
+import com.mungnyang.entity.product.accommodation.room.Room;
+import com.mungnyang.repository.product.accommodation.AccommodationCommentRepository;
 import com.mungnyang.repository.product.accommodation.AccommodationRepository;
 import com.mungnyang.service.fixedEntity.CategoryService;
 import com.mungnyang.service.fixedEntity.StateCityService;
@@ -26,24 +30,11 @@ public class AccommodationService {
 
     private final ModelMapper modelMapper;
     private final AccommodationRepository accommodationRepository;
-    private final CategoryService categoryService;
     private final StateCityService stateCityService;
     private final AccommodationImageService accommodationImageService;
     private final AccommodationFacilityService accommodationFacilityService;
+    private final AccommodationCommentService accommodationCommentService;
     private final RoomService roomService;
-
-    /**
-     * Accommodation 이름으로 Accommodation 찾기
-     * @param accommodationName 해당 숙소 이름
-     * @return Accommodation 엔티티 객체
-     */
-    public Accommodation getAccommodationByAccommodationName(String accommodationName) {
-        Accommodation findAccommodation = accommodationRepository.findByAccommodationName(accommodationName);
-        if (findAccommodation == null) {
-            throw new IllegalStateException();
-        }
-        return findAccommodation;
-    }
 
     /**
      * 신규 숙소 등록하기
@@ -92,12 +83,37 @@ public class AccommodationService {
     }
 
     /**
-     * AccommodationId로 Accommodation 객체 찾기
-     * @param accommodationId 찾을 Accommodation의 일련번호
-     * @return Accommodation 엔티티
+     * 숙소 정보 수정
+     * @param accommodationId 수정할 숙소 일련번호
+     * @param modifyAccommodationDto 수정할 숙소의 정보
+     * @throws Exception
      */
-    public Accommodation getAccommodationByAccommodationId(Long accommodationId) {
-        return accommodationRepository.findById(accommodationId).orElseThrow(IllegalArgumentException::new);
+    public void updateAccommodation(Long accommodationId, ModifyAccommodationDto modifyAccommodationDto) throws Exception {
+        Accommodation savedAccommodation = getAccommodationByAccommodationId(accommodationId);
+        savedAccommodation.setAccommodationName(modifyAccommodationDto.getAccommodationName());
+        savedAccommodation.setProductAddress(ProductAddress.builder()
+                        .address(Address.builder()
+                                .zipcode(modifyAccommodationDto.getProductAddressAddressZipcode())
+                                .main(modifyAccommodationDto.getProductAddressAddressMain())
+                                .detail(modifyAccommodationDto.getAccommodationDetail())
+                                .extra(modifyAccommodationDto.getProductAddressAddressExtra())
+                                .build())
+                        .Lon(modifyAccommodationDto.getProductAddressLon())
+                        .Lat(modifyAccommodationDto.getProductAddressLat())
+                .build());
+        savedAccommodation.setCheckInTime(modifyAccommodationDto.getCheckInTime());
+        savedAccommodation.setCheckOutTime(modifyAccommodationDto.getCheckOutTime());
+        accommodationImageService.updateAccommodationImages(savedAccommodation, modifyAccommodationDto.getImageList());
+        accommodationFacilityService.updateAccommodationFacilities(savedAccommodation, modifyAccommodationDto.getFacilityList());
+    }
+
+    public void deleteAccommodation(Long accommodationId) throws Exception {
+        Accommodation savedAccommodation = getAccommodationByAccommodationId(accommodationId);
+        accommodationImageService.deleteAllAccommodationImages(savedAccommodation);
+        accommodationFacilityService.deleteAccommodationFacilities(savedAccommodation.getAccommodationId());
+        accommodationCommentService.deleteAllAccommodationComments(savedAccommodation.getAccommodationId());
+        roomService.deleteAllRooms(savedAccommodation.getAccommodationId());
+        accommodationRepository.delete(savedAccommodation);
     }
 
     /**
@@ -111,7 +127,27 @@ public class AccommodationService {
         return !email.equals(savedAccommodation.getCreatedBy());
     }
 
+    /**
+     * Accommodation 이름으로 Accommodation 찾기
+     * @param accommodationName 해당 숙소 이름
+     * @return Accommodation 엔티티 객체
+     */
+    public Accommodation getAccommodationByAccommodationName(String accommodationName) {
+        Accommodation findAccommodation = accommodationRepository.findByAccommodationName(accommodationName);
+        if (findAccommodation == null) {
+            throw new IllegalStateException();
+        }
+        return findAccommodation;
+    }
 
+    /**
+     * AccommodationId로 Accommodation 객체 찾기
+     * @param accommodationId 찾을 Accommodation의 일련번호
+     * @return Accommodation 엔티티
+     */
+    public Accommodation getAccommodationByAccommodationId(Long accommodationId) {
+        return accommodationRepository.findById(accommodationId).orElseThrow(IllegalArgumentException::new);
+    }
 
     /**
      * 숙소 생성

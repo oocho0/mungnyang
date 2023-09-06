@@ -11,8 +11,6 @@ import java.util.List;
 public class ModifyAccommodationDto {
     private Long accommodationId;
     private String accommodationName;
-    private Long cityStateStateId;
-    private Long cityCityId;
     private String productAddressAddressZipcode;
     private String productAddressAddressMain;
     private String productAddressAddressDetail;
@@ -24,5 +22,5 @@ public class ModifyAccommodationDto {
     private String accommodationDetail;
     private String accommodationStatus;
     private List<ModifyImageDto> imageList;
-    private List<FacilityDto> facilityList;
+    private List<ModifyFacilityDto> facilityList;
 }

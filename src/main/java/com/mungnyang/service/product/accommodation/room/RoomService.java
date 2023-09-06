@@ -128,6 +128,57 @@ public class RoomService {
     }
 
     /**
+     * 방 수정 하기
+     * @param roomId 해당 방 일련번호
+     * @param modifyRoomDto 수정할 방 정보
+     * @throws Exception
+     */
+    public void updateRoom(Long roomId, ModifyRoomDto modifyRoomDto) throws Exception {
+        Room savedRoom = getRoomByRoomId(roomId);
+        savedRoom.setRoomName(modifyRoomDto.getRoomName());
+        savedRoom.setRoomPrice(modifyRoomDto.getRoomPrice());
+        savedRoom.setRoomDetail(modifyRoomDto.getRoomDetail());
+        savedRoom.setRoomStatus(StatusService.statusConverter(modifyRoomDto.getRoomStatus()));
+        roomImageService.updateRoomImage(savedRoom, modifyRoomDto.getImageList());
+        roomFacilityService.updateRoomFacility(savedRoom, modifyRoomDto.getFacilityList());
+        reservationRoomService.updateReservationRoom(savedRoom.getRoomId(), modifyRoomDto.getReservationList());
+    }
+
+    /**
+     * 해당 숙소의 모든 방 삭제하기
+     * @param accommodationId 해당 숙소 일련번호
+     * @throws Exception
+     */
+    public void deleteAllRooms(Long accommodationId) throws Exception {
+        List<Room> savedRooms = roomRepository.findByAccommodationAccommodationIdOrderByRoomId(accommodationId);
+        for (Room savedRoom : savedRooms) {
+            deleteRoom(savedRoom);
+        }
+    }
+
+    /**
+     * 해당 방 삭제 하기
+     * @param roomId 삭젝할 방 일련번호
+     * @throws Exception
+     */
+    public void deleteRoom(Long roomId) throws Exception {
+        Room room = getRoomByRoomId(roomId);
+        deleteRoom(room);
+    }
+
+    /**
+     * 방 삭제하기
+     * @param savedRoom 삭제할 방
+     * @throws Exception
+     */
+    private void deleteRoom(Room savedRoom) throws Exception {
+        roomImageService.deleteAllRoomImages(savedRoom);
+        roomFacilityService.deleteAllRoomFacilities(savedRoom.getRoomId());
+        reservationRoomService.deleteReservationRoom(savedRoom.getRoomId());
+        roomRepository.delete(savedRoom);
+    }
+
+    /**
      * RoomId로 Room 찾기
      * @param roomId 해당 방의 일련번호
      * @return 해당 방 엔티티

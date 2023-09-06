@@ -1,5 +1,6 @@
 package com.mungnyang.service.product.accommodation;
 
+import com.mungnyang.constant.IsTrue;
 import com.mungnyang.dto.product.ModifyImageDto;
 import com.mungnyang.entity.product.accommodation.Accommodation;
 import com.mungnyang.entity.product.accommodation.AccommodationImage;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +23,6 @@ public class AccommodationImageService {
 
     private final AccommodationImageRepository accommodationImageRepository;
     private final ImageService imageService;
-    private final ModelMapper modelMapper;
 
     /**
      * AccommodationImage 저장
@@ -67,5 +68,59 @@ public class AccommodationImageService {
                     .build());
         }
         return modifyImageDtoList;
+    }
+
+    /**
+     * 숙소 이미지 수정
+     * @param accommodation 해당 숙소 엔티티
+     * @param imageList 수정 페이지에 입력된 수정 이미지 정보
+     * @throws Exception
+     */
+    public void updateAccommodationImages(Accommodation accommodation, List<ModifyImageDto> imageList) throws Exception {
+        boolean isRepImageDelete = false;
+        for (ModifyImageDto modifyImageDto : imageList) {
+            if (modifyImageDto.getIsDelete().equals("Y")) {
+                Long imageId = modifyImageDto.getImageId();
+                AccommodationImage savedImage = getAccommodationImageByAccommodationImageId(imageId);
+                if (savedImage.getImage().getIsRepresentative() == IsTrue.YES) {
+                    isRepImageDelete = true;
+                }
+                imageService.deleteImage(accommodation, savedImage.getImage());
+                accommodationImageRepository.delete(savedImage);
+                continue;
+            }
+            if (modifyImageDto.getImageId() == null) {
+                AccommodationImage newImage = new AccommodationImage();
+                newImage.setAccommodation(accommodation);
+                newImage.setImage(imageService.createImage(accommodation, modifyImageDto.getImageFile(), 1));
+                accommodationImageRepository.save(newImage);
+            }
+        }
+        if (isRepImageDelete) {
+            List<AccommodationImage> currentImages = getAccommodationImageListByAccommodationId(accommodation.getAccommodationId());
+            currentImages.get(0).getImage().setIsRepresentative(IsTrue.YES);
+        }
+    }
+
+    /**
+     * 모든 숙소 이미지 삭제
+     * @param accommodation 해당 숙소
+     * @throws Exception
+     */
+    public void deleteAllAccommodationImages(Accommodation accommodation) throws Exception {
+        List<AccommodationImage> savedAccommodationImages = getAccommodationImageListByAccommodationId(accommodation.getAccommodationId());
+        for (AccommodationImage savedAccommodationImage : savedAccommodationImages) {
+            imageService.deleteImage(accommodation, savedAccommodationImage.getImage());
+            accommodationImageRepository.delete(savedAccommodationImage);
+        }
+    }
+
+    /**
+     * AccommodationImageId로 숙소 이미지 찾기
+     * @param accommodationImageId 해당 숙소 이미지 일련번호
+     * @return AccommodationImage 엔티티
+     */
+    private AccommodationImage getAccommodationImageByAccommodationImageId(Long accommodationImageId) {
+        return accommodationImageRepository.findById(accommodationImageId).orElseThrow(IllegalArgumentException::new);
     }
 }

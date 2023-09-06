@@ -107,7 +107,7 @@ public class KakaoService {
      * @return 카카오 계정의 일련번호가 비밀번호
      */
     public String getMemberPW(String kakaoEmail) {
-        Member member = memberService.findMember(kakaoEmail);
+        Member member = memberService.getMemberByMemberEmail(kakaoEmail);
         if (member == null) {
             return null;
         }
