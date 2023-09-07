@@ -64,9 +64,6 @@ public class ReservationRoomService {
 
     }
 
-    public void deleteReservationRoom(Long roomId) {
-
-    }
 
     /**
      * RoomId로 reservation-room 엔티티 리스트 찾기

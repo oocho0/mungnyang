@@ -116,7 +116,7 @@ public class StoreImageService {
      * @param storeId 해당 방의 일련번호
      * @return 해당 Store의 이미지 List
      */
-    private List<StoreImage> getStoreImageListByStoreId(Long storeId) {
+    public List<StoreImage> getStoreImageListByStoreId(Long storeId) {
         List<StoreImage> findImages = storeImageRepository.findByStoreStoreIdOrderByStoreImageId(storeId);
         if (findImages.isEmpty()) {
             throw new IllegalArgumentException();

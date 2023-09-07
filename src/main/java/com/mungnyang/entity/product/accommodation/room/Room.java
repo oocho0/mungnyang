@@ -1,5 +1,6 @@
 package com.mungnyang.entity.product.accommodation.room;
 
+import com.mungnyang.constant.IsTrue;
 import com.mungnyang.constant.Status;
 import com.mungnyang.entity.WriterEntity;
 import com.mungnyang.entity.product.Product;

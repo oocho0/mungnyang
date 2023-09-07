@@ -11,6 +11,7 @@ import java.util.List;
 public class ModifyAccommodationDto {
     private Long accommodationId;
     private String accommodationName;
+    private Long smallCategorySmallCategoryId;
     private String productAddressAddressZipcode;
     private String productAddressAddressMain;
     private String productAddressAddressDetail;

@@ -6,7 +6,16 @@ function addFile(selectedFiles) {
     fileWorks(eventId, "image-file", selectedFiles, "#explain-image", fileArray, "#image-list", "#input-image", "deleteFile");
 }
 
-var roomFileArray = [[],[],[],[],[],[],[],[],[],[]];
+var roomFileArray = new Map();
+roomFileArray.set("room0", new Array());
+
+function makeRoomFile(i){
+    roomFileArray.set("room"+i, new Array());
+}
+
+function deleteRoomFile(i){
+    roomFileArray.delete("room"+i);
+}
 
 function addRoomFile(selectedFiles){
     var eventId = $(event.target).attr("id");
@@ -14,7 +23,7 @@ function addRoomFile(selectedFiles){
     var inputElement = "room-image-file" + roomNumber;
     var explainElement = "#explain-roomImageWarn" + roomNumber;
     var fileListElement = "#roomImageWarn" + roomNumber;
-    fileWorks(eventId, inputElement, selectedFiles, explainElement, roomFileArray[roomNumber - 1], fileListElement, "#"+eventId, "deleteRoomImage");
+    fileWorks(eventId, inputElement, selectedFiles, explainElement, roomFileArray.get("room"+roomNumber), fileListElement, "#"+eventId, "deleteRoomImage");
 }
 
 function fileWorks(eventId, inputElement, selectedFiles, explainElement, arrayForFile, fileListElement, inputTagId, deleteFunction){
@@ -26,9 +35,7 @@ function fileWorks(eventId, inputElement, selectedFiles, explainElement, arrayFo
     if(selectedFileAmount > remainFileAmount){
         alert("이미지는 최대" + maxFileAmount +"개 까지 첨부 가능합니다.");
     }
-
     $(explainElement).hide();
-
     for(var i = 0; i < Math.min(selectedFileAmount, remainFileAmount); i++){
         const file = selectedFiles.files[i];
         if(validation(file)) {
@@ -87,9 +94,9 @@ function deleteFile(fileNo){
 function deleteRoomImage(fileNo){
     var idName = $(event.target).closest("div").attr("id");
     var roomNo = Number($("#"+idName).closest(".accordion-item").attr("data-roomIndex"));
-    roomFileArray[roomNo-1][fileNo].is_delete = true;
+    roomFileArray.get("room"+roomNo)[fileNo].is_delete = true;
     console.log(roomFileArray);
-    console.log(roomFileArray[roomNo-1]);
+    console.log(roomFileArray.get("room"+roomNo));
     $("#" + idName).remove();
     var currentFileAmount = $("#room"+ roomNo + " .image-file-list").length;
     if(currentFileAmount == 0 || currentFileAmount == null){
@@ -98,22 +105,22 @@ function deleteRoomImage(fileNo){
 }
 
 function addFormData(formData){
+    var k = 0;
     for(var i = 0; i < fileArray.length; i++){
         if(fileArray[i].is_delete == true){
             continue;
         }
-        formData.append("imageList[" + i + "]", fileArray[i]);
+        formData.append("imageList[" + k++ + "]", fileArray[i]);
     }
 }
 
-function addFormDataWithRoom(formData, i){
-    var array = {};
+function addFormDataWithRoom(formData, i, l){
     var k = 0;
-    for(var j = 0 ; j < roomFileArray[i].length; j ++){
-        if(roomFileArray[i][j].is_delete == true){
+    for(var j = 0 ; j < roomFileArray.get("room"+i).length; j ++){
+        if(roomFileArray.get("room"+i)[j].is_delete == true){
             continue;
         }
-        formData.append("roomList[" + i + "].imageList["+k+"]", roomFileArray[i][j]);
+        formData.append("roomList[" + l + "].imageList["+k+"]", roomFileArray.get("room"+i)[j]);
         k++;
     }
 }
@@ -129,7 +136,7 @@ function singleImageCheck(resultObject){
 
 function roomImageCheck(i, resultObject){
     var inputTagId = "#roomImage"+ i
-    imageCheck(roomFileArray[i - 1], resultObject, inputTagId)
+    imageCheck(roomFileArray.get("room"+i), resultObject, inputTagId)
 }
 
 function imageCheck(arrayForFile, resultObject, tagName){
@@ -142,11 +149,4 @@ function imageCheck(arrayForFile, resultObject, tagName){
     if(arrayForFile == null || arrayForFile.length == count){
         resultObject[tagName] = "이미지를 1개 이상 업로드해주세요.";
     }
-}
-
-function deleteAllImages(i){
-    roomFileArray[i-1] = [];
-    $("#roomImage"+i).val('');
-    $("#room-image-file"+i).hide();
-    $("#explain-roomImageWarn"+i).show();
 }

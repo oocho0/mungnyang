@@ -10,6 +10,7 @@ import java.util.Objects;
 @Embeddable
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class Address {
     private String zipcode;
     private String main;

@@ -58,7 +58,9 @@ public class RoomService {
         List<String> roomFacilityList = createRoomDto.getFacilityList();
         roomFacilityService.saveRoomFacility(createdRoom, roomFacilityList);
         List<InitializeReservationRoomDto> initializeReservationRoomDtoList = createRoomDto.getReservationList();
-        reservationRoomService.saveReservationRoom(createdRoom, initializeReservationRoomDtoList);
+        if (initializeReservationRoomDtoList != null) {
+            reservationRoomService.saveReservationRoom(createdRoom, initializeReservationRoomDtoList);
+        }
     }
 
     /**
@@ -77,18 +79,6 @@ public class RoomService {
         Room createdRoom = modelMapper.map(createRoomDto, Room.class);
         createdRoom.setAccommodation(accommodation);
         return createdRoom;
-    }
-
-    /**
-     * Accommodation 객체로 Room 객체 리스트 반환
-     * @return 찾은 Room 리스트 없으면 예외 발생
-     */
-    public List<Room> getRoomListByAccommodationId(Long accommodationId) {
-        List<Room> rooms = roomRepository.findByAccommodationAccommodationIdOrderByRoomId(accommodationId);
-        if (rooms.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-        return rooms;
     }
 
     /**
@@ -149,8 +139,8 @@ public class RoomService {
      * @param accommodationId 해당 숙소 일련번호
      * @throws Exception
      */
-    public void deleteAllRooms(Long accommodationId) throws Exception {
-        List<Room> savedRooms = roomRepository.findByAccommodationAccommodationIdOrderByRoomId(accommodationId);
+    public void deleteAllRooms(Long accommodationId) {
+        List<Room> savedRooms = getRoomListByAccommodationId(accommodationId);
         for (Room savedRoom : savedRooms) {
             deleteRoom(savedRoom);
         }
@@ -161,7 +151,7 @@ public class RoomService {
      * @param roomId 삭젝할 방 일련번호
      * @throws Exception
      */
-    public void deleteRoom(Long roomId) throws Exception {
+    public void deleteRoom(Long roomId) {
         Room room = getRoomByRoomId(roomId);
         deleteRoom(room);
     }
@@ -171,20 +161,8 @@ public class RoomService {
      * @param savedRoom 삭제할 방
      * @throws Exception
      */
-    private void deleteRoom(Room savedRoom) throws Exception {
-        roomImageService.deleteAllRoomImages(savedRoom);
-        roomFacilityService.deleteAllRoomFacilities(savedRoom.getRoomId());
-        reservationRoomService.deleteReservationRoom(savedRoom.getRoomId());
-        roomRepository.delete(savedRoom);
-    }
-
-    /**
-     * RoomId로 Room 찾기
-     * @param roomId 해당 방의 일련번호
-     * @return 해당 방 엔티티
-     */
-    public Room getRoomByRoomId(Long roomId) {
-        return roomRepository.findById(roomId).orElseThrow(IllegalArgumentException::new);
+    private void deleteRoom(Room savedRoom) {
+        savedRoom.setRoomStatus(Status.CLOSED);
     }
 
     /**
@@ -196,5 +174,30 @@ public class RoomService {
     public boolean isNotOneOfAccommodationRoom(Long accommodationId, Long roomId) {
         Room savedRoom = getRoomByRoomId(roomId);
         return !Objects.equals(accommodationId, savedRoom.getAccommodation().getAccommodationId());
+    }
+
+    /**
+     * Accommodation 객체로 Room 객체 리스트 반환
+     * @return 찾은 Room 리스트 없으면 예외 발생
+     */
+    public List<Room> getRoomListByAccommodationId(Long accommodationId) {
+        List<Room> rooms = roomRepository.findByAccommodationAccommodationIdAndRoomStatusNotOrderByRoomId(accommodationId, Status.CLOSED);
+        if (rooms.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        return rooms;
+    }
+
+    /**
+     * RoomId로 Room 찾기
+     * @param roomId 해당 방의 일련번호
+     * @return 해당 방 엔티티
+     */
+    public Room getRoomByRoomId(Long roomId) {
+        Room findRoom = roomRepository.findByRoomIdAndRoomStatusNot(roomId, Status.CLOSED);
+        if (findRoom == null) {
+            throw new IllegalArgumentException();
+        }
+        return findRoom;
     }
 }

@@ -36,10 +36,6 @@
               <label class="form-check-label" for="storeStatusOpen">영업중</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" value="CLOSED" th:field="*{storeStatus}" id="storeStatusClose">
-              <label class="form-check-label" for="storeStatusClose">폐업</label>
-            </div>
-            <div class="form-check form-check-inline">
               <input class="form-check-input" type="radio" value="PAUSE" th:field="*{storeStatus}" id="storeStatusPause">
               <label class="form-check-label" for="storeStatusPause">휴업</label>
             </div>
@@ -145,8 +141,8 @@
           </div>
           <div class="col-5 text-start" id="image-list" >
             <span class="form-text" id="explain-image">.gif, .jpg, .png 형식만 최대 10장까지 가능<br>최대 파일 용량은 100MB<br>파일명 100자 이하 가능</span>
-            <div th:each="storeImage, status : *{imageList}" th:id="image-file + ${status.index}" th:data-id="*{imageList.imageId}" class="image-file-list">
-              <span th:text="${imageList.imageFileName}"></span>
+            <div th:each="storeImage, status : *{imageList}" th:id="image-file + ${status.index}" th:data-id="${storeImage.imageId}" class="image-file-list">
+              <span th:text="${storeImage.imageFileName}"></span>
               <a class="delete" style="cursor: pointer; text-decoration : none; color:inherit;" th:onclick="|deleteFile(${status.index});|">✖</a>
             </div>
           </div>

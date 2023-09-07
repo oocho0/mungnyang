@@ -6,5 +6,5 @@ import java.util.List;
 
 
 public interface AccommodationPageRepository {
-    List<ListAccommodationDto> findListAccommodationDtoByCreatedByOrderByReqDateDesc(String email);
+    List<ListAccommodationDto> findListAccommodationDtoByCreatedByAndIsNotDeleteOrderByReqDateDesc(String email);
 }

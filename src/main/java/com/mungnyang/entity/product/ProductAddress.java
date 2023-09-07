@@ -13,6 +13,7 @@ import java.util.Objects;
 @Embeddable
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class ProductAddress {
 
     private Double Lon;

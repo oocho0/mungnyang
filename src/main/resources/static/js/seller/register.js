@@ -39,15 +39,18 @@ function makeFormData(formData){
     addFormData(formData);
     addFacilityData(formData);
     var roomAmount = Number($("#roomAmount").val());
-    for(var i = 0; i < roomAmount; i++){
-        formData.append("roomList[" + i + "].roomName", $("#roomName" + (i+1)).val());
-        formData.append("roomList[" + i + "].roomPrice", $("#roomPrice" + (i+1)).val());
-        formData.append("roomList[" + i + "].roomDetail", $("#roomDetail" + (i+1)).val());
-        formData.append("roomList[" + i + "].roomStatus", $("[name='roomStatus" + (i+1) + "']:checked").val());
-        addFormDataWithRoom(formData, i);
-        addRoomFacilityData(formData, i);
-        addReservationList(formData, i);
-    }
+    var k = 0;
+    $(".accordion-item").each(function(j, element){
+        var i = $(element).attr("data-roomIndex");
+        formData.append("roomList[" + k + "].roomName", $("#roomName" + i).val());
+        formData.append("roomList[" + k + "].roomPrice", $("#roomPrice" + i).val());
+        formData.append("roomList[" + k + "].roomDetail", $("#roomDetail" + i).val());
+        formData.append("roomList[" + k + "].roomStatus", $("[name='roomStatus" + i + "']:checked").val());
+        addFormDataWithRoom(formData, i, k);
+        addRoomFacilityData(formData, i, k);
+        addReservationList(formData, i, k);
+        k++;
+    });
 }
 
 let resultObjectKeys = [];
@@ -73,12 +76,15 @@ function checkForm(){
     if($("#accommodationName").val().length > 50){
         resultObject["#accommodationName"] = "50자 이내로 작성해주세요.";
     }
+    if($("#smallCategoryId option:selected").text() == "소분류 선택"){
+        resultObject["#smallCategoryId"] = $("#smallCategoryId").data('error') + " 입력되지 않았습니다.";
+    }
     singleImageCheck(resultObject);
     checkFacility(resultObject);
 
-    var roomAmount = Number($("#roomAmount").val());
-    const checkRoomLabels = ["#roomName", "#roomPrice"];
-    for (var i = 1; i < roomAmount+1; i++){
+    $(".accordion-item").each(function(j, element){
+        var i = $(element).attr("data-roomIndex");
+        const checkRoomLabels = ["#roomName", "#roomPrice"];
         $.each(checkRoomLabels, function(index, value){
             if($(value + i).val() == "" || $(value + i).val() == null){
                 resultObject[value + i] = $(value + i).data('error') + " 입력되지 않았습니다.";
@@ -91,12 +97,12 @@ function checkForm(){
 
         roomImageCheck(i, resultObject);
         checkRoomFacility(resultObject, i);
-    }
+    });
 
 
     $.each(resultObject, function(key, value){
-        if($(key).closest("div").parent("div").next("div").find(".error").text().length == 0){
-            $(key).closest("div").parent("div").after($(
+        if($(key).closest(".row").next("div").find(".error").text().length == 0){
+            $(key).closest(".row").after($(
             '<div class="row g-3 align-items-center">' +
             '    <div class="col-3"></div>' +
             '    <div class="col-6 text-start">' +

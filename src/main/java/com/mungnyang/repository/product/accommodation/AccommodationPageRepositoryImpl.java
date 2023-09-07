@@ -1,5 +1,7 @@
 package com.mungnyang.repository.product.accommodation;
 
+import com.mungnyang.constant.IsTrue;
+import com.mungnyang.constant.Status;
 import com.mungnyang.dto.product.accommodation.ListAccommodationDto;
 import com.mungnyang.dto.product.accommodation.QListAccommodationDto;
 import com.mungnyang.entity.fixedEntity.QCity;
@@ -19,7 +21,7 @@ public class AccommodationPageRepositoryImpl implements AccommodationPageReposit
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<ListAccommodationDto> findListAccommodationDtoByCreatedByOrderByReqDateDesc(String email) {
+    public List<ListAccommodationDto> findListAccommodationDtoByCreatedByAndIsNotDeleteOrderByReqDateDesc(String email) {
         QAccommodation accommodation = QAccommodation.accommodation;
         QAccommodationComment accommodationComment = QAccommodationComment.accommodationComment;
         QState state = QState.state;
@@ -40,7 +42,8 @@ public class AccommodationPageRepositoryImpl implements AccommodationPageReposit
                 .join(accommodation.city, city)
                 .join(city.state, state)
                 .leftJoin(accommodationComment).on(accommodation.accommodationId.eq(accommodationComment.accommodation.accommodationId))
-                .where(accommodation.createdBy.eq(email))
+                .where(accommodation.createdBy.eq(email),
+                        accommodation.accommodationStatus.ne(Status.CLOSED))
                 .orderBy(accommodation.reqDate.desc())
                 .groupBy(accommodation.accommodationId)
                 .fetch();
