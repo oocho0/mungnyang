@@ -1,14 +1,12 @@
 package com.mungnyang.dto.product.accommodation;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class ModifyFacilityDto {
     private Long facilityId;
     private String facilityName;

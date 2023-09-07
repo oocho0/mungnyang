@@ -1,12 +1,13 @@
 function request(){
-    let result = checkStoreDtoForm();
+    let result = checkDtoForm();
     if(result == false){
         return false;
     }
-    var url = "/admin/stores/"+$("#storeId").val();
+    var url = "/seller/accommodations/"+$("#accommodationId").val();
 
     var formData = new FormData($("form")[0]);
     addImageToFormData(formData);
+    addFacilityData(formData);
 
     $.ajax({
         url      : url,
@@ -16,12 +17,9 @@ function request(){
         data : formData,
         encType : "multipart/form-data",
         cache   : false,
-        beforeSend : function(){
-
-        },
         success  : function(result, status){
             alert('수정이 완료되었습니다.');
-            location.href='/admin/stores';
+            location.href='/seller/accommodations';
         },
         error : function(status, error){
                 if(status.status == '401'){
@@ -36,9 +34,10 @@ function request(){
 
 let resultObjectKeys = [];
 
-function checkStoreDtoForm(){
+function checkDtoForm(){
     let resultObject = new Object();
-    const checkLabels = ["#storeName", "#addressZipcode", "#addressMain", "#productAddressLat", "#productAddressLon"];
+    const checkLabels = ["#accommodationName", "#addressZipcode", "#addressMain", "#productAddressLat",
+    "#productAddressLon", "#checkInTime", "#checkOutTime"];
 
     if(resultObjectKeys.length != 0){
         $.each(resultObjectKeys, function(index, value){
@@ -54,19 +53,20 @@ function checkStoreDtoForm(){
         }
     });
 
-    if($("#smallCategory").is(":disabled") == true || $("#smallCategory option:selected").text() == "소분류 선택"){
+    if($("#smallCategory option:selected").val() == "0"){
         resultObject["#smallCategory"] = $("#smallCategory").data('error') + " 입력되지 않았습니다.";
     }
 
-    if($("#storeName").val().length > 50){
-        resultObject["#storeName"] = "50자 이내로 작성해주세요.";
+    if($("#accommodationName").val().length > 50){
+        resultObject["#accommodationName"] = "50자 이내로 작성해주세요.";
     }
 
     checkImages(resultObject);
+    checkFacility(resultObject);
 
     $.each(resultObject, function(key, value){
-        if($(key).closest("div").parent("div").next("div").find(".error").text().length == 0){
-            $(key).closest("div").parent("div").after($(
+        if($(key).closest(".row").next("div").find(".error").text().length == 0){
+            $(key).closest(".row").after($(
             '<div class="row g-3 align-items-center">' +
             '    <div class="col-3"></div>' +
             '    <div class="col-6 text-start">' +
@@ -82,7 +82,7 @@ function checkStoreDtoForm(){
     return false;
 }
 
-function deleteStore(){
+function deleteAccommodation(){
 
     var result = confirm("정말 삭제하시겠습니까?\n삭제하시려면 '확인'버튼을 누르시고\n취소하시려면 '취소'버튼을 누르세요.")
     if(!result){
@@ -90,7 +90,7 @@ function deleteStore(){
     }
     var token = $("meta[name='_csrf']").attr("content");
     var header = $("meta[name='_csrf_header']").attr("content");
-    var url = "/admin/stores/"+$("#storeId").val();
+    var url = "/seller/accommodations/"+$("#accommodationId").val();
 
     $.ajax({
         url      : url,
@@ -102,7 +102,7 @@ function deleteStore(){
         },
         success  : function(result, status){
             alert('삭제가 완료되었습니다.');
-            location.href='/admin/stores';
+            location.href='/seller/accommodations';
         },
         error : function(status, error){
                 if(status.status == '401'){

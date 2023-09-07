@@ -17,9 +17,6 @@ function request(){
         data : formData,
         encType : "multipart/form-data",
         cache   : false,
-        beforeSend : function(){
-
-        },
         success  : function(result, status){
             alert('등록이 완료되었습니다.');
             location.href='/seller/accommodations';
@@ -36,7 +33,7 @@ function request(){
 }
 
 function makeFormData(formData){
-    addFormData(formData);
+    addImageToFormData(formData);
     addFacilityData(formData);
     addReservationList(formData);
 }
@@ -61,13 +58,14 @@ function checkForm(){
     });
 
     if($("#roomName").val().length > 50){
-        resultObject["#accommodationName"] = "50자 이내로 작성해주세요.";
+        resultObject["#roomName"] = "50자 이내로 작성해주세요.";
     }
     singleImageCheck(resultObject);
+    checkFacility(resultObject);
 
     $.each(resultObject, function(key, value){
-        if($(key).closest("div").parent("div").next("div").find(".error").text().length == 0){
-            $(key).closest("div").parent("div").after($(
+        if($(key).closest(".row").next("div").find(".error").text().length == 0){
+            $(key).closest(".row").after($(
             '<div class="row g-3 align-items-center">' +
             '    <div class="col-3"></div>' +
             '    <div class="col-6 text-start">' +

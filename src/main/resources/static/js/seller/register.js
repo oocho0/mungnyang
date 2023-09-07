@@ -17,9 +17,6 @@ function request(){
         data : formData,
         encType : "multipart/form-data",
         cache   : false,
-        beforeSend : function(){
-
-        },
         success  : function(result, status){
             alert('등록이 완료되었습니다.');
             location.href='/seller/accommodations';

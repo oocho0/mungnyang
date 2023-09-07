@@ -60,6 +60,8 @@ public class AccommodationController {
         }
         ModifyAccommodationDto findAccommodation = accommodationService.getModifyAccommodationDtoByAccommodationId(accommodationId);
         model.addAttribute("accommodation", findAccommodation);
+        List<SmallCategory> smallCategoryList = categoryService.getSmallCategoryListByBigCategoryId(1L);
+        model.addAttribute("smallCategories", smallCategoryList);
         return "seller/modify";
     }
 

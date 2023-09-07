@@ -54,7 +54,7 @@ function checkStoreDtoForm(){
         }
     });
 
-    if($("#smallCategory").is(":disabled") == true || $("#smallCategory option:selected").text() == "소분류 선택"){
+    if($("#smallCategory").is(":disabled") == true || $("#smallCategory option:selected").val() == "0"){
         resultObject["#smallCategory"] = $("#smallCategory").data('error') + " 입력되지 않았습니다.";
     }
 

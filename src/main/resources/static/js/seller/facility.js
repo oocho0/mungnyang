@@ -16,9 +16,9 @@ function addFacility(){
         return false;
     }
     $("#facilityList").append($(
-    '   <span class="form-text facility" id="facility' + num + '" data-facilityIndex="' + num + '">' + addFacility +
-    '       <a class="delete" style="cursor:pointer; text-decoration : none; color:inherit;" onclick="deleteFacility();">✖</a>' +
-    '   </span>'
+        '   <span class="form-text facility" id="facility' + num + '" data-facilityIndex="' + num + '">' + addFacility +
+        '       <a class="delete" style="cursor:pointer; text-decoration : none; color:inherit;" onclick="deleteFacility();">✖</a>' +
+        '   </span>'
     ));
     num++;
     $("#facilityInput").val("");
@@ -59,12 +59,12 @@ function checkRoomFacility(resultObject, i){
 
 function addFacilityData(formData){
     $(".facility").each(function(i, facility){
-        formData.append("facilityList[" + i + "].name", $(facility).text());
+        formData.append("facilityList[" + i + "]", $(facility).text());
     });
 }
 
 function addRoomFacilityData(formData, i, k){
     $(".roomFacility"+ i).each(function(j, facility){
-        formData.append("roomList["+ k + "].facilityList[" + j + "].name", $(facility).text());
+        formData.append("roomList["+ k + "].facilityList[" + j + "]", $(facility).text());
     });
 }
