@@ -284,7 +284,7 @@ public class MemberService {
      * MemberService 빈 생성 시 기본 회원을 DB에 저장
      */
     @PostConstruct
-    public void init() {
+    private void init() {
         if (getMemberByMemberEmail("admin@abc.com") == null) {
             CreateMemberDto admin = new CreateMemberDto();
             admin.setName("관리자");

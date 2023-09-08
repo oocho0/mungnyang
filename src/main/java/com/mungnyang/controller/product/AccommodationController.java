@@ -1,13 +1,16 @@
 package com.mungnyang.controller.product;
 
+import com.mungnyang.constant.IsTrue;
 import com.mungnyang.dto.product.accommodation.*;
 import com.mungnyang.dto.product.accommodation.room.CreateRoomDto;
 import com.mungnyang.dto.product.accommodation.room.ModifyRoomDto;
+import com.mungnyang.dto.service.CalendarShowReservationRoomDto;
 import com.mungnyang.entity.fixedEntity.SmallCategory;
 import com.mungnyang.entity.product.accommodation.Accommodation;
 import com.mungnyang.service.fixedEntity.CategoryService;
 import com.mungnyang.service.product.accommodation.AccommodationService;
 import com.mungnyang.service.product.accommodation.room.RoomService;
+import com.mungnyang.service.service.ReservationRoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,6 +31,7 @@ public class AccommodationController {
     private final AccommodationService accommodationService;
     private final CategoryService categoryService;
     private final RoomService roomService;
+    private final ReservationRoomService reservationRoomService;
 
     @GetMapping("/accommodation")
     public String loadRegisterPage(Model model) {
@@ -129,6 +133,23 @@ public class AccommodationController {
         ModifyRoomDto modifyRoomDto = roomService.getModifyRoomDtoByRoomId(roomId);
         model.addAttribute("room", modifyRoomDto);
         return "seller/modifyRoom";
+    }
+
+    @GetMapping("/accommodations/{accommodationId}/{roomId}/{isInit}")
+    public ResponseEntity<?> getReservationList(@PathVariable Long accommodationId, @PathVariable Long roomId,
+                                                @PathVariable String isInit, Principal principal) {
+        if (accommodationService.isNotWrittenByPrinciple(accommodationId, principal.getName())) {
+            return new ResponseEntity<String>("변경 권한이 없습니다.", HttpStatus.FORBIDDEN);
+        }
+        if(roomService.isNotOneOfAccommodationRoom(accommodationId, roomId)){
+            return new ResponseEntity<String>("잘못된 경로 입니다.", HttpStatus.BAD_REQUEST);
+        }
+        IsTrue isInitialRecord = isInit.equals("init") ? IsTrue.YES : IsTrue.NO ;
+        List<CalendarShowReservationRoomDto> reservationRoomList = reservationRoomService.getReservationRoomDtoListByRoomId(roomId, isInitialRecord);
+        if (reservationRoomList == null) {
+            return new ResponseEntity<String>("none", HttpStatus.OK);
+        }
+        return new ResponseEntity<List<CalendarShowReservationRoomDto>>(reservationRoomList, HttpStatus.OK);
     }
 
     @PutMapping("/accommodations/{accommodationId}/{roomId}")

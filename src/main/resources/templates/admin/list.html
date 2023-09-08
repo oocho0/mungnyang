@@ -46,7 +46,6 @@
                         <select class="form-select" id="status" aria-label="영업 상태 선택">
                             <option value="" selected>영업 상태 전체</option>
                             <option value="OPEN">영업중</option>
-                            <option value="CLOSED">폐업</option>
                             <option value="PAUSE">휴업</option>
                         </select>
                     </div>
@@ -83,7 +82,7 @@
                         <td th:text="${store.smallCategoryName}"></td>
                         <td th:text="${store.stateName}"></td>
                         <td th:text="${store.cityName}"></td>
-                        <td th:text="${(#strings.equals(store.storeStatus, 'OPEN') ? '영업중' : (#strings.equals(store.storeStatus, 'CLOSED') ? '폐업' : '휴업'))}"></td>
+                        <td th:text="${#strings.equals(store.storeStatus, 'OPEN') ? '영업중' : '휴업'}"></td>
                         <td th:text="${store.rate}"></td>
                         <td th:text="${store.commentCount}"></td>
                     </tr>

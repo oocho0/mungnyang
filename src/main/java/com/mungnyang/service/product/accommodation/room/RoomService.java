@@ -2,7 +2,7 @@ package com.mungnyang.service.product.accommodation.room;
 
 import com.mungnyang.constant.Status;
 import com.mungnyang.dto.product.accommodation.ListAccommodationDto;
-import com.mungnyang.dto.product.accommodation.room.InitializeReservationRoomDto;
+import com.mungnyang.dto.service.InitializeReservationRoomDto;
 import com.mungnyang.dto.product.accommodation.room.CreateRoomDto;
 import com.mungnyang.dto.product.accommodation.room.ListRoomDto;
 import com.mungnyang.dto.product.accommodation.room.ModifyRoomDto;
@@ -110,10 +110,10 @@ public class RoomService {
                 .roomId(savedRoom.getRoomId())
                 .roomName(savedRoom.getRoomName())
                 .roomPrice(savedRoom.getRoomPrice())
+                .roomDetail(savedRoom.getRoomDetail())
                 .roomStatus(StatusService.statusConverter(savedRoom.getRoomStatus()))
                 .imageList(roomImageService.getModifyImageDtoListByRoomId(roomId))
                 .facilityList(roomFacilityService.getFacilityDtoListByRoomId(roomId))
-                .reservationList(reservationRoomService.getReservationRoomDtoListByRoomId(roomId))
                 .build();
     }
 
@@ -131,7 +131,7 @@ public class RoomService {
         savedRoom.setRoomStatus(StatusService.statusConverter(modifyRoomDto.getRoomStatus()));
         roomImageService.updateRoomImage(savedRoom, modifyRoomDto.getImageList());
         roomFacilityService.updateRoomFacility(savedRoom, modifyRoomDto.getFacilityList());
-        reservationRoomService.updateReservationRoom(savedRoom.getRoomId(), modifyRoomDto.getReservationList());
+        reservationRoomService.updateReservationRoom(savedRoom, modifyRoomDto.getReservationList());
     }
 
     /**
@@ -199,5 +199,26 @@ public class RoomService {
             throw new IllegalArgumentException();
         }
         return findRoom;
+    }
+
+    public void deleteClosedTestAllRooms(Long accommodationId) {
+        List<Room> savedRooms = getAllRoomForTestDelete(accommodationId);
+        for (Room savedRoom : savedRooms) {
+            roomFacilityService.deleteAllRoomFacilities(savedRoom.getRoomId());
+            try {
+                roomImageService.deleteAllRoomImages(savedRoom);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            roomRepository.delete(savedRoom);
+        }
+    }
+
+    public List<Room> getAllRoomForTestDelete(Long accommodationId) {
+        List<Room> rooms = roomRepository.findByAccommodationAccommodationId(accommodationId);
+        if (rooms == null) {
+            throw new IllegalArgumentException();
+        }
+        return rooms;
     }
 }

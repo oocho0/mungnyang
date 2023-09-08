@@ -2,6 +2,7 @@ package com.mungnyang.entity.product.accommodation.room;
 
 import com.mungnyang.entity.WriterEntity;
 import com.mungnyang.entity.product.Image;
+import com.mungnyang.entity.product.ProductImage;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Table(name = "room_image")
-public class RoomImage extends WriterEntity {
+public class RoomImage extends WriterEntity implements ProductImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

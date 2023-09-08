@@ -103,9 +103,9 @@ function validate(checkInDate, checkOutDate, arrayName){
 function addReservationList(formData, i, k){
     var roomIndex = "room"+ i;
     for(var j = 0; j < reservationArray.get(roomIndex).length; j++){
-        var parsedCheckInDate = reservationArray.get(roomIndex)[j].checkInDate.add("9","hours");
-        var parsedCheckOutDate = reservationArray.get(roomIndex)[j].checkOutDate.add("9","hours");
-        formData.append("roomList[" + k + "].reservationList[" + j + "].checkInDate", parsedCheckInDate.format("YYYY-MM-DD[T]HH:mm:ss"));
-        formData.append("roomList[" + k + "].reservationList[" + j + "].checkOutDate", parsedCheckOutDate.format("YYYY-MM-DD[T]HH:mm:ss"));
+        var parsedCheckInDate = bookArray[i].checkInDate.format("YYYY-MM-DD[T]HH:mm:ss");
+        var parsedCheckOutDate = bookArray[i].checkOutDate.format("YYYY-MM-DD[T]HH:mm:ss");
+        formData.append("reservationList[" + k + "].checkInDate", parsedCheckInDate);
+        formData.append("reservationList[" + k + "].checkOutDate", parsedCheckOutDate);
     }
 }

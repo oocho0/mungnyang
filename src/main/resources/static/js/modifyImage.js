@@ -11,7 +11,7 @@ class image {
 
 $(document).ready(function(){
     $("#explain-image").hide();
-    var lastIndex = $("#input-image").attr("data-imageIndex");
+    var lastIndex = Number($("#input-image").attr("data-imageIndex"));
     for(var i = 0; i < lastIndex+1; i++){
         fileArray.push(new image($("#image-file" + i).attr("data-id"), null));
     }
@@ -31,7 +31,7 @@ function addFile(selectedFiles) {
     var currentFileAmount = $("#image-list .image-file-list").length;
     var remainFileAmount = maxFileAmount - currentFileAmount;
     var selectedFileAmount = selectedFiles.files.length;
-    var numberForFile = $("#image-list").attr("data-imageIndex");
+    var numberForFile = Number($("#image-list").attr("data-imageIndex"));
 
     if(selectedFileAmount > remainFileAmount){
         alert("이미지는 최대" + maxFileAmount +"개 까지 첨부 가능합니다.");

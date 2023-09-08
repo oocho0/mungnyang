@@ -7,14 +7,13 @@ import com.mungnyang.entity.product.accommodation.AccommodationImage;
 import com.mungnyang.repository.product.accommodation.AccommodationImageRepository;
 import com.mungnyang.service.product.ImageService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -122,5 +121,10 @@ public class AccommodationImageService {
      */
     private AccommodationImage getAccommodationImageByAccommodationImageId(Long accommodationImageId) {
         return accommodationImageRepository.findById(accommodationImageId).orElseThrow(IllegalArgumentException::new);
+    }
+
+    public void clearStorage() {
+        List<AccommodationImage> allImages = accommodationImageRepository.findAll();
+        imageService.clearStorage(allImages);
     }
 }

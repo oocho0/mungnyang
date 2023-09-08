@@ -37,7 +37,7 @@
                                 <div class="text-end">영업 상태 :</div>
                             </div>
                             <div class="col-auto">
-                                <div class="text-start fw-semibold" th:text="${#strings.equals(accommodation.accommodationStatus, 'OPEN') ? '영업중' : (#strings.equals(accommodation.accommodationStatus, 'CLOSED') ? '폐업' : '휴업')}">상태</div>
+                                <div class="text-start fw-semibold" th:text="${#strings.equals(accommodation.accommodationStatus, 'OPEN') ? '영업중' : '휴업'}">상태</div>
                             </div>
                         </div>
                         <div class="col-auto row mx-2">
@@ -72,9 +72,9 @@
                             <td>
                                 <a class="link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
                                    th:text="${room.roomName}"
-                                   th:href="@{/admin/accommodations/{accommodationId}/{roomId}(accommodationId=${accommodation.accommodationId},roomId=${room.roomId})}"></a></td>
+                                   th:href="@{/seller/accommodations/{accommodationId}/{roomId}(accommodationId=${accommodation.accommodationId},roomId=${room.roomId})}"></a></td>
                             <td th:text="${#numbers.formatInteger(room.roomPrice, 0, 'COMMA')} + ' 원'"></td>
-                            <td th:text="${#strings.equals(room.roomStatus, 'OPEN') ? '영업중' : (#strings.equals(room.roomStatus, 'CLOSED') ? '영구 폐쇄' : '임시 폐쇄')}"></td>
+                            <td th:text="${#strings.equals(room.roomStatus, 'OPEN') ? '영업중' : '임시 폐쇄'}"></td>
                         </tr>
                         </tbody>
                         <tfoot>

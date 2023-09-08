@@ -8,6 +8,7 @@ import com.mungnyang.dto.product.accommodation.room.ListRoomDto;
 import com.mungnyang.entity.Address;
 import com.mungnyang.entity.product.ProductAddress;
 import com.mungnyang.entity.product.accommodation.Accommodation;
+import com.mungnyang.entity.product.accommodation.room.Room;
 import com.mungnyang.repository.product.accommodation.AccommodationRepository;
 import com.mungnyang.repository.product.accommodation.room.RoomRepository;
 import com.mungnyang.service.fixedEntity.CategoryService;
@@ -20,6 +21,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Service
@@ -103,7 +105,7 @@ public class AccommodationService {
                 .address(Address.builder()
                         .zipcode(modifyAccommodationDto.getProductAddressAddressZipcode())
                         .main(modifyAccommodationDto.getProductAddressAddressMain())
-                        .detail(modifyAccommodationDto.getAccommodationDetail())
+                        .detail(modifyAccommodationDto.getProductAddressAddressDetail())
                         .extra(modifyAccommodationDto.getProductAddressAddressExtra())
                         .build())
                 .Lon(modifyAccommodationDto.getProductAddressLon())
@@ -118,8 +120,8 @@ public class AccommodationService {
 
     public void deleteAccommodation(Long accommodationId) throws Exception {
         Accommodation savedAccommodation = getAccommodationByAccommodationId(accommodationId);
-        savedAccommodation.setAccommodationStatus(Status.CLOSED);
         roomService.deleteAllRooms(savedAccommodation.getAccommodationId());
+        savedAccommodation.setAccommodationStatus(Status.CLOSED);
     }
 
     /**
@@ -178,4 +180,20 @@ public class AccommodationService {
         }
         return findAccommodation;
     }
+
+    public void deleteTest(){
+        List<Accommodation> closedTestAccommodation = accommodationRepository.findByAccommodationStatus(Status.CLOSED);
+        for (Accommodation accommodation : closedTestAccommodation) {
+            roomService.deleteClosedTestAllRooms(accommodation.getAccommodationId());
+            accommodationCommentService.deleteAllAccommodationComments(accommodation.getAccommodationId());
+            accommodationFacilityService.deleteAllAccommodationFacilities(accommodation.getAccommodationId());
+            try {
+                accommodationImageService.deleteAllAccommodationImages(accommodation);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            accommodationRepository.delete(accommodation);
+        }
+    }
+
 }

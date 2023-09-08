@@ -4,15 +4,23 @@ import com.mungnyang.constant.IsTrue;
 import com.mungnyang.constant.Path;
 import com.mungnyang.entity.product.Image;
 import com.mungnyang.entity.product.Product;
+import com.mungnyang.entity.product.ProductImage;
 import com.mungnyang.entity.product.accommodation.Accommodation;
+import com.mungnyang.entity.product.accommodation.AccommodationImage;
 import com.mungnyang.entity.product.accommodation.room.Room;
+import com.mungnyang.entity.product.accommodation.room.RoomImage;
 import com.mungnyang.entity.product.store.Store;
+import com.mungnyang.entity.product.store.StoreImage;
 import com.mungnyang.service.FileIOService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
+
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -41,16 +49,7 @@ public class ImageService {
         String imageName = "";
         String imageUrl = "";
         if (!StringUtils.isEmpty(originalFileName)) {
-            String savePath = "";
-            if (product instanceof Store) {
-                savePath = path.getStoreImagePath();
-            }
-            if (product instanceof Accommodation) {
-                savePath = path.getAccomImagePath();
-            }
-            if (product instanceof Room) {
-                savePath = path.getRoomImagePath();
-            }
+            String savePath = getPath(product);
             imageName = fileIOService.uploadFile(savePath, originalFileName, imageFile.getBytes());
             imageUrl = "/image/" + product.getClass().getSimpleName().toLowerCase() + "/" + imageName;
         }
@@ -67,17 +66,54 @@ public class ImageService {
      * @throws Exception
      */
     public void deleteImage(Product product, Image image) throws Exception {
-        String savedPath = "";
-        if (product instanceof Store) {
-            savedPath = path.getStoreImagePath();
-        }
-        if (product instanceof Accommodation) {
-            savedPath = path.getAccomImagePath();
-        }
-        if (product instanceof Room) {
-            savedPath = path.getRoomImagePath();
-        }
+        String savedPath = getPath(product);
         savedPath += "/" + image.getName();
         fileIOService.deleteFile(savedPath);
+    }
+
+    public void clearStorage(List<? extends ProductImage> productImage) {
+        ProductImage firstOne = productImage.get(0);
+        String savedPath = "";
+        List<Image> images = new ArrayList<>();
+        if (firstOne instanceof StoreImage) {
+            savedPath = path.getStoreImagePath();
+            List<StoreImage> convertList = (List<StoreImage>) productImage;
+            for (StoreImage storeImage : convertList) {
+                images.add(storeImage.getImage());
+            }
+        }
+        if (firstOne instanceof AccommodationImage) {
+            savedPath = path.getAccomImagePath();
+            List<AccommodationImage> convertList = (List<AccommodationImage>) productImage;
+            for (AccommodationImage accommodationImage : convertList) {
+                images.add(accommodationImage.getImage());
+            }
+        }
+        if (firstOne instanceof RoomImage) {
+            savedPath = path.getRoomImagePath();
+            List<RoomImage> converList = (List<RoomImage>) productImage;
+            for (RoomImage roomImage : converList) {
+                images.add(roomImage.getImage());
+            }
+        }
+        fileIOService.clearStorage(images, savedPath);
+    }
+
+    /**
+     * 이미지의 Path 가져오기
+     * @param product
+     * @return
+     */
+    private String getPath(Product product) {
+        if (product instanceof Store) {
+            return path.getStoreImagePath();
+        }
+        if (product instanceof Accommodation) {
+            return path.getAccomImagePath();
+        }
+        if (product instanceof Room) {
+            return path.getRoomImagePath();
+        }
+        return null;
     }
 }

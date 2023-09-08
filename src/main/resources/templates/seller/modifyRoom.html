@@ -2,201 +2,153 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}">
 <head>
-  <meta name="_csrf" th:content="${_csrf.token}"/>
-  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 <th:block layout:fragment="css">
-  <link th:href="@{/css/error.css}" rel="stylesheet"/>
-  <style>
-  </style>
+    <link th:href="@{/css/error.css}" rel="stylesheet"/>
+    <style>
+    </style>
 </th:block>
 <th:block layout:fragment="script">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
-  <script th:src="@{/js/modifyImage.js}" type="text/javascript"></script>
-  <script th:src="@{/js/seller/modifyRoom.js}" type="text/javascript"></script>
-  <script th:src="@{/js/seller/modifyFacility.js}" type="text/javascript"></script>
-  <script th:src="@{/js/seller/modifyCalendar.js}" type="text/javascript"></script>
-  <script type="text/javascript" th:inline="javascript">
-  </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+    <script th:src="@{/js/modifyImage.js}" type="text/javascript"></script>
+    <script th:src="@{/js/seller/modifyRoom.js}" type="text/javascript"></script>
+    <script th:src="@{/js/seller/modifyFacility.js}" type="text/javascript"></script>
+    <script th:src="@{/js/seller/modifyCalendar.js}" type="text/javascript"></script>
+    <script type="text/javascript" th:inline="javascript">
+    </script>
 </th:block>
 <div layout:fragment="content">
-  <div class="px-5 py-4 text-center bg-body rounded-3">
-    <form role="form" class="p-5 text-center bg-body rounded-3" th:object="${room}">
-      <h2 class="text-body-emphasis pb-5 border-bottom">방 정보 수정</h2>
-      <div class="container py-3 mx-3">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-        <input type="hidden" th:field="*{accommodationId}"/>
-        <!--숙소 상태-->
-        <div class="row g-3 align-items-center py-2">
-          <div class="col-2 text-end">
-            <label class="col-form-label">숙소 상태</label>
-          </div>
-          <div class="col-8 text-start">
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" value="OPEN" th:field="*{accommodationStatus}"
-                     id="accommodationStatusOpen"/>
-              <label class="form-check-label" for="accommodationStatusOpen">영업중</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" value="PAUSE" th:field="*{accommodationStatus}"
-                     id="accommodationStatusPause"/>
-              <label class="form-check-label" for="accommodationStatusPause">휴업</label>
-            </div>
-          </div>
-        </div>
-        <!--숙소 명-->
-        <div class="row g-3 align-items-center py-2">
-          <div class="col-2 text-end">
-            <label class="col-form-label" th:for="accommodationName">숙소명</label>
-          </div>
-          <div class="col-5">
-            <input type="text" class="form-control" th:field="*{accommodationName}"
-                   aria-describedby="nameWarn"
-                   data-error="숙소명이" aria-label="숙소명" placeholder="숙소의 이름을 입력하세요."/>
-          </div>
-          <div class="col-5 text-start">
-            <span class="form-text" id="nameWarn">최대 50자</span>
-          </div>
-        </div>
-        <!--숙소 분류-->
-        <div class="row g-3 align-items-center py-2">
-          <div class="col-2 text-end">
-            <label class="col-form-label" th:for="smallCategorySmallCategoryId">숙소 분류</label>
-          </div>
-          <div class="col-4">
-            <select class="form-select" id="smallCategory" th:field="*{smallCategorySmallCategoryId}" data-error="숙소 분류가"
-                    aria-label="smallCategory">
-              <option value="0" selected>소분류 선택</option>
-              <option th:each="smallCategory : ${smallCategories}" th:text="${smallCategory.name}"
-                      th:value="${smallCategory.smallCategoryId}"></option>
-            </select>
-          </div>
-          <div class="col-4"></div>
-        </div>
-        <!--숙소 주소-->
-        <div class="row g-3 align-items-center py-2">
-          <div class="col-2 text-end">
-            <label class="col-form-label" for="addressZipcode">주소</label>
-          </div>
-          <div class="col-5">
-            <input type="text" id="addressZipcode" data-error="우편 번호가"
-                   th:field="*{productAddressAddressZipcode}"
-                   class="form-control" placeholder="우편번호">
-          </div>
-          <div class="col-3">
-            <input type="button" class="form-control" onclick="sample6_execDaumPostcode()" value="우편번호 찾기">
-          </div>
-        </div>
-        <div class="row g-3 align-items-center py-2">
-          <div class="col-2"></div>
-          <div class="col-8">
-            <input type="text" id="addressMain" data-error="주소가" th:field="*{productAddressAddressMain}"
-                   aria-label="주소" class="form-control" placeholder="주소">
-          </div>
-        </div>
-        <div class="row g-3 align-items-center py-2">
-          <div class="col-2"></div>
-          <div class="col-4">
-            <input type="text" id="addressDetail" th:field="*{productAddressAddressDetail}"
-                   class="form-control"
-                   aria-label="상세주소" placeholder="상세주소">
-          </div>
-          <div class="col-4">
-            <input type="text" id="addressExtra" th:field="*{productAddressAddressExtra}" class="form-control"
-                   aria-label="참고항목" placeholder="참고항목">
-          </div>
-        </div>
-        <!--위치 주소-->
-        <div class="row g-3 align-items-center py-2">
-          <div class="col-2 text-end">
-            <label class="col-form-label" th:for="productAddressLat">위도 경도</label>
-          </div>
-          <div class="col-4">
-            <input type="number" step="0.0000001" th:field="*{productAddressLat}" class="form-control"
-                   data-error="위도가" aria-label="위도" placeholder="위도"/>
-          </div>
-          <div class="col-4">
-            <input type="number" step="0.0000001" th:field="*{productAddressLon}" class="form-control"
-                   data-error="경도가" aria-label="경도" placeholder="경도"/>
-          </div>
-        </div>
-        <!--체크인 체크아웃 정보-->
-        <div class="row g-3 align-items-center py-2">
-          <div class="col-2 text-end">
-            <label class="col-form-label" th:for="checkInTime">체크인 시간</label>
-          </div>
-          <div class="col-3">
-            <input type="time" th:field="*{checkInTime}" aria-label="체크인 시간" data-error="체크인 시간이"
-                   class="form-control"/>
-          </div>
-          <div class="col-2 text-end">
-            <label class="col-form-label" th:for="checkOutTime">체크아웃 시간</label>
-          </div>
-          <div class="col-3">
-            <input type="time" th:field="*{checkOutTime}" aria-label="체크아웃 시간" data-error="체크아웃 시간이"
-                   class="form-control"/>
-          </div>
-        </div>
-        <!--상세 정보-->
-        <div class="row g-3 align-items-center py-2">
-          <div class="col-2 text-end">
-            <label class="col-form-label" th:for="accommodationDetail">상세 정보</label>
-          </div>
-          <div class="col-8">
-                        <textarea th:field="*{accommodationDetail}" class="form-control" aria-label="상세 정보"
+    <div class="px-5 py-4 text-center bg-body rounded-3">
+        <form role="form" class="p-5 text-center bg-body rounded-3" th:object="${room}">
+            <h2 class="text-body-emphasis pb-5 border-bottom">방 정보 수정</h2>
+            <div class="container py-3 mx-3">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <input type="hidden" th:field="*{accommodationId}"/>
+                <input type="hidden" th:field="*{roomId}"/>
+                <!--방 상태-->
+                <div class="row g-3 align-items-center py-2">
+                    <div class="col-2 text-end">
+                        <label class="col-form-label">방 상태</label>
+                    </div>
+                    <div class="col-8 text-start">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" value="OPEN" th:field="*{roomStatus}"
+                                   id="roomStatusOpen"/>
+                            <label class="form-check-label" for="roomStatusOpen">영업중</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" value="PAUSE" th:field="*{roomStatus}"
+                                   id="roomStatusPause"/>
+                            <label class="form-check-label" for="roomStatusPause">임시 폐쇄</label>
+                        </div>
+                    </div>
+                </div>
+                <!--방 명-->
+                <div class="row g-3 align-items-center py-2">
+                    <div class="col-2 text-end">
+                        <label class="col-form-label" th:for="roomName">방 명</label>
+                    </div>
+                    <div class="col-5">
+                        <input type="text" class="form-control" th:field="*{roomName}"
+                               aria-describedby="nameWarn"
+                               data-error="방 명이" aria-label="방 명" placeholder="방의 이름을 입력하세요."/>
+                    </div>
+                    <div class="col-5 text-start">
+                        <span class="form-text" id="nameWarn">최대 50자</span>
+                    </div>
+                </div>
+                <!--방 가격-->
+                <div class="row g-3 align-items-center py-2">
+                    <div class="col-2 text-end">
+                        <label class="col-form-label" th:for="roomPrice">방 가격</label>
+                    </div>
+                    <div class="col-4">
+                        <input type="number" class="form-control" th:field="*{roomPrice}"
+                               data-error="방 가격이" aria-label="방 가격" placeholder="방 가격을 입력하세요."/>
+                    </div>
+                    <div class="col-4 text-start">
+                        원
+                    </div>
+                </div>
+                <!--상세 정보-->
+                <div class="row g-3 align-items-center py-2">
+                    <div class="col-2 text-end">
+                        <label class="col-form-label" th:for="roomDetail">상세 정보</label>
+                    </div>
+                    <div class="col-8">
+                        <textarea th:field="*{roomDetail}" class="form-control" aria-label="상세 정보"
                                   placeholder="상세 정보를 입력하세요<선택>"></textarea>
-          </div>
-        </div>
-        <!--사진 첨부-->
-        <div class="row g-3 py-2">
-          <div class="col-2 text-end">
-            <label class="col-form-label" for="input-image">사진 첨부</label>
-          </div>
-          <div class="col-5">
-            <input type="file" multiple="multiple" id="input-image" class="form-control" aria-label="사진"
-                   th:data-imageIndex="${#lists.size(accommodation.imageList) - 1}" aria-describedby="explain-image" onchange="addFile(this);"/>
-          </div>
-          <div class="col-5 text-start" id="image-list">
+                    </div>
+                </div>
+                <!--사진 첨부-->
+                <div class="row g-3 py-2">
+                    <div class="col-2 text-end">
+                        <label class="col-form-label" for="input-image">사진 첨부</label>
+                    </div>
+                    <div class="col-5">
+                        <input type="file" multiple="multiple" id="input-image" class="form-control" aria-label="사진"
+                               th:data-imageIndex="${#lists.size(room.imageList) - 1}"
+                               aria-describedby="explain-image" onchange="addFile(this);"/>
+                    </div>
+                    <div class="col-5 text-start" id="image-list">
                         <span class="form-text"
                               id="explain-image">.gif, .jpg, .png 형식만 최대 10장까지 가능<br>최대 파일 용량은 100MB<br>파일명 100자 이하 가능</span>
-            <div th:each="image, status : *{imageList}" th:id="image-file + ${status.index}"
-                 th:data-id="${image.imageId}" class="image-file-list">
-              <span th:text="${image.imageFileName}"></span>
-              <a class="delete" style="cursor: pointer; text-decoration : none; color:inherit;"
-                 th:onclick="|deleteFile(${status.index});|">✖</a>
-            </div>
-          </div>
-        </div>
-        <!--숙소 시설-->
-        <div class="row g-3 py-2">
-          <div class="col-2 text-end">
-            <label class="col-form-label">숙소 시설</label>
-          </div>
-          <div class="col-4 text-start">
-            <div class="input-group mb-3">
-              <input type="text" class="form-control" data-error="숙소 시설이" aria-label="숙소 시설"
-                     id="facilityInput" placeholder="숙소 시설을 추가하세요.">
-              <button class="btn btn-outline-secondary" type="button" onclick="addFacility();">추가</button>
-            </div>
-          </div>
-          <div class="col-4 text-start" id="facilityList">
+                        <div th:each="image, status : *{imageList}" th:id="image-file + ${status.index}"
+                             th:data-id="${image.imageId}" class="image-file-list">
+                            <span th:text="${image.imageFileName}"></span>
+                            <a class="delete" style="cursor: pointer; text-decoration : none; color:inherit;"
+                               th:onclick="|deleteFile(${status.index});|">✖</a>
+                        </div>
+                    </div>
+                </div>
+                <!--방 시설-->
+                <div class="row g-3 py-2">
+                    <div class="col-2 text-end">
+                        <label class="col-form-label">방 시설</label>
+                    </div>
+                    <div class="col-4 text-start">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" data-error="방 시설이" aria-label="방 시설"
+                                   id="facilityInput" placeholder="방 시설을 추가하세요.">
+                            <button class="btn btn-outline-secondary" type="button" onclick="addFacility();">추가</button>
+                        </div>
+                    </div>
+                    <div class="col-4 text-start" id="facilityList">
                         <span th:each="facility, status : *{facilityList}" class="form-text facility"
-                              th:data-id="${facility.facilityId}" th:id="facility + ${status.index}" th:data-facilityIndex="${status.index}">
+                              th:data-id="${facility.facilityId}" th:id="facility + ${status.index}"
+                              th:data-facilityIndex="${status.index}">
                             <span th:text="${facility.facilityName}"></span>
                             <a class="delete" style="cursor:pointer; text-decoration : none; color:inherit;"
                                onclick="deleteFacility();">✖</a>
                         </span>
-          </div>
-        </div>
-      </div>
-      <div class="mb-3">
-        <button type="reset" class="btn btn-secondary mx-1">초기화</button>
-        <button type="button" class="btn btn-primary mx-1" onclick="request();">숙소 정보 수정</button>
-        <button type="button" class="btn btn-secondary mx-1" th:onclick="|location.href='@{/seller/accommodations}'|">취소</button>
-      </div>
-      <button type="button" class="btn btn-danger mx-1" th:onclick="deleteAccommodation();">숙소 삭제</button>
-    </form>
-  </div>
+                    </div>
+                </div>
+                <!--방 예약-->
+                <div class="row g-3 py-2">
+                <div class="col-2 text-end">
+                        <label class="col-form-label">방 예약</label>
+                    </div>
+                    <div class="col-8 text-start">
+                        <div id="calendar"></div>
+                        <span class="form-text">- 방을 등록하기 전, 해당 방의 현재 예약 상태를 등록하세요.
+                                            <br>- 예약 기간만큼을 드래그해서 입력하세요.
+                                            <br>- 오늘을 기준으로 이전의 예약은 추가할 수 없습니다.
+                                            <br>- 등록된 예약을 클릭하시면 취소됩니다.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <button type="reset" class="btn btn-secondary mx-1">초기화</button>
+                <button type="button" class="btn btn-primary mx-1" onclick="request();">방 정보 수정</button>
+                <button type="button" class="btn btn-secondary mx-1"
+                        th:onclick="|location.href='@{/seller/accommodations}'|">취소
+                </button>
+            </div>
+            <button type="button" class="btn btn-danger mx-1" th:onclick="deleteRoom();">방 삭제</button>
+        </form>
+    </div>
 </div>
 </html>

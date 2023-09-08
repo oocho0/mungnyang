@@ -10,4 +10,6 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     Room findByRoomIdAndRoomStatusNot(Long roomId, Status closed);
     List<Room> findByAccommodationAccommodationIdAndRoomStatusNotOrderByRoomId(Long accommodationId, Status closed);
+
+    List<Room> findByAccommodationAccommodationId(Long accommodationId);
 }

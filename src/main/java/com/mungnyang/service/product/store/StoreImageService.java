@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,5 +123,10 @@ public class StoreImageService {
             throw new IllegalArgumentException();
         }
         return findImages;
+    }
+
+    public void clearStorage() {
+        List<StoreImage> allImages = storeImageRepository.findAll();
+        imageService.clearStorage(allImages);
     }
 }

@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @Transactional
@@ -69,7 +68,7 @@ public class AccommodationFacilityService {
      * 모든 숙소 시설 삭제 하기
      * @param accommodationId 해당 숙소 일련번호
      */
-    public void deleteAccommodationFacilities(Long accommodationId) {
+    public void deleteAllAccommodationFacilities(Long accommodationId) {
         List<AccommodationFacility> savedFacilities = getAccommodationFacilityListByAccommodationId(accommodationId);
         for (AccommodationFacility savedFacility : savedFacilities) {
             accommodationFacilityRepository.delete(savedFacility);

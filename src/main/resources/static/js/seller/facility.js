@@ -16,7 +16,8 @@ function addFacility(){
         return false;
     }
     $("#facilityList").append($(
-        '   <span class="form-text facility" id="facility' + num + '" data-facilityIndex="' + num + '">' + addFacility +
+        '   <span class="form-text facility" id="facility' + num + '" data-facilityIndex="' + num + '">' +
+        '       <span>' + addFacility + '</span>' +
         '       <a class="delete" style="cursor:pointer; text-decoration : none; color:inherit;" onclick="deleteFacility();">✖</a>' +
         '   </span>'
     ));
@@ -31,9 +32,10 @@ function addRoomFacility(){
     }
     var num = roomNum.get("room"+roomIndex);
     $("#room" + roomIndex + "-facilityList").append($(
-    '   <span class="form-text roomFacility' + roomIndex + '" id="room' + roomIndex + '-facility' + num + '" data-facilityIndex="' + num + '">' + addFacility +
-    '       <a class="delete" style="cursor:pointer; text-decoration : none; color:inherit;" onclick="deleteFacility();">✖</a>' +
-    '   </span>'
+        '   <span class="form-text roomFacility' + roomIndex + '" id="room' + roomIndex + '-facility' + num + '" data-facilityIndex="' + num + '">' +
+        '       <span>' + addFacility + '</span>' +
+        '       <a class="delete" style="cursor:pointer; text-decoration : none; color:inherit;" onclick="deleteFacility();">✖</a>' +
+        '   </span>'
     ));
     roomNum.set("room"+roomIndex, num++);
     $("#room" + roomIndex + "-facilityInput").val("");
@@ -59,12 +61,12 @@ function checkRoomFacility(resultObject, i){
 
 function addFacilityData(formData){
     $(".facility").each(function(i, facility){
-        formData.append("facilityList[" + i + "]", $(facility).text());
+        formData.append("facilityList[" + i + "]", $(facility).find("span").text());
     });
 }
 
 function addRoomFacilityData(formData, i, k){
     $(".roomFacility"+ i).each(function(j, facility){
-        formData.append("roomList["+ k + "].facilityList[" + j + "]", $(facility).text());
+        formData.append("roomList["+ k + "].facilityList[" + j + "]", $(facility).find("span").text());
     });
 }

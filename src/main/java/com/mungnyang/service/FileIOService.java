@@ -1,10 +1,12 @@
 package com.mungnyang.service;
 
+import com.mungnyang.entity.product.Image;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -43,5 +45,34 @@ public class FileIOService {
             return;
         }
         log.info("파일이 존재하지 않습니다.");
+    }
+
+    public void clearStorage(List<Image> images, String savedPath) {
+        log.info("스토리지 검사 시작 ------");
+        File directory = new File(savedPath);
+        if (!directory.isDirectory()) {
+            throw new RuntimeException("유효하지 않은 디렉토리입니다.");
+        }
+        File[] files = directory.listFiles();
+        if (files == null) {
+            log.info("디렉토리가 비여있습니다.");
+            return;
+        }
+        for (File file : files) {
+            boolean isExist = false;
+            for (Image image : images) {
+                if (file.getName().equals(image.getName())) {
+                    isExist = true;
+                }
+            }
+            if (!isExist){
+                try {
+                    log.info("고아 파일을 지웁니다. 파일 이름 = {}", file.getName());
+                    deleteFile(file.getPath());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 }

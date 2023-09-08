@@ -1,5 +1,6 @@
 package com.mungnyang.dto.product.accommodation.room;
 
+import com.mungnyang.dto.service.InitializeReservationRoomDto;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;

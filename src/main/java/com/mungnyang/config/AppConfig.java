@@ -1,6 +1,8 @@
 package com.mungnyang.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.HttpClient;
@@ -18,6 +20,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Objects;
 
 @Slf4j
 @Configuration
@@ -54,7 +57,11 @@ public class AppConfig {
 
     @Bean
     public ObjectMapper objectMapper(){
-        return new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        return objectMapper;
     }
 
     @PersistenceContext

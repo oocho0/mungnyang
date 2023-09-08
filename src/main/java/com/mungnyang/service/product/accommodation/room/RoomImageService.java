@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,5 +120,10 @@ public class RoomImageService {
      */
     private RoomImage getRoomImageByRoomImageId(Long roomImageId) {
         return roomImageRepository.findById(roomImageId).orElseThrow(IllegalArgumentException::new);
+    }
+
+    public void clearStorage() {
+        List<RoomImage> allImages = roomImageRepository.findAll();
+        imageService.clearStorage(allImages);
     }
 }

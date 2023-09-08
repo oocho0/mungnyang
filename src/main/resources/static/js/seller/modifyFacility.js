@@ -31,7 +31,8 @@ function addFacility(){
     }
     var num = facilityArray.length;
     $("#facilityList").append($(
-        '   <span class="form-text facility" id="facility' + num + '" data-facilityIndex="' + num + '">' + addFacility +
+        '   <span class="form-text facility" id="facility' + num + '" data-facilityIndex="' + num + '">' +
+        '       <span>' + addFacility + '</span>' +
         '       <a class="delete" style="cursor:pointer; text-decoration : none; color:inherit;" onclick="deleteFacility();">✖</a>' +
         '   </span>'
     ));

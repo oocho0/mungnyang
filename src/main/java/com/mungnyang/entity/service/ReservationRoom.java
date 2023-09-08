@@ -2,10 +2,7 @@ package com.mungnyang.entity.service;
 
 import com.mungnyang.entity.WriterEntity;
 import com.mungnyang.entity.product.accommodation.room.Room;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -16,6 +13,7 @@ import java.time.LocalDateTime;
 @Table(name="reservation_room")
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class ReservationRoom extends WriterEntity {
 
     @Id

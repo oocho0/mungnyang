@@ -30,15 +30,11 @@ function addRoom(){
     '                </div>' +
     '                <div class="col-8 text-start">' +
     '                    <div class="form-check form-check-inline">' +
-    '                        <input class="form-check-input roomAvailable" type="radio" value="OPEN" name="roomStatus' + newRoomIndex + '" id="roomStatus' + newRoomIndex + '-Open" checked>' +
+    '                        <input class="form-check-input" type="radio" value="OPEN" name="roomStatus' + newRoomIndex + '" id="roomStatus' + newRoomIndex + '-Open" checked>' +
     '                        <label class="form-check-label" for="roomStatus' + newRoomIndex + '-Open">영업중</label>' +
     '                    </div>' +
     '                    <div class="form-check form-check-inline">' +
-    '                        <input class="form-check-input roomAvailable" type="radio" value="CLOSED" name="roomStatus' + newRoomIndex + '" id="roomStatus' + newRoomIndex + '-Close">' +
-    '                        <label class="form-check-label" for="roomStatus' + newRoomIndex + '-Close">영구 폐쇄</label>' +
-    '                    </div>' +
-    '                    <div class="form-check form-check-inline">' +
-    '                        <input class="form-check-input roomAvailable" type="radio" value="PAUSE" name="roomStatus' + newRoomIndex + '" id="roomStatus' + newRoomIndex + '-Pause">' +
+    '                        <input class="form-check-input" type="radio" value="PAUSE" name="roomStatus' + newRoomIndex + '" id="roomStatus' + newRoomIndex + '-Pause">' +
     '                        <label class="form-check-label" for="roomStatus' + newRoomIndex + '-Pause">임시 폐쇄</label>' +
     '                    </div>' +
     '                </div>' +
