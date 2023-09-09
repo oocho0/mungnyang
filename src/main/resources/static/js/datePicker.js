@@ -1,36 +1,33 @@
-$(function() {
-    $('#calendar').daterangepicker({
-        "showDropdowns": true,
+var now = moment();
+var endDate = moment(now).add(1, "d");
+$(function(){
+    $("#dateRange").val(now.format('YYYY[년] MM[월] DD[일]') + ' - ' + endDate.format('YYYY[년] MM[월] DD[일]'));
+    $('#dateRange').daterangepicker({
         "locale": {
-            "format": "YYYY/MM/DD",
+            "format": "YYYY년 MM월 DD일",
             "separator": " - ",
-            "applyLabel": "Apply",
-            "cancelLabel": "Clear",
+            "applyLabel": "변경",
+            "cancelLabel": "취소",
             "fromLabel": "From",
             "toLabel": "To",
-            "customRangeLabel": "Custom",
-            "weekLabel": "W",
             "daysOfWeek": ["일", "월", "화", "수", "목", "금", "토"],
             "monthNames": ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
             "firstDay": 1
         },
-        "alwaysShowCalendars": true,
-    }, function(start, end) {
-        validate(start, end);
-        ("#calendar").closest("div").append($(
-        "<div class="
-        ))
-      console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+        "showDropdowns": true,
+        "autoUpdateInput": false,
+        "startDate": now,
+        "endDate": endDate,
+        "minDate": now,
+        "opens": "center"
+    }, function(start, end, label) {
+    });
+    $('#dateRange').on('apply.daterangepicker', function(ev, picker) {
+        if(picker.startDate.format('DD/MM/YYYY') == picker.endDate.format('DD/MM/YYYY')){
+            ev.preventDefault();
+            alert("1박 이상을 선택해야한댜옹");
+        }else{
+            $(this).val(picker.startDate.format('YYYY[년] MM[월] DD[일]') + ' - ' + picker.endDate.format('YYYY[년] MM[월] DD[일]'));
+        }
     });
 });
-
-function validate(startDate, endDate){
-    var now = moment();
-    if(startDate <= now || endDate <= now) {
-        alert("예약된 날짜가 오늘보다 이전일 수 없습니다.")
-    }
-}
-
-function appendDate(start, end){
-
-}

@@ -22,6 +22,7 @@ public class Room extends WriterEntity implements Product {
 
     private String roomName;
     private Integer roomPrice;
+    private Integer roomPeople;
     @Lob
     private String roomDetail;
 

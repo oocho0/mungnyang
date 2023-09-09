@@ -42,7 +42,7 @@ let resultObjectKeys = [];
 
 function checkForm(){
     let resultObject = {};
-    const checkLabels = ["#roomName", "#roomPrice"];
+    const checkLabels = ["#roomName", "#roomPrice", "#roomPeople"];
 
     if(resultObjectKeys.length != 0){
         $.each(resultObjectKeys, function(index, value){

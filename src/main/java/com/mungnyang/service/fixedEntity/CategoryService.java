@@ -1,7 +1,12 @@
 package com.mungnyang.service.fixedEntity;
 
+import com.mungnyang.constant.Status;
+import com.mungnyang.dto.fixedEntityDto.MainBigCategoryDto;
+import com.mungnyang.dto.fixedEntityDto.MainSmallCategoryDto;
 import com.mungnyang.entity.fixedEntity.BigCategory;
 import com.mungnyang.entity.fixedEntity.SmallCategory;
+import com.mungnyang.entity.product.Product;
+import com.mungnyang.entity.product.store.Store;
 import com.mungnyang.repository.fixedEntity.BigCategoryRepository;
 import com.mungnyang.repository.fixedEntity.SmallCategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +22,21 @@ public class CategoryService {
 
     public BigCategory getBigCategoriesById(Long bigCategoryId) {
         return bigCategoryRepository.findById(bigCategoryId).orElseThrow(IllegalArgumentException::new);
+    }
+
+    /**
+     * 조회 화면에서의 숙소를 제외한 대분류 리스트 반환
+     * @return 대분류의 정보와 대분류 별 편의 시설 갯수를 가진 Dto 리스트
+     */
+    public List<MainBigCategoryDto> getMainBigCategoryDtoForStore(){
+        return bigCategoryRepository.findMainBigCategoryDtoAllForStore(1L);
+    }
+
+    public List<MainSmallCategoryDto> getMainSmallCategoryDtoByBigCategory(Long accommodationId){
+        if (accommodationId == 1L) {
+            return smallCategoryRepository.findMainSmallCategoryDtoListForAccommodation(accommodationId, Status.CLOSED);
+        }
+        return smallCategoryRepository.findMainSmallCategoryDtoListForStore(accommodationId);
     }
 
     /**

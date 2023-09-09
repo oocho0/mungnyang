@@ -41,6 +41,7 @@ function makeFormData(formData){
         var i = $(element).attr("data-roomIndex");
         formData.append("roomList[" + k + "].roomName", $("#roomName" + i).val());
         formData.append("roomList[" + k + "].roomPrice", $("#roomPrice" + i).val());
+        formData.append("roomList[" + k + "].roomPeople", $("#roomPeople" + i).val());
         formData.append("roomList[" + k + "].roomDetail", $("#roomDetail" + i).val());
         formData.append("roomList[" + k + "].roomStatus", $("[name='roomStatus" + i + "']:checked").val());
         addFormDataWithRoom(formData, i, k);
@@ -81,7 +82,7 @@ function checkForm(){
 
     $(".accordion-item").each(function(j, element){
         var i = $(element).attr("data-roomIndex");
-        const checkRoomLabels = ["#roomName", "#roomPrice"];
+        const checkRoomLabels = ["#roomName", "#roomPrice", "#roomPeople"];
         $.each(checkRoomLabels, function(index, value){
             if($(value + i).val() == "" || $(value + i).val() == null){
                 resultObject[value + i] = $(value + i).data('error') + " 입력되지 않았습니다.";

@@ -19,6 +19,7 @@ public class ModifyRoomDto {
     private Long roomId;
     private String roomName;
     private Integer roomPrice;
+    private Integer roomPeople;
     private String roomDetail;
     private String roomStatus;
     private List<ModifyImageDto> imageList;

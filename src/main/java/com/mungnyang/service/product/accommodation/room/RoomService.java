@@ -110,6 +110,7 @@ public class RoomService {
                 .roomId(savedRoom.getRoomId())
                 .roomName(savedRoom.getRoomName())
                 .roomPrice(savedRoom.getRoomPrice())
+                .roomPeople(savedRoom.getRoomPeople())
                 .roomDetail(savedRoom.getRoomDetail())
                 .roomStatus(StatusService.statusConverter(savedRoom.getRoomStatus()))
                 .imageList(roomImageService.getModifyImageDtoListByRoomId(roomId))
@@ -127,6 +128,7 @@ public class RoomService {
         Room savedRoom = getRoomByRoomId(roomId);
         savedRoom.setRoomName(modifyRoomDto.getRoomName());
         savedRoom.setRoomPrice(modifyRoomDto.getRoomPrice());
+        savedRoom.setRoomPeople(modifyRoomDto.getRoomPeople());
         savedRoom.setRoomDetail(modifyRoomDto.getRoomDetail());
         savedRoom.setRoomStatus(StatusService.statusConverter(modifyRoomDto.getRoomStatus()));
         roomImageService.updateRoomImage(savedRoom, modifyRoomDto.getImageList());

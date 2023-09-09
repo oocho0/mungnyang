@@ -9,5 +9,6 @@ public class ListRoomDto {
     private Long roomId;
     private String roomName;
     private Integer roomPrice;
+    private Integer roomPeople;
     private String roomStatus;
 }

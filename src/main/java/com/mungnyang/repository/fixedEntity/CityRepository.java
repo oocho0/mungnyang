@@ -1,6 +1,9 @@
 package com.mungnyang.repository.fixedEntity;
 
+import com.mungnyang.constant.Status;
+import com.mungnyang.dto.fixedEntityDto.MainCityDto;
 import com.mungnyang.entity.fixedEntity.City;
+import com.mungnyang.entity.product.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,4 +18,18 @@ public interface CityRepository extends JpaRepository<City, Long> {
 
     @Query("select c From City c where c.zipcodeStart <= :zipcode1 and c.zipcodeEnd >= :zipcode2")
     City findByZipcode(@Param("zipcode1") Long zipcode1, @Param("zipcode2") Long zipcode2);
+
+
+    @Query("select new com.mungnyang.dto.fixedEntityDto.MainCityDto(c.cityId, c.name, count(s.storeId))" +
+            " from City c" +
+            " left join Store s on c.cityId = s.city.cityId" +
+            " where c.state.stateId = :stateId" +
+            " group by c.cityId")
+    List<MainCityDto> findMainCityDtoListForStore(@Param("stateId") Long stateId);
+    @Query("select new com.mungnyang.dto.fixedEntityDto.MainCityDto(c.cityId, c.name, count(a.accommodationId))" +
+            " from City c" +
+            " left join Accommodation a on c.cityId = a.city.cityId" +
+            " where c.state.stateId = :stateId and (a.accommodationStatus != :status or a.accommodationStatus is null)" +
+            " group by c.cityId")
+    List<MainCityDto> findMainCityDtoListForAccommodation(@Param("stateId") Long stateId, @Param("status") Status closed);
 }

@@ -114,6 +114,7 @@ class AccommodationServiceTest {
             CreateRoomDto createRoomDto = new CreateRoomDto();
             createRoomDto.setRoomName("test" + i + "room" + j);
             createRoomDto.setRoomPrice(2000 * i * j);
+            createRoomDto.setRoomPeople(i);
             createRoomDto.setRoomDetail("detail of test " + i + "room" + j);
             createRoomDto.setRoomStatus(Status.OPEN.name());
             List<String> facilityDtoList = createRoomFacility(i, j);

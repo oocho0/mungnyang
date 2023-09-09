@@ -1,0 +1,12 @@
+.nav-item > .active {
+    background-color : #FAF0E6 !important;
+}
+.nav-item > button {
+    border-bottom : #FAF0E6 !important;
+}
+.card {
+    height : 300px;
+}
+.list-group-flush {
+    overflow: auto;
+}

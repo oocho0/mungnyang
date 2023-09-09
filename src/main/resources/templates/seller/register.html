@@ -3,13 +3,10 @@
       layout:decorate="~{layout/layout}">
 <th:block layout:fragment="css">
     <link th:href="@{/css/error.css}" rel="stylesheet"/>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <style></style>
 </th:block>
 <th:block layout:fragment="script">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/moment-jdateformatparser@1.2.1/moment-jdateformatparser.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script th:src="@{/js/inputImage.js}" type="text/javascript"></script>
@@ -225,6 +222,19 @@
                                     </div>
                                     <div class="col-4 text-start">
                                         원
+                                    </div>
+                                </div>
+                                <!--방 기본 인원 수-->
+                                <div class="row g-3 align-items-center py-2">
+                                    <div class="col-3 text-end">
+                                        <label class="col-form-label" for="roomPeople0">방 기본 인원 수</label>
+                                    </div>
+                                    <div class="col-5">
+                                        <input type="number" class="form-control" id="roomPeople0"
+                                               data-error="방 기본 인원 수가" aria-label="방 기본 인원 수" placeholder="방 기본 인원 수를 입력하세요."/>
+                                    </div>
+                                    <div class="col-4 text-start">
+                                        명
                                     </div>
                                 </div>
                                 <!--방 상세 정보-->

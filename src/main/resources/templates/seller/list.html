@@ -63,6 +63,7 @@
                             <th scope="col">No.</th>
                             <th scope="col">방 명</th>
                             <th scope="col">방 가격</th>
+                            <th scope="col">방 인원</th>
                             <th scope="col">방 상태</th>
                         </tr>
                         </thead>
@@ -74,12 +75,13 @@
                                    th:text="${room.roomName}"
                                    th:href="@{/seller/accommodations/{accommodationId}/{roomId}(accommodationId=${accommodation.accommodationId},roomId=${room.roomId})}"></a></td>
                             <td th:text="${#numbers.formatInteger(room.roomPrice, 0, 'COMMA')} + ' 원'"></td>
+                            <td th:text="${room.roomPeople} + ' 명'"></td>
                             <td th:text="${#strings.equals(room.roomStatus, 'OPEN') ? '영업중' : '임시 폐쇄'}"></td>
                         </tr>
                         </tbody>
                         <tfoot>
                         <tr>
-                            <td colspan="4"><button class="btn btn-warning" type="button" th:onclick="|location.href='@{/seller/accommodations/{accommodationId}/room(accommodationId=${accommodation.accommodationId})}'|">방 추가</button></td>
+                            <td colspan="5"><button class="btn btn-warning" type="button" th:onclick="|location.href='@{/seller/accommodations/{accommodationId}/room(accommodationId=${accommodation.accommodationId})}'|">방 추가</button></td>
                         </tr>
                         </tfoot>
                     </table>

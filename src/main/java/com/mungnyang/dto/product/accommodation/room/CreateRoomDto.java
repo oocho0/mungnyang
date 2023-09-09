@@ -13,6 +13,7 @@ public class CreateRoomDto {
 
     private String roomName;
     private Integer roomPrice;
+    private Integer roomPeople;
     private String roomDetail;
     private String roomStatus;
 
