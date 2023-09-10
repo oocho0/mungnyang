@@ -180,5 +180,20 @@ function findCity(id){
 }
 
 function searchStore(){
-
+    if($(".accordion-header").attr("hidden") == "hidden"){
+        $(".accordion-header").removeAttr("hidden");
+    }
+    if($("#searchResult").attr("hidden") == "hidden"){
+        $("#searchResult").removeAttr("hidden");
+    }
+    $("button.accordion-button").text("편의 시설 검색 결과");
+}
+function searchAccommodation(){
+    if($(".accordion-header").attr("hidden") == "hidden"){
+        $(".accordion-header").removeAttr("hidden");
+    }
+    if($("#searchResult").attr("hidden") == "hidden"){
+        $("#searchResult").removeAttr("hidden");
+    }
+    $("button.accordion-button").text("숙소 검색 결과");
 }

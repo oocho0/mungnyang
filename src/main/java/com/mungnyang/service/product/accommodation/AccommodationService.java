@@ -1,14 +1,16 @@
 package com.mungnyang.service.product.accommodation;
 
 import com.mungnyang.constant.Status;
+import com.mungnyang.dto.product.MainTopDto;
+import com.mungnyang.dto.product.TopInfoDto;
 import com.mungnyang.dto.product.accommodation.ListAccommodationDto;
 import com.mungnyang.dto.product.accommodation.CreateAccommodationDto;
 import com.mungnyang.dto.product.accommodation.ModifyAccommodationDto;
 import com.mungnyang.dto.product.accommodation.room.ListRoomDto;
 import com.mungnyang.entity.Address;
+import com.mungnyang.entity.fixedEntity.SmallCategory;
 import com.mungnyang.entity.product.ProductAddress;
 import com.mungnyang.entity.product.accommodation.Accommodation;
-import com.mungnyang.entity.product.accommodation.room.Room;
 import com.mungnyang.repository.product.accommodation.AccommodationRepository;
 import com.mungnyang.repository.product.accommodation.room.RoomRepository;
 import com.mungnyang.service.fixedEntity.CategoryService;
@@ -21,7 +23,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -134,6 +136,19 @@ public class AccommodationService {
     public boolean isNotWrittenByPrinciple(Long accommodationId, String email) {
         Accommodation savedAccommodation = getAccommodationByAccommodationId(accommodationId);
         return !email.equals(savedAccommodation.getCreatedBy());
+    }
+
+    public List<MainTopDto> getAccommodationsTopList() {
+        List<MainTopDto> mainTopDtoList = new ArrayList<>();
+        List<SmallCategory> accommodationCategories = categoryService.getSmallCategoryListByBigCategoryId(1L);
+        for (SmallCategory accommodationCategory : accommodationCategories) {
+            List<TopInfoDto> topInfoDtoList = accommodationRepository.getAccommodationTopListBySmallCategory(accommodationCategory.getSmallCategoryId());
+            mainTopDtoList.add(MainTopDto.builder()
+                    .name(accommodationCategory.getName())
+                    .info(topInfoDtoList)
+                    .build());
+        }
+        return mainTopDtoList;
     }
 
     /**

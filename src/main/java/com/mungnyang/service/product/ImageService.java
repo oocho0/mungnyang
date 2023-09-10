@@ -51,7 +51,7 @@ public class ImageService {
         if (!StringUtils.isEmpty(originalFileName)) {
             String savePath = getPath(product);
             imageName = fileIOService.uploadFile(savePath, originalFileName, imageFile.getBytes());
-            imageUrl = "/image/" + product.getClass().getSimpleName().toLowerCase() + "/" + imageName;
+            imageUrl = "/images/" + product.getClass().getSimpleName().toLowerCase() + "/" + imageName;
         }
         image.setName(imageName);
         image.setFileName(originalFileName);

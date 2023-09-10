@@ -10,3 +10,23 @@
 .list-group-flush {
     overflow: auto;
 }
+
+.accordion-button, .accordion-button > .active {
+    background-color : #FAF0E6 !important;
+}
+
+.topTitle{
+    font-size : 12px;
+    font-weight : 800;
+}
+
+.topText{
+    font-size : 8px;
+}
+
+.topImage{
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    filter: brightness(50%);
+}

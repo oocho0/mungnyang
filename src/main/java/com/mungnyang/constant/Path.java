@@ -13,4 +13,5 @@ public final class Path {
     private final String storeImagePath;
     private final String roomImagePath;
     private final String accomImagePath;
+    private final String uploadPath;
 }

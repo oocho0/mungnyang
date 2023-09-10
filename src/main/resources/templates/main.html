@@ -3,6 +3,7 @@
       layout:decorate="~{layout/layout}">
 <th:block layout:fragment="css">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/options.css}"/>
     <style></style>
 </th:block>
@@ -10,119 +11,240 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment-jdateformatparser@1.2.1/moment-jdateformatparser.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script type="text/javascript"
+            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b7f35cfc0e791dd9028e3e4f0bf9fba9&libraries=services,clusterer,drawing"></script>
     <script type="text/javascript" th:src="@{/js/datePicker.js}"></script>
     <script type="text/javascript" th:src="@{/js/options.js}"></script>
     <script type="text/javascript" th:inline="javascript"></script>
 </th:block>
 <div layout:fragment="content">
     <div class="px-5 py-4 text-center bg-body rounded-3">
-        <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link link-dark active" id="store-tab" data-bs-toggle="tab"
-                        data-bs-target="#store-tab-pane" type="button" role="tab" aria-controls="store-tab-pane"
-                        aria-selected="true">반려 동반 가능 편의 시설 검색
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link link-dark" id="accommodation-tab" data-bs-toggle="tab"
-                        data-bs-target="#accommodation-tab-pane" type="button" role="tab"
-                        aria-controls="accommodation-tab-pane" aria-selected="true">반려 동반 가능 숙소 검색
-                </button>
-            </li>
-        </ul>
-        <div class="tab-content rounded-bottom-3 border-end border-start border-bottom p-3" id="myTabContent"
-             style="background-color: #FAF0E6; background-clip: border-box;">
-            <div class="tab-pane fade show active" id="store-tab-pane" role="tabpanel" aria-labelledby="store-tab"
-                 tabindex="0">
-                <div class="card-group">
-                    <div class="card">
-                        <div class="card-header bg-body">대분류</div>
-                        <div class="card-body list-group list-group-flush p-0" id="bigCategory">
-                            <a th:each="bc : ${bigCategories}" th:data-id="${bc.bigCategoryId}"
-                                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center radio1">
-                                <span th:text="${bc.name}"></span>
-                                <span th:unless="${bc.productCount == 0}" class="badge bg-primary rounded-pill" th:text="${bc.productCount}"></span>
-                            </a>
+        <div class="accordion accordion-flush" id="searchTab">
+            <div class="accordion-item">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link link-dark active" id="store-tab" data-bs-toggle="tab"
+                                data-bs-target="#store-tab-pane" type="button" role="tab" aria-controls="store-tab-pane"
+                                aria-selected="true">반려 동반 가능 편의 시설 검색
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link link-dark" id="accommodation-tab" data-bs-toggle="tab"
+                                data-bs-target="#accommodation-tab-pane" type="button" role="tab"
+                                aria-controls="accommodation-tab-pane" aria-selected="true">반려 동반 가능 숙소 검색
+                        </button>
+                    </li>
+                </ul>
+                <div class="tab-content rounded-bottom-3 border-end border-start border-bottom pt-3 px-3"
+                     id="myTabContent" style="background-color: #FAF0E6; background-clip: border-box;">
+                    <div class="tab-pane fade show active" id="store-tab-pane" role="tabpanel"
+                         aria-labelledby="store-tab" tabindex="0">
+                        <div class="card-group">
+                            <div class="card">
+                                <div class="card-header bg-body">대분류</div>
+                                <div class="card-body list-group list-group-flush p-0" id="bigCategory">
+                                    <a th:each="bc : ${bigCategories}" th:data-id="${bc.bigCategoryId}"
+                                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-center radio1">
+                                        <span th:text="${bc.name}"></span>
+                                        <span th:unless="${bc.productCount == 0}" class="badge bg-primary rounded-pill"
+                                              th:text="${bc.productCount}"></span>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header bg-body">소분류</div>
+                                <div class="card-body list-group list-group-flush p-0" id="smallCategory"></div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header bg-body">시/도</div>
+                                <div class="card-body list-group list-group-flush p-0" id="storeState">
+                                    <a th:each="state : ${storeState}" th:data-id="${state.stateId}"
+                                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-center radio1">
+                                        <span th:text="${state.name}"></span>
+                                        <span th:unless="${state.productCount == 0}"
+                                              class="badge bg-primary rounded-pill"
+                                              th:text="${state.productCount}"></span>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header bg-body">시/군/구</div>
+                                <div class="card-body list-group list-group-flush p-0" id="storeCity"></div>
+                            </div>
+                        </div>
+                        <div class="row pt-2 pb-3">
+                            <div class="col text-start" id="storeSelectedOptions"></div>
+                            <div class="col text-end">
+                                <button type="button" class="btn btn-warning" onclick="searchStore();">놀러갈 곳을 찾개!
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="card">
-                        <div class="card-header bg-body">소분류</div>
-                        <div class="card-body list-group list-group-flush p-0" id="smallCategory">
+                    <div class="tab-pane fade" id="accommodation-tab-pane" role="tabpanel"
+                         aria-labelledby="accommodation-tab" tabindex="0">
+                        <div class="row">
+                            <div class="col-8 card-group">
+                                <div class="card">
+                                    <div class="card-header bg-body">숙소 분류</div>
+                                    <div class="card-body list-group list-group-flush p-0" id="accommodationCategory">
+                                        <a th:each="sc : ${smallCategories}" th:data-id="${sc.smallCategoryId}"
+                                           class="list-group-item list-group-item-action d-flex justify-content-between align-items-center multi1">
+                                            <span th:text="${sc.name}"></span>
+                                            <span th:unless="${sc.productCount == 0}"
+                                                  class="badge bg-primary rounded-pill"
+                                                  th:text="${sc.productCount}"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header bg-body">시/도</div>
+                                    <div class="card-body list-group list-group-flush p-0" id="accommodationState">
+                                        <a th:each="state : ${accommodationState}" th:data-id="${state.stateId}"
+                                           class="list-group-item list-group-item-action d-flex justify-content-between align-items-center radio1">
+                                            <span th:text="${state.name}"></span>
+                                            <span th:unless="${state.productCount == 0}"
+                                                  class="badge bg-primary rounded-pill"
+                                                  th:text="${state.productCount}"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header bg-body">시/군/구</div>
+                                    <div class="card-body list-group list-group-flush p-0" id="accommodationCity"></div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <label class="col-form-label" for="roomPeople">인원</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="roomPeople" placeholder="사람만 세게냥"/>
+                                    <span class="input-group-text">명</span>
+                                </div>
+                                <label class="col-form-label" for="roomPeople">기간</label>
+                                <input type="text" class="form-control" id="dateRange" value=""/>
+                            </div>
+                        </div>
+                        <div class="row pt-2 pb-3">
+                            <div class="col text-start" id="accommodationSelectedOptions"></div>
+                            <div class="col-auto text-end">
+                                <button type="button" class="btn btn-warning" onclick="searchAccommodation();">여행갈 곳을
+                                    찾냥!
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="card">
-                        <div class="card-header bg-body">시/도</div>
-                        <div class="card-body list-group list-group-flush p-0" id="storeState">
-                            <a th:each="state : ${storeState}" th:data-id="${state.stateId}"
-                                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center radio1">
-                                <span th:text="${state.name}"></span>
-                                <span th:unless="${state.productCount == 0}" class="badge bg-primary rounded-pill" th:text="${state.productCount}"></span>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header bg-body">시/군/구</div>
-                        <div class="card-body list-group list-group-flush p-0" id="storeCity">
-                        </div>
-                    </div>
+                    <h3 class="accordion-header" hidden="hidden">
+                        <button class="accordion-button collapsed" data-bs-toggle="collapse"
+                                data-bs-target="#searchResult" aria-expanded="false" aria-controls="searchResult"
+                                onclick="reload();">검색 결과
+                        </button>
+                    </h3>
                 </div>
-                <div class="row pt-2">
-                    <div class="col text-start" id="storeSelectedOptions">
-                    </div>
-                    <div class="col text-end">
-                        <button type="button" class="btn btn-warning" onclick="searchStore();">놀러갈 곳을 찾개!</button>
+                <div id="searchResult" class="accordion-collapse collapse" data-bs-parent="#searchTab" hidden="hidden">
+                    <div class="accordion-body">
+                        <div class="row" style="height: 500px">
+                            <div id="map" class="col-5"></div>
+                            <script type="text/javascript" th:src="@{/js/kakaoMapApi.js}"></script>
+                            <ul class="col-7 list-group list-group-flush p-0 border text-start">
+                                <li class="list-group-item list-group-item-action result1 py-2 px-4" data-id="1">
+                                    <div class="d-flex justify-content-between align-items-center py-2">
+                                        <h5>편의 시설 명<span class="badge bg-warning rounded-pill" style="font-size: 8px">영업중</span></h5>
+                                        <a class="link-dark link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+                                           href="#">더 알아보기</a>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center py-1">
+                                        <span>대분류/소분류</span>
+                                        <span>평점 <span>3.3 점</span> 후기 <span> 3 개</span></span>
+                                    </div>
+                                    <p>주소</p>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="tab-pane fade" id="accommodation-tab-pane" role="tabpanel" aria-labelledby="accommodation-tab"
-                 tabindex="0">
-                <div class="row">
-                    <div class="col-8 card-group">
-                        <div class="card">
-                            <div class="card-header bg-body">숙소 분류</div>
-                            <div class="card-body list-group list-group-flush p-0" id="accommodationCategory">
-                                <a th:each="sc : ${smallCategories}" th:data-id="${sc.smallCategoryId}"
-                                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center multi1">
-                                    <span th:text="${sc.name}"></span>
-                                    <span th:unless="${sc.productCount == 0}" class="badge bg-primary rounded-pill" th:text="${sc.productCount}"></span>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header bg-body">시/도</div>
-                            <div class="card-body list-group list-group-flush p-0" id="accommodationState">
-                                <a th:each="state : ${accommodationState}" th:data-id="${state.stateId}"
-                                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center radio1">
-                                    <span th:text="${state.name}"></span>
-                                    <span th:unless="${state.productCount == 0}" class="badge bg-primary rounded-pill" th:text="${state.productCount}"></span>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header bg-body">시/군/구</div>
-                            <div class="card-body list-group list-group-flush p-0" id="accommodationCity">
-                            </div>
-                        </div>
+        </div>
+        <div class="m-5">
+            <h2>Top3</h2>
+            <div class="row my-5">
+                <div class="col" th:each="storeTop, status : ${storeTopList}">
+                    <h4 class="text-center border-bottom" th:text="${storeTop.name}"></h4>
+                    <div th:if="${storeTop.info.size() == 0}">
+                        아직 아이템이 없습니다.
                     </div>
-                    <div class="col-4">
-                        <label class="col-form-label" for="roomPeople">인원</label>
-                        <div class="input-group">
-                            <input type="number" class="form-control" id="roomPeople" placeholder="사람만 세게냥"/>
-                            <span class="input-group-text">명</span>
+                    <div th:unless="${storeTop.info.size() == 0}" th:id="store + ${status.count}"
+                         class="carousel slide">
+                        <div class="carousel-indicators">
+                            <button type="button" th:data-bs-target="|#store${status.count}|" data-bs-slide-to="0"
+                                    class="active" aria-current="true" aria-label="Slide 1"></button>
+                            <button type="button" th:data-bs-target="|#store${status.count}|" data-bs-slide-to="1"
+                                    aria-label="Slide 2"></button>
+                            <button type="button" th:data-bs-target="|#store${status.count}|" data-bs-slide-to="2"
+                                    aria-label="Slide 3"></button>
                         </div>
-                        <label class="col-form-label" for="roomPeople">기간</label>
-                        <input type="text" class="form-control" id="dateRange" value=""/>
+                        <div class="carousel-inner">
+                            <div th:each="info, index : ${storeTop.info}"
+                                 th:class="${index.first} ? 'carousel-item active' : 'carousel-item'">
+                                <img th:src="${info.repImageUrl}" class="d-block topImage" th:alt="${info.name}">
+                                <div class="carousel-caption d-none d-md-block">
+                                    <p class="topTitle" th:text="${info.name}"></p>
+                                    <p class="topText" th:text="${info.address}"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" th:data-bs-target="|#store${status.count}|"
+                                data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" th:data-bs-target="|#store${status.count}|"
+                                data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
                     </div>
                 </div>
-                <div class="row pt-2">
-                    <div class="col text-start" id="accommodationSelectedOptions">
+            </div>
+            <div class="row my-5">
+                <div class="col" th:each="accomTop, status : ${accommodationTopList}">
+                    <h4 class="text-center border-bottom" th:text="${accomTop.name}"></h4>
+                    <div th:if="${accomTop.info.size() == 0}">
+                        아직 아이템이 없습니다.
                     </div>
-                    <div class="col-auto text-end">
-                        <button type="button" class="btn btn-warning" onclick="searchAccommodation();">여행갈 곳을 찾냥!
+                    <div th:unless="${accomTop.info.size() == 0}" th:id="accommodation + ${status.count}"
+                         class="carousel slide">
+                        <div class="carousel-indicators">
+                            <button type="button" th:data-bs-target="|#accommodation${status.count}|"
+                                    data-bs-slide-to="0" class="active" aria-current="true"
+                                    aria-label="Slide 1"></button>
+                            <button type="button" th:data-bs-target="|#accommodation${status.count}|"
+                                    data-bs-slide-to="1" aria-label="Slide 2"></button>
+                            <button type="button" th:data-bs-target="|#accommodation${status.count}|"
+                                    data-bs-slide-to="2" aria-label="Slide 3"></button>
+                        </div>
+                        <div class="carousel-inner">
+                            <div th:each="info, index : ${accomTop.info}"
+                                 th:class="${index.first} ? 'carousel-item active' : 'carousel-item'">
+                                <img th:src="${info.repImageUrl}" class="d-block topImage" th:alt="${info.name}">
+                                <div class="carousel-caption d-none d-md-block">
+                                    <p class="topTitle" th:text="${info.name}"></p>
+                                    <p class="topText" th:text="${info.address}"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" th:data-bs-target="|#accommodation${status.count}|"
+                                data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" th:data-bs-target="|#accommodation${status.count}|"
+                                data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
                         </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </html>

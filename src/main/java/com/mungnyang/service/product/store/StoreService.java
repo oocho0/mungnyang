@@ -1,10 +1,13 @@
 package com.mungnyang.service.product.store;
 
 import com.mungnyang.constant.Status;
+import com.mungnyang.dto.product.MainTopDto;
 import com.mungnyang.dto.product.SearchStoreFilter;
+import com.mungnyang.dto.product.TopInfoDto;
 import com.mungnyang.dto.product.store.CreateStoreDto;
 import com.mungnyang.dto.product.store.ListStoreDto;
 import com.mungnyang.dto.product.store.ModifyStoreDto;
+import com.mungnyang.dto.product.store.ResultStoreDto;
 import com.mungnyang.entity.Address;
 import com.mungnyang.entity.fixedEntity.BigCategory;
 import com.mungnyang.entity.fixedEntity.City;
@@ -24,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -134,6 +138,26 @@ public class StoreService {
         storeImageService.updateStoreImages(savedStore, modifyStoreDto.getImageList());
     }
 
+    /**
+     * 메인 화면 TOP3에 나올 대분류별 편의 시설 리스트 반환
+     * @return MainTopDto 리스트
+     */
+    public List<MainTopDto> getStoresTopList(){
+        List<MainTopDto> mainTopDtoList = new ArrayList<>();
+        List<BigCategory> storeCategories = categoryService.getBigCategoriesForStore();
+        for (BigCategory storeCategory : storeCategories) {
+            List<TopInfoDto> topInfoDtoList = storeRepository.getStoreTopListByBigCategory(storeCategory.getBigCategoryId());
+            mainTopDtoList.add(MainTopDto.builder()
+                    .name(storeCategory.getName())
+                    .info(topInfoDtoList)
+                    .build());
+        }
+        return mainTopDtoList;
+    }
+
+    public List<ResultStoreDto> getStoreResultList(List<Long> categoryId, List<Long> cityId) {
+        return storeRepository.getStoreResultsByFilters(categoryId, cityId);
+    }
     /**
      * 편의 시설 생성
      *
