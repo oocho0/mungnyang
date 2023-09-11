@@ -6,6 +6,7 @@ import lombok.*;
 @Setter
 @Getter
 public class TopInfoDto {
+    private Long id;
     private String name;
     private String address;
     private Float rate;
@@ -13,7 +14,8 @@ public class TopInfoDto {
     private String repImageUrl;
 
     @QueryProjection
-    public TopInfoDto(String name, String address, Float rate, Long commentCount, String repImageUrl) {
+    public TopInfoDto(Long id, String name, String address, Float rate, Long commentCount, String repImageUrl) {
+        this.id = id;
         this.name = name;
         this.address = address;
         this.rate = rate;

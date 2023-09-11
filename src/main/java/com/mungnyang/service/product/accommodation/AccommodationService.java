@@ -2,15 +2,24 @@ package com.mungnyang.service.product.accommodation;
 
 import com.mungnyang.constant.Status;
 import com.mungnyang.dto.product.MainTopDto;
+import com.mungnyang.dto.product.ResultDto;
+import com.mungnyang.dto.product.SearchAccommodationFilter;
 import com.mungnyang.dto.product.TopInfoDto;
+import com.mungnyang.dto.product.accommodation.DetailAccommodationDto;
 import com.mungnyang.dto.product.accommodation.ListAccommodationDto;
 import com.mungnyang.dto.product.accommodation.CreateAccommodationDto;
 import com.mungnyang.dto.product.accommodation.ModifyAccommodationDto;
+import com.mungnyang.dto.product.accommodation.room.DetailRoomDto;
 import com.mungnyang.dto.product.accommodation.room.ListRoomDto;
+import com.mungnyang.dto.product.store.CommentDto;
 import com.mungnyang.entity.Address;
 import com.mungnyang.entity.fixedEntity.SmallCategory;
 import com.mungnyang.entity.product.ProductAddress;
 import com.mungnyang.entity.product.accommodation.Accommodation;
+import com.mungnyang.entity.product.accommodation.AccommodationComment;
+import com.mungnyang.entity.product.accommodation.AccommodationFacility;
+import com.mungnyang.entity.product.accommodation.AccommodationImage;
+import com.mungnyang.entity.product.accommodation.room.Room;
 import com.mungnyang.repository.product.accommodation.AccommodationRepository;
 import com.mungnyang.repository.product.accommodation.room.RoomRepository;
 import com.mungnyang.service.fixedEntity.CategoryService;
@@ -22,7 +31,9 @@ import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.MultiValueMap;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -138,6 +149,11 @@ public class AccommodationService {
         return !email.equals(savedAccommodation.getCreatedBy());
     }
 
+    /**
+     * 메인 화면에 TOP3에 나올 소분류별 숙소 리스트 반환
+     *
+     * @return
+     */
     public List<MainTopDto> getAccommodationsTopList() {
         List<MainTopDto> mainTopDtoList = new ArrayList<>();
         List<SmallCategory> accommodationCategories = categoryService.getSmallCategoryListByBigCategoryId(1L);
@@ -149,6 +165,60 @@ public class AccommodationService {
                     .build());
         }
         return mainTopDtoList;
+    }
+
+    /**
+     * 메인 화면 조회 결과 리스트 반환
+     *
+     * @param filter 메인 화면 조회 조건(소분류, 시/군/구, 인원, 기간)
+     * @return 숙소 정보 ResultDto 리스트
+     */
+    public List<ResultDto> getAccommodationResultList(SearchAccommodationFilter filter) {
+        List<Long> categoryId = filter.getCategoryId();
+        List<Long> cityId = filter.getCityId();
+        Integer roomPeople = filter.getRoomPeople();
+        LocalDateTime checkInDate = filter.getCheckInDate();
+        LocalDateTime checkOutDate = filter.getCheckOutDate();
+        return accommodationRepository.getAccommodationResultsByFilter(categoryId, cityId, roomPeople, checkInDate, checkOutDate);
+    }
+
+    public DetailAccommodationDto getAccommodationDetails(Long accommodationId) {
+        Accommodation accommodation = getAccommodationByAccommodationId(accommodationId);
+        List<AccommodationImage> images = accommodationImageService.getAccommodationImageListByAccommodationId(accommodationId);
+        List<String> imageList = new ArrayList<>();
+        for (AccommodationImage image : images) {
+            imageList.add(image.getImage().getUrl());
+        }
+        List<AccommodationComment> comments = accommodationCommentService.getAccommodationCommentListByAccommodationId(accommodationId);
+        List<CommentDto> commentDtoList = new ArrayList<>();
+        for (AccommodationComment comment : comments) {
+            commentDtoList.add(CommentDto.builder()
+                    .commentId(comment.getAccommodationCommentId())
+                    .content(comment.getComment().getCommentContent())
+                    .rate(comment.getComment().getRate())
+                    .email(comment.getMember().getEmail())
+                    .build());
+        }
+        List<AccommodationFacility> facilities = accommodationFacilityService.getAccommodationFacilityListByAccommodationId(accommodationId);
+        List<String> facilityList = new ArrayList<>();
+        for (AccommodationFacility facility : facilities) {
+            facilityList.add(facility.getFacilityName());
+        }
+        List<DetailRoomDto> detailRoomDtoList = roomService.getRoomDetails(accommodationId);
+        return DetailAccommodationDto.builder()
+                .id(accommodation.getAccommodationId())
+                .name(accommodation.getAccommodationName())
+                .category(accommodation.getSmallCategory().getName())
+                .address("(" + accommodation.getProductAddress().getAddress().getZipcode() + ") " + accommodation.getProductAddress().getAddress().getMain() + " " + accommodation.getProductAddress().getAddress().getExtra())
+                .checkInTime(accommodation.getCheckInTime())
+                .checkOutTime(accommodation.getCheckOutTime())
+                .detail(accommodation.getAccommodationDetail())
+                .status(StatusService.statusConverter(accommodation.getAccommodationStatus()))
+                .images(imageList)
+                .comments(commentDtoList)
+                .facilities(facilityList)
+                .rooms(detailRoomDtoList)
+                .build();
     }
 
     /**
@@ -196,7 +266,7 @@ public class AccommodationService {
         return findAccommodation;
     }
 
-    public void deleteTest(){
+    public void deleteTest() {
         List<Accommodation> closedTestAccommodation = accommodationRepository.findByAccommodationStatus(Status.CLOSED);
         for (Accommodation accommodation : closedTestAccommodation) {
             roomService.deleteClosedTestAllRooms(accommodation.getAccommodationId());

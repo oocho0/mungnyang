@@ -1,19 +1,20 @@
 package com.mungnyang.service.product.store;
 
 import com.mungnyang.constant.Status;
-import com.mungnyang.dto.product.MainTopDto;
-import com.mungnyang.dto.product.SearchStoreFilter;
-import com.mungnyang.dto.product.TopInfoDto;
+import com.mungnyang.dto.product.*;
+import com.mungnyang.dto.product.store.CommentDto;
 import com.mungnyang.dto.product.store.CreateStoreDto;
+import com.mungnyang.dto.product.store.DetailStoreDto;
 import com.mungnyang.dto.product.store.ListStoreDto;
 import com.mungnyang.dto.product.store.ModifyStoreDto;
-import com.mungnyang.dto.product.store.ResultStoreDto;
 import com.mungnyang.entity.Address;
 import com.mungnyang.entity.fixedEntity.BigCategory;
 import com.mungnyang.entity.fixedEntity.City;
 import com.mungnyang.entity.fixedEntity.SmallCategory;
 import com.mungnyang.entity.product.ProductAddress;
 import com.mungnyang.entity.product.store.Store;
+import com.mungnyang.entity.product.store.StoreComment;
+import com.mungnyang.entity.product.store.StoreImage;
 import com.mungnyang.repository.product.store.StoreRepository;
 import com.mungnyang.service.fixedEntity.CategoryService;
 import com.mungnyang.service.fixedEntity.StateCityService;
@@ -26,6 +27,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,9 +143,10 @@ public class StoreService {
 
     /**
      * 메인 화면 TOP3에 나올 대분류별 편의 시설 리스트 반환
+     *
      * @return MainTopDto 리스트
      */
-    public List<MainTopDto> getStoresTopList(){
+    public List<MainTopDto> getStoresTopList() {
         List<MainTopDto> mainTopDtoList = new ArrayList<>();
         List<BigCategory> storeCategories = categoryService.getBigCategoriesForStore();
         for (BigCategory storeCategory : storeCategories) {
@@ -155,9 +159,52 @@ public class StoreService {
         return mainTopDtoList;
     }
 
-    public List<ResultStoreDto> getStoreResultList(List<Long> categoryId, List<Long> cityId) {
+    /**
+     * 메인 화면 조회 결과 리스트 반환
+     *
+     * @param paramMap 메인 화면 조회 조건(소분류, 시/군/구)
+     * @return 편의 시설 정보 ResultDto 리스트
+     */
+    public List<ResultDto> getStoreResultList(MultiParam paramMap) {
+        List<Long> categoryId = paramMap.getCategoryId();
+        List<Long> cityId = paramMap.getCityId();
         return storeRepository.getStoreResultsByFilters(categoryId, cityId);
     }
+
+    /**
+     * 편의 시설 자세한 정보 화면
+     * @param storeId 해당 편의 시설 일련번호
+     * @return DetailStoreDto
+     */
+    public DetailStoreDto getStoreDetails(Long storeId) {
+        Store store = getStoreByStoreId(storeId);
+        List<StoreComment> comments = storeCommentService.getStoreCommentListByStoreId(storeId);
+        List<StoreImage> images = storeImageService.getStoreImageListByStoreId(storeId);
+        List<String> imageList = new ArrayList<>();
+        for (StoreImage image : images) {
+            imageList.add(image.getImage().getUrl());
+        }
+        List<CommentDto> commentDtoList = new ArrayList<>();
+        for (StoreComment comment : comments) {
+            commentDtoList.add(CommentDto.builder()
+                    .commentId(comment.getStoreCommentId())
+                    .content(comment.getComment().getCommentContent())
+                    .rate(comment.getComment().getRate())
+                    .email(comment.getMember().getEmail())
+                    .build());
+        }
+        return DetailStoreDto.builder()
+                .id(store.getStoreId())
+                .name(store.getStoreName())
+                .category(store.getSmallCategory().getBigCategory().getName() + " / " + store.getSmallCategory().getName())
+                .address("(" + store.getProductAddress().getAddress().getZipcode() + ") " + store.getProductAddress().getAddress().getMain() + " " + store.getProductAddress().getAddress().getDetail())
+                .detail(store.getStoreDetail())
+                .status(StatusService.statusConverter(store.getStoreStatus()))
+                .images(imageList)
+                .comments(commentDtoList)
+                .build();
+    }
+
     /**
      * 편의 시설 생성
      *

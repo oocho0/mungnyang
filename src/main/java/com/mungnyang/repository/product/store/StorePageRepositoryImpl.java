@@ -3,12 +3,12 @@ package com.mungnyang.repository.product.store;
 import com.mungnyang.constant.IsTrue;
 import com.mungnyang.constant.Status;
 import com.mungnyang.dto.product.QTopInfoDto;
+import com.mungnyang.dto.product.ResultDto;
 import com.mungnyang.dto.product.SearchStoreFilter;
 import com.mungnyang.dto.product.TopInfoDto;
 import com.mungnyang.dto.product.store.ListStoreDto;
 import com.mungnyang.dto.product.store.QListStoreDto;
-import com.mungnyang.dto.product.store.QResultStoreDto;
-import com.mungnyang.dto.product.store.ResultStoreDto;
+import com.mungnyang.dto.product.QResultDto;
 import com.mungnyang.entity.fixedEntity.QBigCategory;
 import com.mungnyang.entity.fixedEntity.QCity;
 import com.mungnyang.entity.fixedEntity.QSmallCategory;
@@ -122,6 +122,7 @@ public class StorePageRepositoryImpl implements StorePageRepository {
     public List<TopInfoDto> getStoreTopListByBigCategory(Long bigCategoryId) {
         return jpaQueryFactory.select(
                         new QTopInfoDto(
+                                store.storeId,
                                 store.storeName,
                                 store.city.state.name.concat(" ").concat(store.city.name),
                                 storeComment.comment.rate.avg().coalesce(0.0).floatValue(),
@@ -139,22 +140,25 @@ public class StorePageRepositoryImpl implements StorePageRepository {
     }
 
     @Override
-    public List<ResultStoreDto> getStoreResultsByFilters(List<Long> smallCategoryId, List<Long> cityId) {
+    public List<ResultDto> getStoreResultsByFilters(List<Long> smallCategoryId, List<Long> cityId) {
         return jpaQueryFactory.select(
-                        new QResultStoreDto(
+                        new QResultDto(
                                 store.storeId,
                                 store.storeName,
                                 store.smallCategory.bigCategory.name.concat(" / ").concat(store.smallCategory.name),
                                 storeComment.comment.rate.avg().coalesce(0.0).floatValue(),
                                 storeComment.count(),
+                                store.storeStatus.stringValue(),
                                 store.productAddress.address.main,
                                 store.productAddress.Lon,
-                                store.productAddress.Lat
+                                store.productAddress.Lat,
+                                storeImage.image.url
                         )
                 ).from(store)
                 .leftJoin(storeComment).on(store.storeId.eq(storeComment.store.storeId))
-                .where(store.smallCategory.smallCategoryId.in(smallCategoryId))
-                .where(store.city.cityId.in(cityId))
+                .where(store.smallCategory.smallCategoryId.in(smallCategoryId),
+                        store.city.cityId.in(cityId),
+                        storeImage.image.isRepresentative.eq(IsTrue.YES))
                 .groupBy(store.storeId)
                 .orderBy(storeComment.comment.rate.avg().desc())
                 .fetch();

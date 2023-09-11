@@ -2,6 +2,8 @@ var now = moment();
 var endDate = moment(now).add(1, "d");
 $(function(){
     $("#dateRange").val(now.format('YYYY[년] MM[월] DD[일]') + ' - ' + endDate.format('YYYY[년] MM[월] DD[일]'));
+    $("#dateRange").attr("data-checkIn", now.format("YYYY-MM-DD[T]HH:mm:ss"));
+    $("#dateRange").attr("data-checkOut", endDate.format("YYYY-MM-DD[T]HH:mm:ss"));
     $('#dateRange').daterangepicker({
         "locale": {
             "format": "YYYY년 MM월 DD일",
@@ -28,6 +30,8 @@ $(function(){
             alert("1박 이상을 선택해야한댜옹");
         }else{
             $(this).val(picker.startDate.format('YYYY[년] MM[월] DD[일]') + ' - ' + picker.endDate.format('YYYY[년] MM[월] DD[일]'));
+            $(this).attr("data-checkIn", picker.startDate.format("YYYY-MM-DD[T]HH:mm:ss"));
+            $(this).attr("data-checkOut", picker.endDate.format("YYYY-MM-DD[T]HH:mm:ss"));
         }
     });
 });

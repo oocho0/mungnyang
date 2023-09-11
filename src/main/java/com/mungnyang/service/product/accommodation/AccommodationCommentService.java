@@ -30,7 +30,7 @@ public class AccommodationCommentService {
      * @param accommodationId 해당 숙소 일련번호
      * @return 해당 숙소의 AccommodationComment 엔티티 리스트
      */
-    private List<AccommodationComment> getAccommodationCommentListByAccommodationId(Long accommodationId) {
+    public List<AccommodationComment> getAccommodationCommentListByAccommodationId(Long accommodationId) {
         List<AccommodationComment> findAccommodationCommentList = accommodationCommentRepository.findByAccommodationAccommodationIdOrderByAccommodationCommentId(accommodationId);
         if (findAccommodationCommentList == null) {
             throw new IllegalArgumentException();

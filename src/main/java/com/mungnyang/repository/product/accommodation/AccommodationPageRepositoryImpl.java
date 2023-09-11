@@ -2,7 +2,9 @@ package com.mungnyang.repository.product.accommodation;
 
 import com.mungnyang.constant.IsTrue;
 import com.mungnyang.constant.Status;
+import com.mungnyang.dto.product.QResultDto;
 import com.mungnyang.dto.product.QTopInfoDto;
+import com.mungnyang.dto.product.ResultDto;
 import com.mungnyang.dto.product.TopInfoDto;
 import com.mungnyang.dto.product.accommodation.ListAccommodationDto;
 import com.mungnyang.dto.product.accommodation.QListAccommodationDto;
@@ -11,25 +13,29 @@ import com.mungnyang.entity.fixedEntity.QState;
 import com.mungnyang.entity.product.accommodation.QAccommodation;
 import com.mungnyang.entity.product.accommodation.QAccommodationComment;
 import com.mungnyang.entity.product.accommodation.QAccommodationImage;
+import com.mungnyang.entity.product.accommodation.room.QRoom;
+import com.mungnyang.entity.service.QReservationRoom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.thymeleaf.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
 public class AccommodationPageRepositoryImpl implements AccommodationPageRepository {
     private final JPAQueryFactory jpaQueryFactory;
+    private final QAccommodation accommodation = QAccommodation.accommodation;
+    private final QAccommodationComment accommodationComment = QAccommodationComment.accommodationComment;
+    private final QState state = QState.state;
+    private final QCity city = QCity.city;
+    private final QAccommodationImage accommodationImage = QAccommodationImage.accommodationImage;
+    private final QRoom room = QRoom.room;
+    private final QReservationRoom reservationRoom = QReservationRoom.reservationRoom;
 
     @Override
     public List<ListAccommodationDto> findListAccommodationDtoByCreatedByAndIsNotDeleteOrderByReqDateDesc(String email) {
-        QAccommodation accommodation = QAccommodation.accommodation;
-        QAccommodationComment accommodationComment = QAccommodationComment.accommodationComment;
-        QState state = QState.state;
-        QCity city = QCity.city;
-
         return jpaQueryFactory.select(
                         new QListAccommodationDto(
                                 accommodation.accommodationId,
@@ -54,12 +60,9 @@ public class AccommodationPageRepositoryImpl implements AccommodationPageReposit
 
     @Override
     public List<TopInfoDto> getAccommodationTopListBySmallCategory(Long smallCategoryId) {
-        QAccommodation accommodation = QAccommodation.accommodation;
-        QAccommodationImage accommodationImage = QAccommodationImage.accommodationImage;
-        QAccommodationComment accommodationComment = QAccommodationComment.accommodationComment;
-
         return jpaQueryFactory.select(
                         new QTopInfoDto(
+                                accommodation.accommodationId,
                                 accommodation.accommodationName,
                                 accommodation.city.state.name.concat(" ").concat(accommodation.city.name),
                                 accommodationComment.comment.rate.avg().coalesce(0.0).floatValue(),
@@ -74,6 +77,39 @@ public class AccommodationPageRepositoryImpl implements AccommodationPageReposit
                         accommodation.accommodationStatus.ne(Status.CLOSED))
                 .groupBy(accommodation.accommodationId, accommodationImage.image.url)
                 .orderBy(accommodationComment.comment.rate.avg().desc()).limit(3)
+                .fetch();
+    }
+
+    @Override
+    public List<ResultDto> getAccommodationResultsByFilter(List<Long> categoryId, List<Long> cityId, Integer roomPeople,
+                                                           LocalDateTime checkInDate, LocalDateTime checkOutDate) {
+        return jpaQueryFactory.select(
+                        new QResultDto(
+                                accommodation.accommodationId,
+                                accommodation.accommodationName,
+                                accommodation.smallCategory.bigCategory.name.concat("/").concat(accommodation.smallCategory.name),
+                                accommodationComment.comment.rate.avg().coalesce(0.0).floatValue(),
+                                accommodationComment.count(),
+                                accommodation.accommodationStatus.stringValue(),
+                                accommodation.productAddress.address.main,
+                                accommodation.productAddress.Lon,
+                                accommodation.productAddress.Lat,
+                                accommodationImage.image.url
+                        )
+                ).from(accommodation)
+                .leftJoin(accommodationComment).on(accommodation.accommodationId.eq(accommodationComment.accommodation.accommodationId))
+                .leftJoin(room).on(accommodation.accommodationId.eq(room.accommodation.accommodationId))
+                .leftJoin(reservationRoom).on(accommodation.accommodationId.eq(reservationRoom.room.accommodation.accommodationId))
+                .leftJoin(accommodationImage).on(accommodation.accommodationId.eq(accommodationImage.accommodation.accommodationId))
+                .where(accommodation.smallCategory.smallCategoryId.in(categoryId),
+                        accommodation.city.cityId.in(cityId),
+                        room.roomPeople.goe(roomPeople),
+                        reservationRoom.checkInDate.goe(checkOutDate),
+                        reservationRoom.checkOutDate.loe(checkInDate),
+                        accommodationImage.image.isRepresentative.eq(IsTrue.YES),
+                        accommodation.accommodationStatus.ne(Status.CLOSED))
+                .groupBy(accommodation.accommodationId, accommodationImage.image.url)
+                .orderBy(accommodationComment.comment.rate.avg().coalesce(0.0).floatValue().desc())
                 .fetch();
     }
 }

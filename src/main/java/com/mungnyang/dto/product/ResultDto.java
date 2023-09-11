@@ -1,29 +1,33 @@
-package com.mungnyang.dto.product.store;
+package com.mungnyang.dto.product;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 
 @Getter
 @Setter
-public class ResultStoreDto {
-    private Long storeId;
-    private String storeName;
+public class ResultDto {
+    private Long id;
+    private String name;
     private String category;
     private Float rate;
     private Long commentCount;
+    private String status;
     private String address;
     private Double lon;
     private Double lat;
+    private String repImageUrl;
 
     @QueryProjection
-    public ResultStoreDto(Long storeId, String storeName, String category, Float rate, Long commentCount, String address, Double lon, Double lat) {
-        this.storeId = storeId;
-        this.storeName = storeName;
+    public ResultDto(Long id, String name, String category, Float rate, Long commentCount, String status, String address, Double lon, Double lat, String repImageUrl) {
+        this.id = id;
+        this.name = name;
         this.category = category;
         this.rate = rate;
         this.commentCount = commentCount;
+        this.status = status;
         this.address = address;
         this.lon = lon;
         this.lat = lat;
+        this.repImageUrl = repImageUrl;
     }
 }

@@ -10,6 +10,9 @@
 .list-group-flush {
     overflow: auto;
 }
+#resultList {
+    overflow: auto;
+}
 
 .accordion-button, .accordion-button > .active {
     background-color : #FAF0E6 !important;
