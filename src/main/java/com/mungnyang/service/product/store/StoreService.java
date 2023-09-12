@@ -2,7 +2,7 @@ package com.mungnyang.service.product.store;
 
 import com.mungnyang.constant.Status;
 import com.mungnyang.dto.product.*;
-import com.mungnyang.dto.product.store.CommentDto;
+import com.mungnyang.dto.product.CommentDto;
 import com.mungnyang.dto.product.store.CreateStoreDto;
 import com.mungnyang.dto.product.store.DetailStoreDto;
 import com.mungnyang.dto.product.store.ListStoreDto;
@@ -27,8 +27,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -178,30 +176,25 @@ public class StoreService {
      */
     public DetailStoreDto getStoreDetails(Long storeId) {
         Store store = getStoreByStoreId(storeId);
-        List<StoreComment> comments = storeCommentService.getStoreCommentListByStoreId(storeId);
         List<StoreImage> images = storeImageService.getStoreImageListByStoreId(storeId);
         List<String> imageList = new ArrayList<>();
         for (StoreImage image : images) {
             imageList.add(image.getImage().getUrl());
         }
-        List<CommentDto> commentDtoList = new ArrayList<>();
-        for (StoreComment comment : comments) {
-            commentDtoList.add(CommentDto.builder()
-                    .commentId(comment.getStoreCommentId())
-                    .content(comment.getComment().getCommentContent())
-                    .rate(comment.getComment().getRate())
-                    .email(comment.getMember().getEmail())
-                    .build());
-        }
+        Page<CommentDto> commentList = storeCommentService.getCommentPage(storeId);
         return DetailStoreDto.builder()
                 .id(store.getStoreId())
                 .name(store.getStoreName())
                 .category(store.getSmallCategory().getBigCategory().getName() + " / " + store.getSmallCategory().getName())
                 .address("(" + store.getProductAddress().getAddress().getZipcode() + ") " + store.getProductAddress().getAddress().getMain() + " " + store.getProductAddress().getAddress().getDetail())
+                .lat(store.getProductAddress().getLat())
+                .lon(store.getProductAddress().getLon())
                 .detail(store.getStoreDetail())
                 .status(StatusService.statusConverter(store.getStoreStatus()))
+                .rateAvg(storeCommentService.getRateAverage(storeId))
+                .commentCount(storeCommentService.getCommentCount(storeId))
                 .images(imageList)
-                .comments(commentDtoList)
+                .comments(commentList)
                 .build();
     }
 

@@ -3,8 +3,7 @@ package com.mungnyang.entity.product.accommodation;
 import com.mungnyang.entity.WriterEntity;
 import com.mungnyang.entity.member.Member;
 import com.mungnyang.entity.product.Comment;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -12,6 +11,9 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Table(name = "accommodation_comment")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class AccommodationComment extends WriterEntity {
 
     @Id
@@ -25,8 +27,4 @@ public class AccommodationComment extends WriterEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accommodation_id")
     private Accommodation accommodation;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
 }

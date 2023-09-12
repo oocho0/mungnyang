@@ -12,7 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/moment-jdateformatparser@1.2.1/moment-jdateformatparser.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script type="text/javascript"
-            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b7f35cfc0e791dd9028e3e4f0bf9fba9&libraries=services,clusterer,drawing"></script>
+            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b7f35cfc0e791dd9028e3e4f0bf9fba9"></script>
     <script type="text/javascript" th:src="@{/js/datePicker.js}"></script>
     <script type="text/javascript" th:src="@{/js/options.js}"></script>
     <script type="text/javascript" th:inline="javascript"></script>
@@ -141,7 +141,7 @@
                     <div class="accordion-body">
                         <div class="row" style="height: 500px">
                             <div id="map" class="col-5"></div>
-                            <script type="text/javascript" th:src="@{/js/kakaoMapApi.js}"></script>
+                            <script type="text/javascript" th:src="@{/js/mainKakaoMapApi.js}"></script>
                             <ul class="col-7 list-group list-group-flush p-0 border text-start" id="resultList">
                             </ul>
                         </div>
@@ -158,7 +158,7 @@
                         아직 아이템이 없습니다.
                     </div>
                     <div th:unless="${storeTop.info.size() == 0}" th:id="store + ${status.count}"
-                         class="carousel slide" data-bs-ride="carousel">
+                         class="carousel slide" data-bs-ride="true">
                         <div class="carousel-indicators">
                             <button type="button" th:data-bs-target="|#store${status.count}|" data-bs-slide-to="0"
                                     class="active" aria-current="true" aria-label="Slide 1"></button>
@@ -171,10 +171,10 @@
                             <div th:each="info, index : ${storeTop.info}"
                                  th:class="${index.first} ? 'carousel-item active' : 'carousel-item'">
                                 <a th:href="|/store/${info.id}|"><img th:src="${info.repImageUrl}" class="d-block topImage" th:alt="${info.name}"/></a>
-                                <div class="carousel-caption d-none d-md-block">
+                                <a th:href="|/store/${info.id}|"><div class="carousel-caption d-none d-md-block">
                                     <p class="topTitle" th:text="${info.name}"></p>
                                     <p class="topText" th:text="${info.address}"></p>
-                                </div>
+                                </div></a>
                             </div>
                         </div>
                         <button class="carousel-control-prev" type="button" th:data-bs-target="|#store${status.count}|"
@@ -197,7 +197,7 @@
                         아직 아이템이 없습니다.
                     </div>
                     <div th:unless="${accomTop.info.size() == 0}" th:id="accommodation + ${status.count}"
-                         class="carousel slide" data-bs-ride="carousel">
+                         class="carousel slide" data-bs-ride="true">
                         <div class="carousel-indicators">
                             <button type="button" th:data-bs-target="|#accommodation${status.count}|"
                                     data-bs-slide-to="0" class="active" aria-current="true"
@@ -211,10 +211,10 @@
                             <div th:each="info, index : ${accomTop.info}"
                                  th:class="${index.first} ? 'carousel-item active' : 'carousel-item'">
                                 <a th:href="|/accommodation/${info.id}|"><img th:src="${info.repImageUrl}" class="d-block topImage" th:alt="${info.name}"/></a>
-                                <div class="carousel-caption d-none d-md-block">
+                                <a th:href="|/accommodation/${info.id}|"><div class="carousel-caption d-none d-md-block">
                                     <p class="topTitle" th:text="${info.name}"></p>
                                     <p class="topText" th:text="${info.address}"></p>
-                                </div>
+                                </div></a>
                             </div>
                         </div>
                         <button class="carousel-control-prev" type="button" th:data-bs-target="|#accommodation${status.count}|"

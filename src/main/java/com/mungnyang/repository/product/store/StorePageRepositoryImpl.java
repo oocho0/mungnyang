@@ -156,10 +156,11 @@ public class StorePageRepositoryImpl implements StorePageRepository {
                         )
                 ).from(store)
                 .leftJoin(storeComment).on(store.storeId.eq(storeComment.store.storeId))
+                .leftJoin(storeImage).on(store.storeId.eq(storeImage.store.storeId))
                 .where(store.smallCategory.smallCategoryId.in(smallCategoryId),
                         store.city.cityId.in(cityId),
                         storeImage.image.isRepresentative.eq(IsTrue.YES))
-                .groupBy(store.storeId)
+                .groupBy(store.storeId, storeImage.image.url)
                 .orderBy(storeComment.comment.rate.avg().desc())
                 .fetch();
     }

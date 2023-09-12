@@ -245,21 +245,28 @@ function searchStore(){
                 }
                 $("#resultList").append($(
                     '<li class="list-group-item list-group-item-action result1 py-2 px-4" id="' + value.id + '">' +
-                    '    <div class="d-flex justify-content-between align-items-center py-2">' +
-                    '        <h5>' + value.name + '<span class="badge ' + badgeColor + ' rounded-pill" style="font-size: 8px">' + status + '</span></h5>' +
-                    '        <a class="link-dark link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"' +
-                    '           href="/store/' + value.id + '">더 알아보기</a>' +
+                    '    <div class="row g-3">' +
+                    '        <div class="col-3">' +
+                    '            <img style="width: 100%; height: 120px; object-fit: cover;" src=' + value.repImageUrl + '/>' +
+                    '        </div>' +
+                    '        <div class="col-9">' +
+                    '            <div class="d-flex justify-content-between align-items-center py-2">' +
+                    '                <h5>' + value.name + '<span class="badge ' + badgeColor + ' rounded-pill" style="font-size: 8px">' + status + '</span></h5>' +
+                    '                <a class="link-dark link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"' +
+                    '                   href="/store/' + value.id + '">더 알아보기</a>' +
+                    '            </div>' +
+                    '            <div class="d-flex justify-content-between align-items-center py-1">' +
+                    '                <span>' + value.category + '</span>' +
+                    '                <span>평점 <span>' + value.rate + ' 점</span> 후기 <span>' + value.commentCount + ' 개</span></span>' +
+                    '            </div>' +
+                    '            <p>' + value.address + '</p>' +
+                    '        </div>' +
                     '    </div>' +
-                    '    <div class="d-flex justify-content-between align-items-center py-1">' +
-                    '        <span>' + value.category + '</span>' +
-                    '        <span>평점 <span>' + value.rate + ' 점</span> 후기 <span>' + value.commentCount + ' 개</span></span>' +
-                    '    </div>' +
-                    '    <p>' + value.address + '</p>' +
                     '</li>'
                 ));
                 var points = {};
                 points.id = value.id;
-                points.content = '<div style="font-size: 8px; width: max-content; padding:5px;">' + value.name + '</div>';
+                points.content = '<div style="text-align: center; font-size: 8px; width: max-content; padding:5px;">' + value.name + '</div>';
                 points.latlng = new kakao.maps.LatLng(value.lat, value.lon);
                 positions.push(points);
             });
@@ -352,21 +359,28 @@ function searchAccommodation(){
                 }
                 $("#resultList").append($(
                     '<li class="list-group-item list-group-item-action result1 py-2 px-4" id="' + value.id + '">' +
-                    '    <div class="d-flex justify-content-between align-items-center py-2">' +
-                    '        <h5>' + value.name + '<span class="badge bg-warning rounded-pill" style="font-size: 8px">' + status + '</span></h5>' +
-                    '        <a class="link-dark link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"' +
-                    '           href="/accommodation/' + value.id + '">더 알아보기</a>' +
+                    '    <div class="row g-3">' +
+                    '        <div class="col-3">' +
+                    '            <img style="width: 100%; height: 120px; object-fit: cover;" src=' + value.repImageUrl + '/>' +
+                    '        </div>' +
+                    '        <div class="col-9">' +
+                    '            <div class="d-flex justify-content-between align-items-center py-2">' +
+                    '                <h5>' + value.name + '<span class="badge bg-warning rounded-pill" style="font-size: 8px">' + status + '</span></h5>' +
+                    '                <a class="link-dark link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"' +
+                    '                   href="/accommodation/' + value.id + '">더 알아보기</a>' +
+                    '            </div>' +
+                    '            <div class="d-flex justify-content-between align-items-center py-1">' +
+                    '                <span>' + value.category + '</span>' +
+                    '                <span>평점 <span>' + value.rate + ' 점</span> 후기 <span>' + value.commentCount + ' 개</span></span>' +
+                    '            </div>' +
+                    '            <p>' + value.address + '</p>' +
+                    '        </div>' +
                     '    </div>' +
-                    '    <div class="d-flex justify-content-between align-items-center py-1">' +
-                    '        <span>' + value.category + '</span>' +
-                    '        <span>평점 <span>' + value.rate + ' 점</span> 후기 <span>' + value.commentCount + ' 개</span></span>' +
-                    '    </div>' +
-                    '    <p>' + value.address + '</p>' +
                     '</li>'
                 ));
                 var points = {};
                 points.id = value.id;
-                points.content = '<div><a href="#' + value.id + '">' + value.name + '</a></div>';
+                points.content = '<div style="text-align: center; font-size: 8px; width: max-content; padding:5px;">' + value.name + '</a></div>';
                 points.latlng = new kakao.maps.LatLng(value.lat, value.lon);
                 positions.push(points);
             });

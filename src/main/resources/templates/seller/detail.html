@@ -1,20 +1,257 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}">
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
 <th:block layout:fragment="css">
-  <style></style>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/smallImage.css}"/>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css"/>
+    <style></style>
 </th:block>
 <th:block layout:fragment="script">
-  <script type="text/javascript" th:inline="javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment-jdateformatparser@1.2.1/moment-jdateformatparser.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script type="text/javascript"
+            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b7f35cfc0e791dd9028e3e4f0bf9fba9"></script>
+    <script type="text/javascript" th:src="@{/js/datePicker.js}"></script>
+    <script type="text/javascript" th:src="@{/js/comment.js}"></script>
+    <script type="text/javascript" th:inline="javascript"></script>
 </th:block>
 <div layout:fragment="content">
-  <div class="px-5 py-4 text-center bg-body rounded-3">
     <div class="p-5 text-center bg-body rounded-3">
-      <h2 class="text-body-emphasis pb-5 border-bottom"></h2>
-      <div class="container py-3 mx-3">
-
-      </div>
+        <div class="card m-4 p-3">
+            <form class="card-body p-5 text-center bg-body rounded-3" th:object="${accommodation}">
+                <input type="hidden" id="type" value="accommodation"/>
+                <input type="hidden" th:field="*{id}"/>
+                <input type="hidden" th:field="*{lat}">
+                <input type="hidden" th:field="*{lon}"/>
+                <h2 class="text-body-emphasis pb-5" id="name" th:text="*{name}"></h2>
+                <div class="container py-3 mx-3">
+                    <div class="row">
+                        <div class="col-6">
+                            <div id="imageList" class="carousel slide" data-bs-ride="true">
+                                <div class="carousel-inner">
+                                    <div th:each="url, index : *{images}"
+                                         th:class="${index.first} ? 'carousel-item active' : 'carousel-item'">
+                                        <img th:src="${url}" class="d-block bigImage"
+                                             alt="${accommodation.name}+${index.count}"/>
+                                    </div>
+                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#imageList"
+                                        data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#imageList"
+                                        data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            </div>
+                            <div style="overflow: auto;">
+                                <button th:each="url, index : *{images}" type="button" data-bs-target="#imageList"
+                                        th:data-bs-slide-to="${index.index}"
+                                        class="imageBtn btn btn-light"
+                                        th:aria-current="${index.first} ? 'true' : ''"
+                                        aria-label="${accommodation.name}+${index.count}">
+                                    <img th:src="${url}" class="smallImage" alt="${accommodation.name}+${index.count}"/>
+                                </button>
+                            </div>
+                            <div class="row align-items-top pt-2">
+                                <div class="col-3 text-end">숙소 시설 : </div>
+                                <div class="col-9 text-start"><span class="ps-0 pe-4" th:each="facility : *{facilities}" th:text="${facility}"></span></div>
+                            </div>
+                        </div>
+                        <div class="col-6 text-start">
+                            <div class="row g-3 pb-1">
+                                <div class="col-3 text-start" th:text="${#strings.equals(accommodation.status, 'OPEN') ? '영업중' : '휴업'}"></div>
+                                <div class="col-3 text-start" th:text="*{category}"></div>
+                                <div class="col-3 text-center">평점 : <span th:text="|*{rateAvg} 점|"></span></div>
+                                <div class="col-3 text-end">후기 : <span th:text="|*{commentCount} 개|"></span></div>
+                            </div>
+                            <div class="row g-3 py-1">
+                                <div class="col-6">숙소 관리자 : <span th:text="*{ownerName}"></span> </div>
+                                <div class="col-6">연락처 : <span th:text="*{ownerTel}"></span> </div>
+                            </div>
+                            <div class="g-3 py-1 row">
+                                <div class="col-6">체크인 시간 : <span th:text="*{checkInTime}"></span></div>
+                                <div class="col-6">체크아웃 시간 : <span th:text="*{checkOutTime}"></span></div>
+                            </div>
+                            <div class="pt-1 pb-2" th:text="*{address}"></div>
+                            <div id="map" style="height: 180px;"></div>
+                            <script type="text/javascript" th:src="@{/js/detailKakaoMapApi.js}"></script>
+                            <div class="py-3" th:text="*{detail}"></div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h4 class="pb-2 border-bottom mb-2">숙소 호실</h4>
+                        <div class="card mb-2" th:each="room : *{rooms}">
+                            <div class="card-body">
+                                <h5 th:text="${room.name}"></h5>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div id="roomImageList" class="carousel slide" data-bs-ride="true">
+                                            <div class="carousel-inner">
+                                                <div th:each="url, index : ${room.images}"
+                                                     th:class="${index.first} ? 'carousel-item active' : 'carousel-item'">
+                                                    <img th:src="${url}" class="d-block bigImage"
+                                                         alt="${room.name}+${index.count}"/>
+                                                </div>
+                                            </div>
+                                            <button class="carousel-control-prev" type="button" data-bs-target="#roomImageList"
+                                                    data-bs-slide="prev">
+                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                <span class="visually-hidden">Previous</span>
+                                            </button>
+                                            <button class="carousel-control-next" type="button" data-bs-target="#roomImageList"
+                                                    data-bs-slide="next">
+                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                <span class="visually-hidden">Next</span>
+                                            </button>
+                                        </div>
+                                        <div style="overflow: auto;">
+                                            <button th:each="url, index : ${room.images}" type="button" data-bs-target="#roomImageList"
+                                                    th:data-bs-slide-to="${index.index}"
+                                                    class="imageBtn btn btn-light"
+                                                    th:aria-current="${index.first} ? 'true' : ''"
+                                                    aria-label="${room.name}+${index.count}">
+                                                <img th:src="${url}" class="smallImage" alt="${room.name}+${index.count}"/>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div th:text="${#strings.equals(room.status, 'OPEN') ? '정상 운영' : '임시 폐쇄'}"></div>
+                                        <div>가격 : <span th:text="${#numbers.formatInteger(room.price, 0, 'COMMA')} + ' 원'"></span> </div>
+                                        <div>기본 인원 : <span th:text="|${room.people} 명|"></span></div>
+                                        <div>방 시설 : <span th:each="facility: ${room.facilities}" th:text="${facility}"></span></div>
+                                        <div>상세 정보 : <span th:text="${room.detail}"></span> </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="commentList" class="mt-4">
+                        <h4 class="pb-2 border-bottom mb-2">후기</h4>
+                        <div id="emptyComment" th:if="${#lists.isEmpty(accommodation.comments.content)}" class="mb-4 py-5">
+                            <h5>첫 후기를 남겨보세멍!</h5>
+                        </div>
+                        <div id="existComment" th:unless="${#lists.isEmpty(accommodation.comments.content)}">
+                            <div th:each="comment : ${accommodation.comments.getContent()}" class="card mb-2">
+                                <div class="card-header bg-body d-flex justify-content-between align-items-center"
+                                     th:data-id="${comment.commentId}">
+                                    <div>
+                                        <span th:text="${comment.email}"></span> / <span
+                                            th:text="${#temporals.format(comment.createDate, 'yyyy-MM-dd')}"></span>
+                                    </div>
+                                    <button th:if="${#strings.equals(comment.email, user)}"
+                                            class="btn btn-outline-secondary btn-sm"
+                                            th:onclick="|deleteComment(${comment.commentId})|">삭제 하기
+                                    </button>
+                                </div>
+                                <div class="card-body row">
+                                    <fieldset class="col-auto rating">
+                                        <input type="radio" th:id="|${comment.commentId}-rating10|" th:checked="${#strings.equals(comment.rate, 5.0)}" readonly><label th:for="|${comment.commentId}-rating10|" title="5점"></label>
+                                        <input type="radio" th:id="|${comment.commentId}-rating9|" th:checked="${#strings.equals(comment.rate, 4.5)}" readonly><label class="half" th:for="|${comment.commentId}-rating9|" title="4.5점"></label>
+                                        <input type="radio" th:id="|${comment.commentId}-rating8|" th:checked="${#strings.equals(comment.rate, 4.0)}" readonly><label th:for="|${comment.commentId}-rating8|" title="4점"></label>
+                                        <input type="radio" th:id="|${comment.commentId}-rating7|" th:checked="${#strings.equals(comment.rate, 3.5)}" readonly><label class="half" th:for="|${comment.commentId}-rating7|" title="3.5점"></label>
+                                        <input type="radio" th:id="|${comment.commentId}-rating6|" th:checked="${#strings.equals(comment.rate, 3.0)}" readonly><label th:for="|${comment.commentId}-rating6|" title="3점"></label>
+                                        <input type="radio" th:id="|${comment.commentId}-rating5|" th:checked="${#strings.equals(comment.rate, 2.5)}" readonly><label class="half" th:for="|${comment.commentId}-rating5|" title="2.5점"></label>
+                                        <input type="radio" th:id="|${comment.commentId}-rating4|" th:checked="${#strings.equals(comment.rate, 2.0)}" readonly><label th:for="|${comment.commentId}-rating4|" title="2점"></label>
+                                        <input type="radio" th:id="|${comment.commentId}-rating3|" th:checked="${#strings.equals(comment.rate, 1.5)}" readonly><label class="half" th:for="|${comment.commentId}-rating3|" title="1.5점"></label>
+                                        <input type="radio" th:id="|${comment.commentId}-rating2|" th:checked="${#strings.equals(comment.rate, 1.0)}" readonly><label th:for="|${comment.commentId}-rating2|" title="1점"></label>
+                                        <input type="radio" th:id="|${comment.commentId}-rating1|" th:checked="${#strings.equals(comment.rate, 0.5)}" readonly><label class="half" th:for="|${comment.commentId}-rating1|" title="0.5점"></label>
+                                    </fieldset>
+                                    <div class="col-auto" th:text="${comment.content}"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-5" th:unless="${#lists.isEmpty(accommodation.comments.content)}">
+                            <nav th:with="startPage = ${(accommodation.comments.number / accommodation.comments.size ) * accommodation.comments.size + 1},
+                                endPage = (${(accommodation.comments.totalPages == 0) ? 1 : (startPage + accommodation.comments.size - 1 < accommodation.comments.totalPages ? (startPage + accommodation.comments.size - 1) : accommodation.comments.totalPages)})">
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item"
+                                        th:classappend="${accommodation.comments.number <= accommodation.comments.size} ? 'disabled'">
+                                        <a class="page-link" th:onclick="page(0);" aria-label="first">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item" th:classappend="${accommodation.comments.first} ? 'disabled'">
+                                        <a class="page-link"
+                                           th:onclick="page(' + ${accommodation.comments.number - 1} + ');"
+                                           aria-label="Previous">
+                                            <span aria-hidden="true">&lt;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item" th:each="page: ${#numbers.sequence(startPage, endPage)}"
+                                        th:classappend="${accommodation.comments.number eq page-1} ? 'active' : ''">
+                                        <a class="page-link" th:onclick="page(' + ${page-1} + ');" th:inline="text">
+                                            [[${page}]]
+                                        </a>
+                                    </li>
+                                    <li class="page-item" th:classappend="${accommodation.comments.last} ? 'disabled'">
+                                        <a class="page-link"
+                                           th:onclick="page(' + ${accommodation.comments.number + 1} + ');"
+                                           aria-label="Next">
+                                            <span aria-hidden="true">&gt;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item"
+                                        th:classappend="${(accommodation.comments.totalPages/accommodation.comments.size) <= startPage} ? 'disabled'">
+                                        <a class="page-link"
+                                           th:onclick="page(' + ${accommodation.comments.totalPages -1} + ');"
+                                           aria-label="last">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div id="newComment" class="row g-3 align-items-top">
+                            <div class="col-2 text-end">
+                                <fieldset class="rating">
+                                    <input type="radio" id="rating10" name="rate" value="5.0"><label for="rating10"
+                                                                                                     title="5점"></label>
+                                    <input type="radio" id="rating9" name="rate" value="4.5"><label class="half"
+                                                                                                    for="rating9"
+                                                                                                    title="4.5점"></label>
+                                    <input type="radio" id="rating8" name="rate" value="4.0"><label for="rating8"
+                                                                                                    title="4점"></label>
+                                    <input type="radio" id="rating7" name="rate" value="3.5"><label class="half"
+                                                                                                    for="rating7"
+                                                                                                    title="3.5점"></label>
+                                    <input type="radio" id="rating6" name="rate" value="3.0"><label for="rating6"
+                                                                                                    title="3점"></label>
+                                    <input type="radio" id="rating5" name="rate" value="2.5"><label class="half"
+                                                                                                    for="rating5"
+                                                                                                    title="2.5점"></label>
+                                    <input type="radio" id="rating4" name="rate" value="2.0"><label for="rating4"
+                                                                                                    title="2점"></label>
+                                    <input type="radio" id="rating3" name="rate" value="1.5"><label class="half"
+                                                                                                    for="rating3"
+                                                                                                    title="1.5점"></label>
+                                    <input type="radio" id="rating2" name="rate" value="1.0"><label for="rating2"
+                                                                                                    title="1점"></label>
+                                    <input type="radio" id="rating1" name="rate" value="0.5"><label class="half"
+                                                                                                    for="rating1"
+                                                                                                    title="0.5점"></label>
+                                </fieldset>
+                            </div>
+                            <div class="col-9">
+                                <textarea id="content" class="form-control" name="content"
+                                          placeholder="후기를 남겨주라냥!"></textarea>
+                            </div>
+                            <div class="col-1 text-start">
+                                <button class="btn btn-primary" type="button" onclick="addComment();">등록
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-  </div>
 </div>
 </html>

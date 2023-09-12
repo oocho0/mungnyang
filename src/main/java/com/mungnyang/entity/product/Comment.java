@@ -1,7 +1,6 @@
 package com.mungnyang.entity.product;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Lob;
@@ -10,6 +9,9 @@ import java.util.Objects;
 @Embeddable
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Comment {
 
     @Lob

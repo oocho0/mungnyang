@@ -11,27 +11,28 @@ import com.mungnyang.dto.product.accommodation.CreateAccommodationDto;
 import com.mungnyang.dto.product.accommodation.ModifyAccommodationDto;
 import com.mungnyang.dto.product.accommodation.room.DetailRoomDto;
 import com.mungnyang.dto.product.accommodation.room.ListRoomDto;
-import com.mungnyang.dto.product.store.CommentDto;
+import com.mungnyang.dto.product.CommentDto;
 import com.mungnyang.entity.Address;
 import com.mungnyang.entity.fixedEntity.SmallCategory;
+import com.mungnyang.entity.member.Member;
 import com.mungnyang.entity.product.ProductAddress;
 import com.mungnyang.entity.product.accommodation.Accommodation;
 import com.mungnyang.entity.product.accommodation.AccommodationComment;
 import com.mungnyang.entity.product.accommodation.AccommodationFacility;
 import com.mungnyang.entity.product.accommodation.AccommodationImage;
-import com.mungnyang.entity.product.accommodation.room.Room;
 import com.mungnyang.repository.product.accommodation.AccommodationRepository;
 import com.mungnyang.repository.product.accommodation.room.RoomRepository;
 import com.mungnyang.service.fixedEntity.CategoryService;
 import com.mungnyang.service.fixedEntity.StateCityService;
+import com.mungnyang.service.member.MemberService;
 import com.mungnyang.service.product.StatusService;
 import com.mungnyang.service.product.accommodation.room.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.MultiValueMap;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -50,8 +51,7 @@ public class AccommodationService {
     private final AccommodationFacilityService accommodationFacilityService;
     private final AccommodationCommentService accommodationCommentService;
     private final RoomService roomService;
-
-    private final RoomRepository repository;
+    private final MemberService memberService;
 
     /**
      * 신규 숙소 등록하기
@@ -184,21 +184,13 @@ public class AccommodationService {
 
     public DetailAccommodationDto getAccommodationDetails(Long accommodationId) {
         Accommodation accommodation = getAccommodationByAccommodationId(accommodationId);
+        Member owner = memberService.getMemberByMemberEmail(accommodation.getCreatedBy());
         List<AccommodationImage> images = accommodationImageService.getAccommodationImageListByAccommodationId(accommodationId);
         List<String> imageList = new ArrayList<>();
         for (AccommodationImage image : images) {
             imageList.add(image.getImage().getUrl());
         }
-        List<AccommodationComment> comments = accommodationCommentService.getAccommodationCommentListByAccommodationId(accommodationId);
-        List<CommentDto> commentDtoList = new ArrayList<>();
-        for (AccommodationComment comment : comments) {
-            commentDtoList.add(CommentDto.builder()
-                    .commentId(comment.getAccommodationCommentId())
-                    .content(comment.getComment().getCommentContent())
-                    .rate(comment.getComment().getRate())
-                    .email(comment.getMember().getEmail())
-                    .build());
-        }
+        Page<CommentDto> commentDtoList = accommodationCommentService.getCommentPage(accommodationId);
         List<AccommodationFacility> facilities = accommodationFacilityService.getAccommodationFacilityListByAccommodationId(accommodationId);
         List<String> facilityList = new ArrayList<>();
         for (AccommodationFacility facility : facilities) {
@@ -210,10 +202,16 @@ public class AccommodationService {
                 .name(accommodation.getAccommodationName())
                 .category(accommodation.getSmallCategory().getName())
                 .address("(" + accommodation.getProductAddress().getAddress().getZipcode() + ") " + accommodation.getProductAddress().getAddress().getMain() + " " + accommodation.getProductAddress().getAddress().getExtra())
+                .lat(accommodation.getProductAddress().getLat())
+                .lon(accommodation.getProductAddress().getLon())
                 .checkInTime(accommodation.getCheckInTime())
                 .checkOutTime(accommodation.getCheckOutTime())
                 .detail(accommodation.getAccommodationDetail())
                 .status(StatusService.statusConverter(accommodation.getAccommodationStatus()))
+                .rateAvg(accommodationCommentService.getRateAverage(accommodationId))
+                .commentCount(accommodationCommentService.getCommentCount(accommodationId))
+                .ownerName(owner.getName())
+                .ownerTel(owner.getTel())
                 .images(imageList)
                 .comments(commentDtoList)
                 .facilities(facilityList)
