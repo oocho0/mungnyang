@@ -15,6 +15,8 @@ import com.mungnyang.entity.product.accommodation.QAccommodationComment;
 import com.mungnyang.entity.product.accommodation.QAccommodationImage;
 import com.mungnyang.entity.product.accommodation.room.QRoom;
 import com.mungnyang.entity.service.QReservationRoom;
+import com.querydsl.core.types.SubQueryExpression;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -33,6 +35,22 @@ public class AccommodationPageRepositoryImpl implements AccommodationPageReposit
     private final QAccommodationImage accommodationImage = QAccommodationImage.accommodationImage;
     private final QRoom room = QRoom.room;
     private final QReservationRoom reservationRoom = QReservationRoom.reservationRoom;
+
+    private BooleanExpression searchByCheckInTime(LocalDateTime checkInTime, LocalDateTime checkOutDate) {
+        if (checkInTime == null || checkOutDate == null) {
+            return null;
+        }
+        return room.roomId.notIn(
+                jpaQueryFactory.select(room.roomId)
+                        .from(room)
+                        .leftJoin(reservationRoom).on(room.roomId.eq(reservationRoom.room.roomId))
+                        .where(reservationRoom.checkInDate.eq(checkInTime)
+                                .or(reservationRoom.checkOutDate.eq(checkOutDate))
+                                .or(reservationRoom.checkInDate.between(checkInTime, checkOutDate))
+                                .or(reservationRoom.checkOutDate.between(checkInTime, checkOutDate))
+                                .or(reservationRoom.checkInDate.before(checkInTime).and(reservationRoom.checkOutDate.after(checkInTime)))
+                                .or(reservationRoom.checkInDate.before(checkOutDate).and(reservationRoom.checkOutDate.after(checkOutDate)))));
+    }
 
     @Override
     public List<ListAccommodationDto> findListAccommodationDtoByCreatedByAndIsNotDeleteOrderByReqDateDesc(String email) {
@@ -99,13 +117,11 @@ public class AccommodationPageRepositoryImpl implements AccommodationPageReposit
                 ).from(accommodation)
                 .leftJoin(accommodationComment).on(accommodation.accommodationId.eq(accommodationComment.accommodation.accommodationId))
                 .leftJoin(room).on(accommodation.accommodationId.eq(room.accommodation.accommodationId))
-                .leftJoin(reservationRoom).on(accommodation.accommodationId.eq(reservationRoom.room.accommodation.accommodationId))
                 .leftJoin(accommodationImage).on(accommodation.accommodationId.eq(accommodationImage.accommodation.accommodationId))
                 .where(accommodation.smallCategory.smallCategoryId.in(categoryId),
                         accommodation.city.cityId.in(cityId),
                         room.roomPeople.goe(roomPeople),
-                        reservationRoom.checkInDate.goe(checkOutDate),
-                        reservationRoom.checkOutDate.loe(checkInDate),
+                        searchByCheckInTime(checkInDate, checkOutDate),
                         accommodationImage.image.isRepresentative.eq(IsTrue.YES),
                         accommodation.accommodationStatus.ne(Status.CLOSED))
                 .groupBy(accommodation.accommodationId, accommodationImage.image.url)

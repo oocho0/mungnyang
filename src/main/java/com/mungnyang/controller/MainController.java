@@ -5,15 +5,19 @@ import com.mungnyang.dto.fixedEntityDto.MainSmallCategoryDto;
 import com.mungnyang.dto.fixedEntityDto.MainStateDto;
 import com.mungnyang.dto.product.*;
 import com.mungnyang.dto.product.accommodation.DetailAccommodationDto;
+import com.mungnyang.dto.product.accommodation.SearchReservationInfo;
 import com.mungnyang.dto.product.store.DetailStoreDto;
+import com.mungnyang.dto.service.CalendarShowReservationRoomDto;
 import com.mungnyang.entity.product.accommodation.Accommodation;
 import com.mungnyang.entity.product.store.Store;
 import com.mungnyang.service.fixedEntity.CategoryService;
 import com.mungnyang.service.fixedEntity.StateCityService;
 import com.mungnyang.service.product.accommodation.AccommodationCommentService;
 import com.mungnyang.service.product.accommodation.AccommodationService;
+import com.mungnyang.service.product.accommodation.room.RoomService;
 import com.mungnyang.service.product.store.StoreCommentService;
 import com.mungnyang.service.product.store.StoreService;
+import com.mungnyang.service.service.ReservationRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +41,8 @@ public class MainController {
     private final AccommodationService accommodationService;
     private final StoreCommentService storeCommentService;
     private final AccommodationCommentService accommodationCommentService;
+    private final RoomService roomService;
+    private final ReservationRoomService reservationRoomService;
     @GetMapping("/")
     public String getmainPage(Model model) {
         List<MainBigCategoryDto> bigCategoryDtoList = categoryService.getMainBigCategoryDtoForStore();
@@ -76,8 +82,13 @@ public class MainController {
     }
 
     @GetMapping("/accommodation/{accommodationId}")
-    public String getAccommodationDetailPage(@PathVariable Long accommodationId, Model model, Principal principal) {
-        DetailAccommodationDto detailAccommodationDto = accommodationService.getAccommodationDetails(accommodationId);
+    public String getAccommodationDetailPage(@PathVariable Long accommodationId, Model model, Principal principal,
+                                             @ModelAttribute SearchReservationInfo searchReservationInfo) {
+        if (searchReservationInfo == null) {
+            searchReservationInfo = new SearchReservationInfo();
+            model.addAttribute("search", "NO");
+        }
+        DetailAccommodationDto detailAccommodationDto = accommodationService.getAccommodationDetails(accommodationId, searchReservationInfo);
         model.addAttribute("accommodation", detailAccommodationDto);
         if (principal == null) {
             model.addAttribute("user", null);
@@ -97,6 +108,9 @@ public class MainController {
             userEmail = principal.getName();
         }
         CommentPagingDto commentPagingDto = new CommentPagingDto(storeComments, userEmail);
+        if (commentPagingDto.getComments().getTotalElements() == 0L) {
+            return new ResponseEntity<String>("none", HttpStatus.OK);
+        }
         return new ResponseEntity<CommentPagingDto>(commentPagingDto, HttpStatus.OK);
     }
 
@@ -110,6 +124,21 @@ public class MainController {
             userEmail = principal.getName();
         }
         CommentPagingDto commentPagingDto = new CommentPagingDto(accommodationComments, userEmail);
+        if (commentPagingDto.getComments().getTotalElements() == 0L) {
+            return new ResponseEntity<String>("none", HttpStatus.OK);
+        }
         return new ResponseEntity<CommentPagingDto>(commentPagingDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/accommodation/{accommodationId}/{roomId}/reservations")
+    public ResponseEntity<?> getReservationList(@PathVariable Long accommodationId, @PathVariable Long roomId) {
+        if (roomService.isNotOneOfAccommodationRoom(accommodationId, roomId)) {
+            return new ResponseEntity<String>("잘못된 경로 입니다.", HttpStatus.BAD_REQUEST);
+        }
+        List<CalendarShowReservationRoomDto> reservationRoomList = reservationRoomService.getReservationRoomDtoListByRoomIdForDetailPage(roomId);
+        if (reservationRoomList == null) {
+            return new ResponseEntity<String>("none", HttpStatus.OK);
+        }
+        return new ResponseEntity<List<CalendarShowReservationRoomDto>>(reservationRoomList, HttpStatus.OK);
     }
 }

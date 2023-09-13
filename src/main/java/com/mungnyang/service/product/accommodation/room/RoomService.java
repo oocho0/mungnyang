@@ -2,6 +2,7 @@ package com.mungnyang.service.product.accommodation.room;
 
 import com.mungnyang.constant.Status;
 import com.mungnyang.dto.product.accommodation.ListAccommodationDto;
+import com.mungnyang.dto.product.accommodation.SearchReservationInfo;
 import com.mungnyang.dto.product.accommodation.room.DetailRoomDto;
 import com.mungnyang.dto.service.InitializeReservationRoomDto;
 import com.mungnyang.dto.product.accommodation.room.CreateRoomDto;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -145,7 +147,13 @@ public class RoomService {
         reservationRoomService.updateReservationRoom(savedRoom, modifyRoomDto.getReservationList());
     }
 
-    public List<DetailRoomDto> getRoomDetails(Long accommodationId) {
+    /**
+     * 숙소 디테일 화면에 보일 숙소 방 정보
+     * @param accommodationId 해당 숙소 일련번호
+     * @param reservationInfo 숙소 예약 검색 시, 입력한 정보
+     * @return 숙소 예약 검색 결과에 해당하는 숙소 방인지 아닌지 선별하는 정보가 담긴 방 점보
+     */
+    public List<DetailRoomDto> getRoomDetails(Long accommodationId, SearchReservationInfo reservationInfo) {
         List<Room> rooms = getRoomListByAccommodationId(accommodationId);
         List<DetailRoomDto> detailRoomDtos = new ArrayList<>();
         for (Room room : rooms) {
@@ -168,9 +176,36 @@ public class RoomService {
                     .status(StatusService.statusConverter(room.getRoomStatus()))
                     .images(imageList)
                     .facilities(facilityList)
+                    .isPeopleCapable(roomPeopleCapability(room.getRoomPeople(), reservationInfo.getRoomPeople()))
+                    .isAvailable(roomAvailability(room.getRoomId(), reservationInfo.getCheckInDate(), reservationInfo.getCheckOutDate()))
                     .build());
         }
         return detailRoomDtos;
+    }
+
+    /**
+     * 검색 시 입력한 인원 수가 방의 기본 인원 이상인지 아닌지 반환
+     * 검색 하지 않으면 입력한 인원 수를 0으로 두고 판단
+     * @param stdRoomPeople 방의 기본 인원 수
+     * @param inputRoomPeople 입력한 인원 수
+     * @return 입력한 인원 수가 방의 기본 인원 수보다 크면 YES
+     */
+    private String roomPeopleCapability(Integer stdRoomPeople, Integer inputRoomPeople) {
+        if (inputRoomPeople == null) {
+            inputRoomPeople = 0;
+        }
+        if (stdRoomPeople < inputRoomPeople) {
+            return "NO";
+        }
+        return "YES";
+    }
+
+    private String roomAvailability(Long roomId, LocalDateTime inputCheckInDate, LocalDateTime inputCheckOutDate) {
+        List<Room> roomAvailability = roomRepository.getRoomAvailability(roomId, inputCheckInDate, inputCheckOutDate);
+        if (roomAvailability.size() == 0) {
+            return "NO";
+        }
+        return "YES";
     }
 
     /**

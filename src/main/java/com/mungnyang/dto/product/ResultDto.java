@@ -17,6 +17,7 @@ public class ResultDto {
     private Double lat;
     private String repImageUrl;
 
+    @Builder
     @QueryProjection
     public ResultDto(Long id, String name, String category, Float rate, Long commentCount, String status, String address, Double lon, Double lat, String repImageUrl) {
         this.id = id;

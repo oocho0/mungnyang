@@ -20,8 +20,6 @@ public class CalendarShowReservationRoomDto {
     private Long id;
     private String title;
     private LocalDateTime start;
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime end;
     private ExtendedProps extendedProps;
 

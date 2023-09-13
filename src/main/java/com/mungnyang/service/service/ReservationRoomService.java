@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +37,20 @@ public class ReservationRoomService {
                     .build();
             reservationRoomRepository.save(createdReservationRoom);
         }
+    }
+
+    public List<CalendarShowReservationRoomDto> getReservationRoomDtoListByRoomIdForDetailPage(Long roomId) {
+        List<CalendarShowReservationRoomDto> reservationRoomDtoList = new ArrayList<>();
+        List<ReservationRoom> reservationRoomList = getReservationRoomListByRoomId(roomId, LocalDateTime.now());
+        for (ReservationRoom reservationRoom : reservationRoomList) {
+            reservationRoomDtoList.add(CalendarShowReservationRoomDto.builder()
+                    .id(reservationRoom.getReservationRoomId())
+                    .title("예약 불가")
+                    .start(reservationRoom.getCheckInDate())
+                    .end(reservationRoom.getCheckOutDate())
+                    .build());
+        }
+        return reservationRoomDtoList;
     }
 
     /**
@@ -110,17 +125,14 @@ public class ReservationRoomService {
         }
     }
 
-
     /**
      * RoomId로 reservation-room 엔티티 리스트 찾기
      *
      * @param roomId 해당 방의 일련번호
      * @return ReservationRoom 엔티티 리스트
      */
-    private List<ReservationRoom> getReservationRoomListByRoomId(Long roomId) {
-        List<ReservationRoom> reservationRoomList = new ArrayList<>();
-        reservationRoomList = reservationRoomRepository.findByRoomRoomIdOrderByReservationRoomId(roomId);
-        return reservationRoomList;
+    private List<ReservationRoom> getReservationRoomListByRoomId(Long roomId, LocalDateTime today) {
+        return reservationRoomRepository.findByRoomRoomIdAndCheckOutDateAfterOrderByReservationRoomId(roomId, today);
     }
 
     private ReservationRoom getReservationRoomByReservationRoomId(Long reservationRoomId) {

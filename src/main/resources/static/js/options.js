@@ -232,16 +232,18 @@ function searchStore(){
             }
             $("button.accordion-button").text("편의 시설 검색 결과");
             $("#resultList").empty();
+            if(result.length == 0){
+                $("#resultList").append($(
+                    '<li style="height: 500px; line-height: 500px;" class="text-center">검색 결과가 없습니다.</li>'
+                ));
+                map.relayout();
+                return false;
+            }
             var positions = [];
             $.each(result, function(key, value){
-                var status = value.status;
-                var badgeColor = "";
-                if(status == "OPEN"){
-                    status = "영업중";
-                    badgeColor = "bg-warning";
-                }else{
-                    status = "휴업";
-                    badgeColor = "bg-secondary";
+                var status = '';
+                if(value.status != "OPEN"){
+                    status = '<span class="badge bg-secondary rounded-pill" style="font-size: 9px">휴업중</span>';
                 }
                 $("#resultList").append($(
                     '<li class="list-group-item list-group-item-action result1 py-2 px-4" id="' + value.id + '">' +
@@ -251,9 +253,8 @@ function searchStore(){
                     '        </div>' +
                     '        <div class="col-9">' +
                     '            <div class="d-flex justify-content-between align-items-center py-2">' +
-                    '                <h5>' + value.name + '<span class="badge ' + badgeColor + ' rounded-pill" style="font-size: 8px">' + status + '</span></h5>' +
-                    '                <a class="link-dark link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"' +
-                    '                   href="/store/' + value.id + '">더 알아보기</a>' +
+                    '                <h5 pe-1>' + value.name + status + '</h5>' +
+                    '                <button class="btn btn-warning rounded-pill" onclick="location.href=\'/store/' + value.id + '\'">자세히 보기</button>' +
                     '            </div>' +
                     '            <div class="d-flex justify-content-between align-items-center py-1">' +
                     '                <span>' + value.category + '</span>' +
@@ -333,6 +334,7 @@ function searchAccommodation(){
         return;
     }
     url += people + checkIn + checkOut;
+    href = "?roomPeople=" + $("#roomPeople").val() + "&checkInDate=" + $("#dateRange").attr("data-checkIn") + "&checkOutDate=" + $("#dateRange").attr("data-checkOut");
 
     $.ajax({
         url : url,
@@ -349,13 +351,21 @@ function searchAccommodation(){
             }
             $("button.accordion-button").text("숙소 검색 결과");
             $("#resultList").empty();
+            if(result.length == 0){
+                $("#resultList").append($(
+                    '<li style="height: 500px; line-height: 500px;" class="text-center">검색 결과가 없습니다.</li>'
+                ));
+                map.relayout();
+                return false;
+            }
             var positions = [];
             $.each(result, function(key, value){
-                var status = value.status;
-                if(status == "OPEN"){
-                    status = "영업중";
+                var status = '';
+                var link = '';
+                if(value.status == "OPEN"){
+                    link = '                <button class="btn btn-warning rounded-pill" onclick="location.href=\'/accommodation/' + value.id + href + '\'">예약 하러 가기</button>';
                 }else{
-                    status = "휴업";
+                    status = '<span class="badge bg-secondary rounded-pill" style="font-size: 9px">휴업중</span>';
                 }
                 $("#resultList").append($(
                     '<li class="list-group-item list-group-item-action result1 py-2 px-4" id="' + value.id + '">' +
@@ -365,9 +375,8 @@ function searchAccommodation(){
                     '        </div>' +
                     '        <div class="col-9">' +
                     '            <div class="d-flex justify-content-between align-items-center py-2">' +
-                    '                <h5>' + value.name + '<span class="badge bg-warning rounded-pill" style="font-size: 8px">' + status + '</span></h5>' +
-                    '                <a class="link-dark link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"' +
-                    '                   href="/accommodation/' + value.id + '">더 알아보기</a>' +
+                    '                <h5 pe-1>' + value.name + status + '</h5>' +
+                    link +
                     '            </div>' +
                     '            <div class="d-flex justify-content-between align-items-center py-1">' +
                     '                <span>' + value.category + '</span>' +

@@ -5,10 +5,7 @@ import com.mungnyang.dto.product.MainTopDto;
 import com.mungnyang.dto.product.ResultDto;
 import com.mungnyang.dto.product.SearchAccommodationFilter;
 import com.mungnyang.dto.product.TopInfoDto;
-import com.mungnyang.dto.product.accommodation.DetailAccommodationDto;
-import com.mungnyang.dto.product.accommodation.ListAccommodationDto;
-import com.mungnyang.dto.product.accommodation.CreateAccommodationDto;
-import com.mungnyang.dto.product.accommodation.ModifyAccommodationDto;
+import com.mungnyang.dto.product.accommodation.*;
 import com.mungnyang.dto.product.accommodation.room.DetailRoomDto;
 import com.mungnyang.dto.product.accommodation.room.ListRoomDto;
 import com.mungnyang.dto.product.CommentDto;
@@ -182,7 +179,7 @@ public class AccommodationService {
         return accommodationRepository.getAccommodationResultsByFilter(categoryId, cityId, roomPeople, checkInDate, checkOutDate);
     }
 
-    public DetailAccommodationDto getAccommodationDetails(Long accommodationId) {
+    public DetailAccommodationDto getAccommodationDetails(Long accommodationId, SearchReservationInfo reservationInfo) {
         Accommodation accommodation = getAccommodationByAccommodationId(accommodationId);
         Member owner = memberService.getMemberByMemberEmail(accommodation.getCreatedBy());
         List<AccommodationImage> images = accommodationImageService.getAccommodationImageListByAccommodationId(accommodationId);
@@ -196,7 +193,7 @@ public class AccommodationService {
         for (AccommodationFacility facility : facilities) {
             facilityList.add(facility.getFacilityName());
         }
-        List<DetailRoomDto> detailRoomDtoList = roomService.getRoomDetails(accommodationId);
+        List<DetailRoomDto> detailRoomDtoList = roomService.getRoomDetails(accommodationId, reservationInfo);
         return DetailAccommodationDto.builder()
                 .id(accommodation.getAccommodationId())
                 .name(accommodation.getAccommodationName())

@@ -24,7 +24,7 @@ function request(){
             location.href='/admin/stores';
         },
         error : function(status, error){
-                if(status.status == '401' || status.status == '403'){
+                if(status.status == '401' || status.status == '403' || status.status == '404'){
                 alert('로그인 후 이용해주세요');
                 location.href='/member/login';
             } else{
@@ -105,7 +105,7 @@ function deleteStore(){
             location.href='/admin/stores';
         },
         error : function(status, error){
-                if(status.status == '401' || status.status == '403'){
+                if(status.status == '401' || status.status == '403' || status.status == '404'){
                 alert('로그인 후 이용해주세요');
                 location.href='/member/login';
             } else{

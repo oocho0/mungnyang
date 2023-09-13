@@ -1,5 +1,7 @@
 var now = moment();
+now.set({'hour': 15, 'minute': 0, 'second': 0, 'millisecond': 0});
 var endDate = moment(now).add(1, "d");
+endDate.set({'hour': 11, 'minute': 0, 'second': 0, 'millisecond': 0});
 $(function(){
     $("#dateRange").val(now.format('YYYY[년] MM[월] DD[일]') + ' - ' + endDate.format('YYYY[년] MM[월] DD[일]'));
     $("#dateRange").attr("data-checkIn", now.format("YYYY-MM-DD[T]HH:mm:ss"));
@@ -30,8 +32,10 @@ $(function(){
             alert("1박 이상을 선택해야한댜옹");
         }else{
             $(this).val(picker.startDate.format('YYYY[년] MM[월] DD[일]') + ' - ' + picker.endDate.format('YYYY[년] MM[월] DD[일]'));
-            $(this).attr("data-checkIn", picker.startDate.format("YYYY-MM-DD[T]HH:mm:ss"));
-            $(this).attr("data-checkOut", picker.endDate.format("YYYY-MM-DD[T]HH:mm:ss"));
+            var checkInDate = picker.startDate.set({'hour': 15, 'minute': 0, 'second': 0, 'millisecond': 0});
+            var checkOutDate = picker.endDate.set({'hour': 11, 'minute': 0, 'second': 0, 'millisecond': 0});
+            $(this).attr("data-checkIn", checkInDate.format("YYYY-MM-DD[T]HH:mm:ss"));
+            $(this).attr("data-checkOut", checkOutDate.format("YYYY-MM-DD[T]HH:mm:ss"));
         }
     });
 });

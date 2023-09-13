@@ -1,0 +1,4 @@
+.accordion-button[aria-expanded="true"] {
+    background-color : #FFF !important;
+    box-shadow : none;
+}
