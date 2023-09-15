@@ -23,7 +23,7 @@
         <div class="card m-4 p-3">
             <div class="card-body p-5 text-center bg-body rounded-3">
                 <input type="hidden" id="type" value="store"/>
-                <input type="hidden" th:field="${store.id}"/>
+                <input type="hidden" id="id" th:field="${store.id}"/>
                 <input type="hidden" th:field="${store.lat}">
                 <input type="hidden" th:field="${store.lon}"/>
                 <h2 class="text-body-emphasis pb-4"><span class="pe-3" id="name" th:text="${store.name}"></span><span
@@ -96,38 +96,38 @@
                                     <div class="card-body row">
                                         <fieldset class="col-auto rating">
                                             <input type="radio" th:id="|${comment.commentId}-rating10|"
-                                                   th:checked="${#strings.equals(comment.rate, 5.0)}" readonly><label
+                                                   th:checked="${#strings.equals(comment.rate, 5.0)}" disabled><label
                                                 th:for="|${comment.commentId}-rating10|" title="5점"></label>
                                             <input type="radio" th:id="|${comment.commentId}-rating9|"
-                                                   th:checked="${#strings.equals(comment.rate, 4.5)}" readonly><label
+                                                   th:checked="${#strings.equals(comment.rate, 4.5)}" disabled><label
                                                 class="half" th:for="|${comment.commentId}-rating9|"
                                                 title="4.5점"></label>
                                             <input type="radio" th:id="|${comment.commentId}-rating8|"
-                                                   th:checked="${#strings.equals(comment.rate, 4.0)}" readonly><label
+                                                   th:checked="${#strings.equals(comment.rate, 4.0)}" disabled><label
                                                 th:for="|${comment.commentId}-rating8|" title="4점"></label>
                                             <input type="radio" th:id="|${comment.commentId}-rating7|"
-                                                   th:checked="${#strings.equals(comment.rate, 3.5)}" readonly><label
+                                                   th:checked="${#strings.equals(comment.rate, 3.5)}" disabled><label
                                                 class="half" th:for="|${comment.commentId}-rating7|"
                                                 title="3.5점"></label>
                                             <input type="radio" th:id="|${comment.commentId}-rating6|"
-                                                   th:checked="${#strings.equals(comment.rate, 3.0)}" readonly><label
+                                                   th:checked="${#strings.equals(comment.rate, 3.0)}" disabled><label
                                                 th:for="|${comment.commentId}-rating6|" title="3점"></label>
                                             <input type="radio" th:id="|${comment.commentId}-rating5|"
-                                                   th:checked="${#strings.equals(comment.rate, 2.5)}" readonly><label
+                                                   th:checked="${#strings.equals(comment.rate, 2.5)}" disabled><label
                                                 class="half" th:for="|${comment.commentId}-rating5|"
                                                 title="2.5점"></label>
                                             <input type="radio" th:id="|${comment.commentId}-rating4|"
-                                                   th:checked="${#strings.equals(comment.rate, 2.0)}" readonly><label
+                                                   th:checked="${#strings.equals(comment.rate, 2.0)}" disabled><label
                                                 th:for="|${comment.commentId}-rating4|" title="2점"></label>
                                             <input type="radio" th:id="|${comment.commentId}-rating3|"
-                                                   th:checked="${#strings.equals(comment.rate, 1.5)}" readonly><label
+                                                   th:checked="${#strings.equals(comment.rate, 1.5)}" disabled><label
                                                 class="half" th:for="|${comment.commentId}-rating3|"
                                                 title="1.5점"></label>
                                             <input type="radio" th:id="|${comment.commentId}-rating2|"
-                                                   th:checked="${#strings.equals(comment.rate, 1.0)}" readonly><label
+                                                   th:checked="${#strings.equals(comment.rate, 1.0)}" disabled><label
                                                 th:for="|${comment.commentId}-rating2|" title="1점"></label>
                                             <input type="radio" th:id="|${comment.commentId}-rating1|"
-                                                   th:checked="${#strings.equals(comment.rate, 0.5)}" readonly><label
+                                                   th:checked="${#strings.equals(comment.rate, 0.5)}" disabled><label
                                                 class="half" th:for="|${comment.commentId}-rating1|"
                                                 title="0.5점"></label>
                                         </fieldset>
@@ -136,31 +136,31 @@
                                 </div>
                             </div>
                             <div class="mb-5" th:unless="${#lists.isEmpty(store.comments.content)}">
-                                <nav th:with="startPage = ${(store.comments.number / store.comments.size ) * store.comments.size + 1},
+                                <nav th:with="startPage = ${(store.comments.number < 6) ? 1 : store.comments.number + 1},
                                 endPage = (${(store.comments.totalPages == 0) ? 1 : (startPage + store.comments.size - 1 < store.comments.totalPages ? (startPage + store.comments.size - 1) : store.comments.totalPages)})">
                                     <ul class="pagination justify-content-center">
                                         <li class="page-item"
                                             th:classappend="${store.comments.number <= store.comments.size} ? 'disabled'">
-                                            <a class="page-link" th:onclick="page(0);" aria-label="first">
+                                            <a class="page-link" onclick="page(0);" aria-label="first">
                                                 <span aria-hidden="true">&laquo;</span>
                                             </a>
                                         </li>
                                         <li class="page-item" th:classappend="${store.comments.first} ? 'disabled'">
                                             <a class="page-link"
-                                               th:onclick="page(' + ${store.comments.number - 1} + ');"
+                                               th:onclick="|page(${store.comments.number - 1});|"
                                                aria-label="Previous">
                                                 <span aria-hidden="true">&lt;</span>
                                             </a>
                                         </li>
                                         <li class="page-item" th:each="page: ${#numbers.sequence(startPage, endPage)}"
                                             th:classappend="${store.comments.number eq page-1} ? 'active' : ''">
-                                            <a class="page-link" th:onclick="page(' + ${page-1} + ');" th:inline="text">
+                                            <a class="page-link" th:onclick="|page(${page-1});|" th:inline="text">
                                                 [[${page}]]
                                             </a>
                                         </li>
                                         <li class="page-item" th:classappend="${store.comments.last} ? 'disabled'">
                                             <a class="page-link"
-                                               th:onclick="page(' + ${store.comments.number + 1} + ');"
+                                               th:onclick="|page(${store.comments.number + 1});|"
                                                aria-label="Next">
                                                 <span aria-hidden="true">&gt;</span>
                                             </a>
@@ -168,7 +168,7 @@
                                         <li class="page-item"
                                             th:classappend="${(store.comments.totalPages/store.comments.size) <= startPage} ? 'disabled'">
                                             <a class="page-link"
-                                               th:onclick="page(' + ${store.comments.totalPages -1} + ');"
+                                               th:onclick="|page(${store.comments.totalPages -1});|"
                                                aria-label="last">
                                                 <span aria-hidden="true">&raquo;</span>
                                             </a>

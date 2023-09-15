@@ -5,7 +5,8 @@ import com.mungnyang.dto.fixedEntityDto.MainSmallCategoryDto;
 import com.mungnyang.dto.fixedEntityDto.MainStateDto;
 import com.mungnyang.dto.product.*;
 import com.mungnyang.dto.product.accommodation.DetailAccommodationDto;
-import com.mungnyang.dto.product.accommodation.SearchReservationInfo;
+import com.mungnyang.dto.service.ReservationInfoDto;
+import com.mungnyang.dto.product.accommodation.room.AvailableRoomDto;
 import com.mungnyang.dto.product.store.DetailStoreDto;
 import com.mungnyang.dto.service.CalendarShowReservationRoomDto;
 import com.mungnyang.entity.product.accommodation.Accommodation;
@@ -21,6 +22,8 @@ import com.mungnyang.service.service.ReservationRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -30,6 +33,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -83,12 +87,14 @@ public class MainController {
 
     @GetMapping("/accommodation/{accommodationId}")
     public String getAccommodationDetailPage(@PathVariable Long accommodationId, Model model, Principal principal,
-                                             @ModelAttribute SearchReservationInfo searchReservationInfo) {
-        if (searchReservationInfo == null) {
-            searchReservationInfo = new SearchReservationInfo();
-            model.addAttribute("search", "NO");
+                                             @ModelAttribute ReservationInfoDto reservationInfoDto) {
+        if (reservationInfoDto.getHeadCount() == null) {
+            LocalDateTime today = LocalDateTime.now().withHour(15).withMinute(0).withSecond(0).withNano(0);
+            LocalDateTime tomorrow = LocalDateTime.now().withHour(11).withMinute(0).withSecond(0).withNano(0).plusDays(1);
+            reservationInfoDto = new ReservationInfoDto(2, 1, today, tomorrow);
+            model.addAttribute("reservationInfoDto", reservationInfoDto);
         }
-        DetailAccommodationDto detailAccommodationDto = accommodationService.getAccommodationDetails(accommodationId, searchReservationInfo);
+        DetailAccommodationDto detailAccommodationDto = accommodationService.getAccommodationDetails(accommodationId, reservationInfoDto);
         model.addAttribute("accommodation", detailAccommodationDto);
         if (principal == null) {
             model.addAttribute("user", null);
@@ -98,8 +104,16 @@ public class MainController {
         return "seller/detail";
     }
 
+    @GetMapping("/accommodation/{accommodationId}/reservations")
+    public ResponseEntity<?> getAvailableRoom(@PathVariable Long accommodationId,
+                                              @ModelAttribute ReservationInfoDto reservationInfoDto){
+        List<AvailableRoomDto> availableRoomDtoList = roomService.getRoomAvailable(accommodationId, reservationInfoDto);
+        return new ResponseEntity<List<AvailableRoomDto>>(availableRoomDtoList, HttpStatus.OK);
+    }
+
     @GetMapping("/store/{storeId}/comment")
-    public ResponseEntity<?> getStoreCommentPaging(@PathVariable Long storeId, Pageable pageable, Principal principal) {
+    public ResponseEntity<?> getStoreCommentPaging(@PathVariable Long storeId,
+                                                   @PageableDefault(size= 5, sort = "reqDate", direction = Sort.Direction.DESC) Pageable pageable, Principal principal) {
         Page<CommentDto> storeComments = storeCommentService.getCommentPage(storeId, pageable);
         String userEmail;
         if (principal == null) {
@@ -115,7 +129,8 @@ public class MainController {
     }
 
     @GetMapping("/accommodation/{accommodationId}/comment")
-    public ResponseEntity<?> getAccommodationCommentPaging(@PathVariable Long accommodationId, Pageable pageable, Principal principal) {
+    public ResponseEntity<?> getAccommodationCommentPaging(@PathVariable Long accommodationId,
+                                                           @PageableDefault(size= 5, sort = "reqDate", direction = Sort.Direction.DESC) Pageable pageable, Principal principal) {
         Page<CommentDto> accommodationComments = accommodationCommentService.getCommentPage(accommodationId, pageable);
         String userEmail;
         if (principal == null) {

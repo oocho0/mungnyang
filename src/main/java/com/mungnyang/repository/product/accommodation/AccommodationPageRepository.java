@@ -11,6 +11,6 @@ import java.util.List;
 public interface AccommodationPageRepository {
     List<ListAccommodationDto> findListAccommodationDtoByCreatedByAndIsNotDeleteOrderByReqDateDesc(String email);
     List<TopInfoDto> getAccommodationTopListBySmallCategory(Long smallCategoryId);
-    List<ResultDto> getAccommodationResultsByFilter(List<Long> categoryId, List<Long> cityId, Integer roomPeople,
+    List<ResultDto> getAccommodationResultsByFilter(List<Long> categoryId, List<Long> cityId, Integer headCount,
                                                     LocalDateTime checkInDate, LocalDateTime checkOutDate);
 }

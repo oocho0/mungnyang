@@ -37,7 +37,7 @@ let resultObjectKeys = [];
 
 function checkDtoForm(){
     let resultObject = new Object();
-    const checkLabels = ["#roomName", "#roomPrice", "#roomPeople"];
+    const checkLabels = ["#roomName", "#roomPrice", "#headCount"];
 
     if(resultObjectKeys.length != 0){
         $.each(resultObjectKeys, function(index, value){

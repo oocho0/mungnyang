@@ -7,7 +7,9 @@ import com.mungnyang.dto.member.KakaoMemberDto;
 import com.mungnyang.dto.member.UpdateMemberDto;
 import com.mungnyang.dto.member.UpdatePasswordDto;
 import com.mungnyang.entity.member.Member;
+import com.mungnyang.entity.service.Cart;
 import com.mungnyang.repository.member.MemberRepository;
+import com.mungnyang.service.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -19,6 +21,7 @@ import org.thymeleaf.util.StringUtils;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -27,6 +30,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+    private final CartService cartService;
 
     /**
      * 회원 일련번호로 회원 찾기
@@ -47,11 +51,23 @@ public class MemberService {
      */
     @Transactional(readOnly = true)
     public Member getMemberByMemberEmail(String email) {
-        Member member = memberRepository.findByEmail(email);
-        if (member == null) {
-            throw new IllegalArgumentException();
-        }
-        return member;
+        return memberRepository.findByEmail(email);
+    }
+
+    public Cart getCart(String email) {
+        Member signInMember = getMemberByMemberEmail(email);
+        return cartService.getCartByMemberId(signInMember.getMemberId());
+    }
+
+    /**
+     * Url로 넘어온 cartId와 로그인한 회원의 정보가 동일한지 판단해서 다르면 문제
+     * @param cartId Url로 넘어온 CartId
+     * @param email 로그인한 회원의 아이디이자 이메일
+     * @return 동일하지 않으면 true, 동일하면 문제없으므로 false
+     */
+    public boolean isNotWrittenByPrinciple(Long cartId, String email) {
+        Cart findCart = getCart(email);
+        return !Objects.equals(cartId, findCart.getCartId());
     }
 
     /**
@@ -63,6 +79,7 @@ public class MemberService {
         Member member = createMember(createMemberDto);
         validateDuplicateMember(member);
         memberRepository.save(member);
+        cartService.saveCart(member);
     }
 
     /**
@@ -78,6 +95,7 @@ public class MemberService {
         member.setRole(Role.USER);
         member.setPassword(encodedPassword(password));
         memberRepository.save(member);
+        cartService.saveCart(member);
     }
 
     /**

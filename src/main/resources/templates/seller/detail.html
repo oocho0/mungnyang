@@ -20,6 +20,7 @@
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b7f35cfc0e791dd9028e3e4f0bf9fba9"></script>
     <script type="text/javascript" th:src="@{/js/roomDatePicker.js}"></script>
+    <script type="text/javascript" th:src="@{/js/seller/searchAvailable.js}"></script>
     <script type="text/javascript" th:src="@{/js/comment.js}"></script>
     <script type="text/javascript" th:inline="javascript"></script>
 </th:block>
@@ -82,16 +83,19 @@
                     </div>
                     <div class="card">
                         <div class="card-body">
-                            <div class="pt-2 align-items-center row g-3">
-                                <div class="col-2 align-middle"><h4>예약</h4></div>
-                                <div class="col-4 row align-items-center">
-                                    <div class="col-4 text-end"><label>인원 : </label></div>
-                                    <div class="col-7"><input class="form-control text-end" type="number" id="roomPeople" th:value="${searchReservationInfo.roomPeople}"/></div>
-                                    <div class="col-1 text-start">명</div>
+                            <div class="align-items-center row g-3">
+                                <div class="col-2 pt-1 align-middle"><h4>예약 검색</h4></div>
+                                <div class="col-4 pt-3 row align-items-center">
+                                    <div class="col-3 text-end"><label>인원 : </label></div>
+                                    <div class="col-7"><input class="form-control text-end" type="number" id="headCount" th:value="${reservationInfoDto.headCount}"/></div>
+                                    <div class="col-1 ms-0 ps-0 text-start">명</div>
                                 </div>
-                                <div class="col-6 row align-items-center">
-                                    <div class="col-3 text-end"><label>기간 :</label></div>
-                                    <div class="col-9"><input type="text" class="form-control" th:data-checkIn="${searchReservationInfo.checkInDate}" th:data-checkOut="${searchReservationInfo.checkOutDate}" id="dateRange" value=""/></div>
+                                <div class="col-5 pt-3 row align-items-center">
+                                    <div class="col-2 text-end"><label>기간 :</label></div>
+                                    <div class="col-10"><input type="text" class="form-control" th:data-checkin="${reservationInfoDto.checkInDate}" th:data-checkout="${reservationInfoDto.checkOutDate}" id="dateRange" value=""/></div>
+                                </div>
+                                <div class="col-1 align-middle">
+                                    <button type="button" class="btn btn-primary" id="searchAvailableBtn">검색</button>
                                 </div>
                             </div>
                         </div>
@@ -128,9 +132,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-6 text-start">
-                                                <div class="pb-1">가격 : <span th:text="${#numbers.formatInteger(room.price, 0, 'COMMA')} + ' 원'"></span>
-                                                </div>
-                                                <div class="py-1">기본 인원 : <span th:text="|${room.people} 명|"></span>
+                                                <div class="pb-1">최대 인원 : <span th:text="|${room.headCount} 명|"></span>
                                                 </div>
                                                 <div class="row align-items-top py-1">
                                                     <div class="col-auto me-0 pe-0">방 시설 :</div>
@@ -142,12 +144,26 @@
                                                 <div th:text="${room.detail}"></div>
                                             </div>
                                         </div>
-                                        <div th:if="${#strings.equals(room.isPeopleCapable, 'YES')} and ${#strings.equals(room.isAvailable, 'YES')}" class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                            <button class="btn btn-secondary me-md-2" type="button">예약 바구니에 넣개</button>
-                                            <button class="btn btn-warning" type="button">바로 예약하개</button>
-                                        </div>
-                                        <div th:unless="${#strings.equals(room.isPeopleCapable, 'YES')} and ${#strings.equals(room.isAvailable, 'YES')}" class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                            <button class="btn btn-secondary" type="button" disabled>예약 조건이 맞지 않다냥</button>
+                                        <div th:id="|available${room.id}|" th:data-price="${room.price}" th:with="price=${room.price}, days=${reservationInfoDto.days}">
+                                            <div class="py-3">
+                                                <div class="d-grid gap-2 d-md-flex justify-content-md-end fs-5 pb-2">1박 당 <span th:text="${#numbers.formatInteger(price, 0, 'COMMA')} + ' 원'"></span>
+                                                </div>
+                                                <div class="d-grid gap-2 d-md-flex justify-content-md-end fs-4 fw-bold">총 <span th:text="|${days}박|"></span> 금액 : <span th:text="${#numbers.formatInteger((price * days), 0, 'COMMA')} + ' 원'"></span>
+                                                </div>
+                                            </div>
+                                            <div th:id="|btn${room.id}|" th:data-days="${days}" th:data-headCount="${reservationInfoDto.headCount}" th:data-checkIn="${reservationInfoDto.checkInDate}" th:data-checkOut="${reservationInfoDto.checkOutDate}">
+                                                <div th:if="${#strings.equals(room.isHeadCountCapable, 'YES')} and ${#strings.equals(room.isAvailable, 'YES')}" class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                                    <button class="btn btn-secondary me-md-2" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                                                            th:data-bs-title="|총 <b>${reservationInfoDto.headCount}</b>명, 총 <b>${days}</b>박<br><b>${#temporals.year(reservationInfoDto.checkInDate)}년 ${#temporals.month(reservationInfoDto.checkInDate)}월 ${#temporals.day(reservationInfoDto.checkInDate)}일 ~<br>${#temporals.year(reservationInfoDto.checkOutDate)}년 ${#temporals.month(reservationInfoDto.checkOutDate)}월 ${#temporals.day(reservationInfoDto.checkOutDate)}일</b>|"
+                                                            type="button" th:onclick="|cart(${room.id});|">예약 바구니에 넣개</button>
+                                                    <button class="btn btn-warning" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                                                            th:data-bs-title="|총 <b>${reservationInfoDto.headCount}</b>명, 총 <b>${days}</b>박<br><b>${#temporals.year(reservationInfoDto.checkInDate)}년 ${#temporals.month(reservationInfoDto.checkInDate)}월 ${#temporals.day(reservationInfoDto.checkInDate)}일 ~<br>${#temporals.year(reservationInfoDto.checkOutDate)}년 ${#temporals.month(reservationInfoDto.checkOutDate)}월 ${#temporals.day(reservationInfoDto.checkOutDate)}일</b>|"
+                                                            type="button" th:onclick="|reservation(${room.id});|">바로 예약하개</button>
+                                                </div>
+                                                <div th:unless="${#strings.equals(room.isHeadCountCapable, 'YES')} and ${#strings.equals(room.isAvailable, 'YES')}" class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                                    <button class="btn btn-secondary" type="button" disabled>예약 조건을 확인 하라냥</button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <h3 class="accordion-header">

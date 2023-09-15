@@ -14,7 +14,10 @@ function page(page){
                 ));
                 return;
             }
-            var startPage = (result.comments.number / result.comments.size) * result.comments.size + 1;
+            var startPage = 1;
+            if(result.comments.number > 5 ) {
+                startPage = result.comments.number + 1;
+            }
             var endPage = (result.comments.totalPages == 0) ? 1 : (startPage + result.comments.size - 1 < result.comments.totalPages ? (startPage + result.comments.size - 1) : result.comments.totalPages);
             var firstAppendClass = (result.comments.number <= result.comments.size) ? 'disabled' : '';
             var prevAppendClass = (result.comments.first) ? 'disabled' : '';
@@ -37,23 +40,23 @@ function page(page){
                 '<div class="mb-5">' +
                 '    <nav>' +
                 '        <ul class="pagination justify-content-center">' +
-                '            <li class="page-item" ' + firstAppendClass + ' >' +
+                '            <li class="page-item ' + firstAppendClass + '" >' +
                 '                <a class="page-link" onclick="page(0);" aria-label="first">' +
                 '                    <span aria-hidden="true">&laquo;</span>' +
                 '                </a>' +
                 '            </li>' +
-                '            <li class="page-item" ' + prevAppendClass + '>' +
+                '            <li class="page-item ' + prevAppendClass + '">' +
                 '                <a class="page-link" onclick="page(' + (result.comments.number - 1) + ');" aria-label="Previous">' +
                 '                    <span aria-hidden="true">&lt;</span>' +
                 '                </a>' +
                 '            </li>' +
                 pages +
-                '            <li class="page-item" ' + nextAppendClass + '>' +
+                '            <li class="page-item ' + nextAppendClass + '">' +
                 '                <a class="page-link" onclick="page(' + (result.comments.number + 1) + ');" aria-label="Next">' +
                 '                    <span aria-hidden="true">&gt;</span>' +
                 '                </a>' +
                 '            </li>' +
-                '            <li class="page-item" ' + lastAppendClass + '>' +
+                '            <li class="page-item ' + lastAppendClass + '">' +
                 '                <a class="page-link" onclick="page(' + (result.comments.totalPages -1) + ');" aria-label="last">' +
                 '                    <span aria-hidden="true">&raquo;</span>' +
                 '                </a>' +
@@ -80,16 +83,16 @@ function page(page){
                     '    </div>' +
                     '    <div class="card-body row">' +
                     '        <fieldset class="col-auto rating">' +
-                    '            <input type="radio" id="' + value.commentId + '-rating10" name="' + value.commentId + '-rate" value="5.0" readonly><label for="' + value.commentId + '-rating10" title="5점"></label>' +
-                    '            <input type="radio" id="' + value.commentId + '-rating9" name="' + value.commentId + '-rate" value="4.5" readonly><label class="half" for="' + value.commentId + '-rating9" title="4.5점"></label>' +
-                    '            <input type="radio" id="' + value.commentId + '-rating8" name="' + value.commentId + '-rate" value="4.0" readonly><label for="' + value.commentId + '-rating8" title="4점"></label>' +
-                    '            <input type="radio" id="' + value.commentId + '-rating7" name="' + value.commentId + '-rate" value="3.5" readonly><label class="half" for="' + value.commentId + '-rating7" title="3.5점"></label>' +
-                    '            <input type="radio" id="' + value.commentId + '-rating6" name="' + value.commentId + '-rate" value="3.0" readonly><label for="' + value.commentId + '-rating6" title="3점"></label>' +
-                    '            <input type="radio" id="' + value.commentId + '-rating5" name="' + value.commentId + '-rate" value="2.5" readonly><label class="half" for="' + value.commentId + '-rating5" title="2.5점"></label>' +
-                    '            <input type="radio" id="' + value.commentId + '-rating4" name="' + value.commentId + '-rate" value="2.0" readonly><label for="' + value.commentId + '-rating4" title="2점"></label>' +
-                    '            <input type="radio" id="' + value.commentId + '-rating3" name="' + value.commentId + '-rate" value="1.5" readonly><label class="half" for="' + value.commentId + '-rating3" title="1.5점"></label>' +
-                    '            <input type="radio" id="' + value.commentId + '-rating2" name="' + value.commentId + '-rate" value="1.0" readonly><label for="' + value.commentId + '-rating2" title="1점"></label>' +
-                    '            <input type="radio" id="' + value.commentId + '-rating1" name="' + value.commentId + '-rate" value="0.5" readonly><label class="half" for="' + value.commentId + '-rating1" title="0.5점"></label>' +
+                    '            <input type="radio" id="' + value.commentId + '-rating10" name="' + value.commentId + '-rate" value="5" disabled><label for="' + value.commentId + '-rating10" title="5점"></label>' +
+                    '            <input type="radio" id="' + value.commentId + '-rating9" name="' + value.commentId + '-rate" value="4.5" disabled><label class="half" for="' + value.commentId + '-rating9" title="4.5점"></label>' +
+                    '            <input type="radio" id="' + value.commentId + '-rating8" name="' + value.commentId + '-rate" value="4" disabled><label for="' + value.commentId + '-rating8" title="4점"></label>' +
+                    '            <input type="radio" id="' + value.commentId + '-rating7" name="' + value.commentId + '-rate" value="3.5" disabled><label class="half" for="' + value.commentId + '-rating7" title="3.5점"></label>' +
+                    '            <input type="radio" id="' + value.commentId + '-rating6" name="' + value.commentId + '-rate" value="3" disabled><label for="' + value.commentId + '-rating6" title="3점"></label>' +
+                    '            <input type="radio" id="' + value.commentId + '-rating5" name="' + value.commentId + '-rate" value="2.5" disabled><label class="half" for="' + value.commentId + '-rating5" title="2.5점"></label>' +
+                    '            <input type="radio" id="' + value.commentId + '-rating4" name="' + value.commentId + '-rate" value="2" disabled><label for="' + value.commentId + '-rating4" title="2점"></label>' +
+                    '            <input type="radio" id="' + value.commentId + '-rating3" name="' + value.commentId + '-rate" value="1.5" disabled><label class="half" for="' + value.commentId + '-rating3" title="1.5점"></label>' +
+                    '            <input type="radio" id="' + value.commentId + '-rating2" name="' + value.commentId + '-rate" value="1" disabled><label for="' + value.commentId + '-rating2" title="1점"></label>' +
+                    '            <input type="radio" id="' + value.commentId + '-rating1" name="' + value.commentId + '-rate" value="0.5" disabled><label class="half" for="' + value.commentId + '-rating1" title="0.5점"></label>' +
                     '        </fieldset>' +
                     '        <div class="col-auto">' + value.content + '</div>' +
                     '    </div>' +
@@ -112,9 +115,6 @@ function addComment(){
         alert("평점을 선택하라냥!");
         return false;
     }
-    if($("#content").val() == "" || $("#content").val() == null || $("#content").val() == "후기를 남겨주라냥!"){
-        $("#content").attr("disabled", true);
-    }
      var formData = new FormData();
      formData.append("rate", $("[name='rate']:checked").val());
      formData.append("content", $("#content").val());
@@ -133,9 +133,20 @@ function addComment(){
          success : function(result, status){
              alert("댓글이 등록되었습니다.")
              page(0);
-             $("#content").removeAttr("disabled");
-             $("[name='rate']:checked").removeAttr("checked");
              $("#content").val("");
+             $("#newComment .rating").empty();
+             $("#newComment .rating").append($(
+                 '<input type="radio" id="rating10" name="rate" value="5.0"><label for="rating10" title="5점"></label>' +
+                 '<input type="radio" id="rating9" name="rate" value="4.5"><label class="half" for="rating9" title="4.5점"></label>' +
+                 '<input type="radio" id="rating8" name="rate" value="4.0"><label for="rating8" title="4점"></label>' +
+                 '<input type="radio" id="rating7" name="rate" value="3.5"><label class="half" for="rating7" title="3.5점"></label>' +
+                 '<input type="radio" id="rating6" name="rate" value="3.0"><label for="rating6" title="3점"></label>' +
+                 '<input type="radio" id="rating5" name="rate" value="2.5"><label class="half" for="rating5" title="2.5점"></label>' +
+                 '<input type="radio" id="rating4" name="rate" value="2.0"><label for="rating4" title="2점"></label>' +
+                 '<input type="radio" id="rating3" name="rate" value="1.5"><label class="half" for="rating3" title="1.5점"></label>' +
+                 '<input type="radio" id="rating2" name="rate" value="1.0"><label for="rating2" title="1점"></label>' +
+                 '<input type="radio" id="rating1" name="rate" value="0.5"><label class="half" for="rating1" title="0.5점"></label>'
+             ));
          },
          error : function(status, error){
              if(status.status == '401' || status.status == '403' || status.status == '404'){
@@ -144,7 +155,6 @@ function addComment(){
              } else{
                  alert(status.responseText);
              }
-             $("#content").removeAttr("disabled");
          }
      });
 }
@@ -152,9 +162,9 @@ function addComment(){
 function deleteComment(id){
     var token = $("meta[name='_csrf']").attr("content");
     var header = $("meta[name='_csrf_header']").attr("content");
-    var url = "/" + $("#type").val() + "/" + $("#id").val() + "/comment";
+    var url = "/user/" + $("#type").val() + "/" + $("#id").val() + "/comment";
     $.ajax({
-        url : "/user" + url + "/" + id,
+        url : url + "/" + id,
         type : "DELETE",
         cache   : false,
         beforeSend : function(xhr){

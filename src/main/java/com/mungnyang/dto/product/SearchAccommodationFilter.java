@@ -12,7 +12,7 @@ import java.util.List;
 public class SearchAccommodationFilter {
     private List<Long> categoryId;
     private List<Long> cityId;
-    private Integer roomPeople;
+    private Integer headCount;
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime checkInDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")

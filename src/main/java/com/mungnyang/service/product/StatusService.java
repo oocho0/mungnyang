@@ -1,6 +1,6 @@
 package com.mungnyang.service.product;
 
-import com.mungnyang.constant.Booked;
+import com.mungnyang.constant.ReservationStatus;
 import com.mungnyang.constant.IsTrue;
 import com.mungnyang.constant.Status;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import org.thymeleaf.util.StringUtils;
 @RequiredArgsConstructor
 public class StatusService {
     /**
-     * modelMapper에서 String타입의 status를 Status타입으로 바꿈
+     * String타입의 status를 Status타입으로 바꿈
      * @param status 바꿀 String타입의 status
      * @return 변환된 Status타입
      */
@@ -23,7 +23,7 @@ public class StatusService {
     }
 
     /**
-     * modelMapper에서 Status타입의 status를 String으로 바꿈
+     * Status타입의 status를 String으로 바꿈
      * @param status 바꿀 Status 타입의 status
      * @return 변환된 String
      */
@@ -32,7 +32,7 @@ public class StatusService {
     }
 
     /**
-     * modelMapper에서 String타입의 isTrue를 IsTrue타입으로 바꿈
+     * String타입의 isTrue를 IsTrue타입으로 바꿈
      * @param isTrue String타입의 isTrue
      * @return 변환된 IsTrue타입
      */
@@ -41,12 +41,20 @@ public class StatusService {
     }
 
     /**
-     * modelMapper에서 String타입의 isAvailable를 IsAvailable타입으로 바꿈
-     * @param isAvailable String타입의 isAvailable
+     * String타입의 reservationStatus를 ReservationStatus타입으로 바꿈
+     * @param reservationStatus String타입의 reservationStatus
      * @return 변환된 IsAvailable타입
      */
-    public static Booked isAvailableConverter(String isAvailable) {
-        return StringUtils.equals(isAvailable, Booked.AVAILABLE.name()) ? Booked.AVAILABLE :
-                (StringUtils.equals(isAvailable, Booked.BOOKED.name()) ? Booked.BOOKED : Booked.UNAVAILABLE);
+    public static ReservationStatus reservationStatusConverter(String reservationStatus) {
+        return StringUtils.equals(reservationStatus, ReservationStatus.RESERVATION.name()) ? ReservationStatus.RESERVATION : ReservationStatus.CANCEL;
+    }
+
+    /**
+     * ReservationStatus타입의 reservationStatus를 String타입으로 바꿈
+     * @param reservationStatus ReservationStatus타입의 reservationStatus
+     * @return 변환된 String
+     */
+    public static String reservationStatusConverter(ReservationStatus reservationStatus) {
+        return reservationStatus == ReservationStatus.RESERVATION ? ReservationStatus.RESERVATION.name() : ReservationStatus.CANCEL.name();
     }
 }

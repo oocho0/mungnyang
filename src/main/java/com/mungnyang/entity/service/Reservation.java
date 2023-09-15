@@ -1,9 +1,9 @@
 package com.mungnyang.entity.service;
 
+import com.mungnyang.constant.ReservationStatus;
 import com.mungnyang.entity.WriterEntity;
 import com.mungnyang.entity.member.Member;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "reservation")
 public class Reservation extends WriterEntity {
     @Id
@@ -22,5 +25,6 @@ public class Reservation extends WriterEntity {
     private Member member;
 
     private LocalDateTime reservationDate;
-    private String reservationStatus;
+    private ReservationStatus reservationStatus;
+    private Integer reservationTotalPrice;
 }

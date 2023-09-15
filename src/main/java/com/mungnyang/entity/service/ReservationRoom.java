@@ -1,5 +1,6 @@
 package com.mungnyang.entity.service;
 
+import com.mungnyang.constant.ReservationStatus;
 import com.mungnyang.entity.WriterEntity;
 import com.mungnyang.entity.product.accommodation.room.Room;
 import lombok.*;
@@ -28,7 +29,8 @@ public class ReservationRoom extends WriterEntity {
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
 
-    private Integer reservationPrice;
+    private Integer headCount;
     private LocalDateTime checkInDate;
     private LocalDateTime checkOutDate;
+    private ReservationStatus reservationStatus;
 }

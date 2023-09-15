@@ -276,7 +276,7 @@ function searchStore(){
                var id = value.id;
                var thisMarker = value.marker;
                $("#"+id).click(function(){
-                  thisMarker.trigger("click");
+                  kakao.maps.event.trigger(thisMarker, "click");
                });
             });
             $("#resultBtn").attr("aria-expanded", "true");
@@ -321,20 +321,21 @@ function searchAccommodation(){
         }
     })
     url += categoryParam + cityParam;
-    var people = "&roomPeople=";
-    if($("#roomPeople").val() == null || $("#roomPeople").val() == ""){
+    var headCount = "&headCount=";
+    if($("#headCount").val() == null || $("#headCount").val() == ""){
         alert("같이 갈 인원 수를 입력하세냥!");
         return;
     }
-    people += $("#roomPeople").val();
-    var checkIn = "&checkInDate=" + $("#dateRange").attr("data-checkIn");
-    var checkOut = "&checkOutDate=" + $("#dateRange").attr("data-checkOut");
+    headCount += $("#headCount").val();
+    var checkIn = $("#dateRange").attr("data-checkIn");
+    var checkOut = $("#dateRange").attr("data-checkOut");
     if ($("#dateRange").val() == "" || $("#dateRange").val() == null){
         alert("기간을 입력하세냥!");
         return;
     }
-    url += people + checkIn + checkOut;
-    href = "?roomPeople=" + $("#roomPeople").val() + "&checkInDate=" + $("#dateRange").attr("data-checkIn") + "&checkOutDate=" + $("#dateRange").attr("data-checkOut");
+    url += headCount + "&checkInDate=" + checkIn + "&checkOutDate=" + checkOut;
+    var days = Math.ceil(moment.duration(moment(checkOut).diff(moment(checkIn))).asDays());
+    href = "?headCount=" + $("#headCount").val() + "&days=" + days + "&checkInDate=" + checkIn + "&checkOutDate=" + checkOut;
 
     $.ajax({
         url : url,
@@ -398,7 +399,7 @@ function searchAccommodation(){
                var id = value.id;
                var thisMarker = value.marker;
                $("#"+id).click(function(){
-                  thisMarker.click();
+                  kakao.maps.event.trigger(thisMarker, "click");
                });
             });
             $("#resultBtn").attr("aria-expanded", "true");

@@ -1,11 +1,16 @@
 package com.mungnyang.controller.product;
 
+import com.mungnyang.constant.MemberType;
+import com.mungnyang.constant.Role;
+import com.mungnyang.constant.Url;
+import com.mungnyang.dto.member.CreateMemberDto;
 import com.mungnyang.dto.product.SearchStoreFilter;
 import com.mungnyang.dto.product.store.CreateStoreDto;
 import com.mungnyang.dto.product.store.ListStoreDto;
 import com.mungnyang.dto.product.store.ModifyStoreDto;
 import com.mungnyang.entity.fixedEntity.BigCategory;
 import com.mungnyang.entity.fixedEntity.State;
+import com.mungnyang.entity.member.Member;
 import com.mungnyang.service.fixedEntity.CategoryService;
 import com.mungnyang.service.fixedEntity.StateCityService;
 import com.mungnyang.service.member.MemberService;
@@ -20,8 +25,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -32,6 +39,7 @@ public class StoreController {
     private final StoreService storeService;
     private final CategoryService categoryService;
     private final StateCityService stateCityService;
+    private final MemberService memberService;
 
     @GetMapping("/store")
     public String loadRegisterPage(Model model) {
@@ -52,7 +60,7 @@ public class StoreController {
 
     @GetMapping("/stores")
     public String loadManagementPage(@ModelAttribute SearchStoreFilter searchStoreFilter,
-                                     @PageableDefault(sort = "storeId", direction = Sort.Direction.DESC) Pageable pageable,
+                                     @PageableDefault(size= 10, sort = "storeId", direction = Sort.Direction.DESC) Pageable pageable,
                                      Model model) {
         List<BigCategory> bigCategories = categoryService.getBigCategoriesForStore();
         model.addAttribute("bigCategories", bigCategories);
@@ -91,5 +99,27 @@ public class StoreController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>("success", HttpStatus.OK);
+    }
+
+    @GetMapping("/new")
+    public String loadAddAdminPage(CreateMemberDto createMemberDto, Model model) {
+        createMemberDto.setRole(Role.ADMIN.name());
+        createMemberDto.setMemberType(MemberType.NORMAL.name());
+        model.addAttribute("createMemberDto", createMemberDto);
+        return "admin/addAdmin";
+    }
+
+    @PostMapping("/new")
+    public String registerAdmin(@ModelAttribute @Valid CreateMemberDto createMemberDto, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            return "admin/addAdmin";
+        }
+        try {
+            memberService.saveMember(createMemberDto);
+        } catch (IllegalStateException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "admin/addAdmin";
+        }
+        return "redirect:" + Url.LOGIN;
     }
 }

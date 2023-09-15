@@ -32,6 +32,6 @@ public class CalendarShowReservationRoomDto {
 
         private Long roomId;
         private Long reservationId;
-        private Integer reservationPrice;
+        private Integer totalPrice;
     }
 }

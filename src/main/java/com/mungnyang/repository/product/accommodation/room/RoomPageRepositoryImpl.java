@@ -32,15 +32,6 @@ public class RoomPageRepositoryImpl implements RoomPageRepository {
                                 .or(reservationRoom.checkOutDate.between(checkInTime, checkOutDate))
                                 .or(reservationRoom.checkInDate.before(checkInTime).and(reservationRoom.checkOutDate.after(checkInTime)))
                                 .or(reservationRoom.checkInDate.before(checkOutDate).and(reservationRoom.checkOutDate.after(checkOutDate)))));
-//        return reservationRoom.checkInDate.isNull()
-//                .or(
-//                        ((reservationRoom.checkInDate.before(checkInTime).and(reservationRoom.checkOutDate.after(checkInTime)))
-//                                .or(reservationRoom.checkOutDate.before(checkOutDate).and(reservationRoom.checkOutDate.after(checkOutDate)))
-//                                .or(reservationRoom.checkInDate.between(checkInTime, checkOutDate))
-//                                .or(reservationRoom.checkOutDate.between(checkInTime, checkOutDate))
-//                                .or(reservationRoom.checkInDate.eq(checkInTime))
-//                                .or(reservationRoom.checkOutDate.eq(checkOutDate))).not()
-//                );
     }
 
     @Override

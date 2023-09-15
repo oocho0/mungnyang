@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +21,11 @@ public class AccommodationImageService {
 
     private final AccommodationImageRepository accommodationImageRepository;
     private final ImageService imageService;
+
+    public String getAccommodationImage(Long accommodationId) {
+        AccommodationImage accommodationImage = accommodationImageRepository.findByAccommodationAccommodationIdAndImageIsRepresentative(accommodationId, IsTrue.YES);
+        return accommodationImage.getImage().getUrl();
+    }
 
     /**
      * AccommodationImage 저장

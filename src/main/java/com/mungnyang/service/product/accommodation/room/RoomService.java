@@ -2,12 +2,9 @@ package com.mungnyang.service.product.accommodation.room;
 
 import com.mungnyang.constant.Status;
 import com.mungnyang.dto.product.accommodation.ListAccommodationDto;
-import com.mungnyang.dto.product.accommodation.SearchReservationInfo;
-import com.mungnyang.dto.product.accommodation.room.DetailRoomDto;
+import com.mungnyang.dto.service.ReservationInfoDto;
+import com.mungnyang.dto.product.accommodation.room.*;
 import com.mungnyang.dto.service.InitializeReservationRoomDto;
-import com.mungnyang.dto.product.accommodation.room.CreateRoomDto;
-import com.mungnyang.dto.product.accommodation.room.ListRoomDto;
-import com.mungnyang.dto.product.accommodation.room.ModifyRoomDto;
 import com.mungnyang.entity.product.accommodation.Accommodation;
 import com.mungnyang.entity.product.accommodation.room.Room;
 import com.mungnyang.entity.product.accommodation.room.RoomFacility;
@@ -66,7 +63,7 @@ public class RoomService {
         roomFacilityService.saveRoomFacility(createdRoom, roomFacilityList);
         List<InitializeReservationRoomDto> initializeReservationRoomDtoList = createRoomDto.getReservationList();
         if (initializeReservationRoomDtoList != null) {
-            reservationRoomService.saveReservationRoom(createdRoom, initializeReservationRoomDtoList);
+            reservationRoomService.saveReservationRoomForInitialize(createdRoom, initializeReservationRoomDtoList);
         }
     }
 
@@ -120,7 +117,7 @@ public class RoomService {
                 .roomId(savedRoom.getRoomId())
                 .roomName(savedRoom.getRoomName())
                 .roomPrice(savedRoom.getRoomPrice())
-                .roomPeople(savedRoom.getRoomPeople())
+                .headCount(savedRoom.getHeadCount())
                 .roomDetail(savedRoom.getRoomDetail())
                 .roomStatus(StatusService.statusConverter(savedRoom.getRoomStatus()))
                 .imageList(roomImageService.getModifyImageDtoListByRoomId(roomId))
@@ -139,7 +136,7 @@ public class RoomService {
         Room savedRoom = getRoomByRoomId(roomId);
         savedRoom.setRoomName(modifyRoomDto.getRoomName());
         savedRoom.setRoomPrice(modifyRoomDto.getRoomPrice());
-        savedRoom.setRoomPeople(modifyRoomDto.getRoomPeople());
+        savedRoom.setHeadCount(modifyRoomDto.getHeadCount());
         savedRoom.setRoomDetail(modifyRoomDto.getRoomDetail());
         savedRoom.setRoomStatus(StatusService.statusConverter(modifyRoomDto.getRoomStatus()));
         roomImageService.updateRoomImage(savedRoom, modifyRoomDto.getImageList());
@@ -149,11 +146,12 @@ public class RoomService {
 
     /**
      * 숙소 디테일 화면에 보일 숙소 방 정보
+     *
      * @param accommodationId 해당 숙소 일련번호
      * @param reservationInfo 숙소 예약 검색 시, 입력한 정보
      * @return 숙소 예약 검색 결과에 해당하는 숙소 방인지 아닌지 선별하는 정보가 담긴 방 점보
      */
-    public List<DetailRoomDto> getRoomDetails(Long accommodationId, SearchReservationInfo reservationInfo) {
+    public List<DetailRoomDto> getRoomDetails(Long accommodationId, ReservationInfoDto reservationInfo) {
         List<Room> rooms = getRoomListByAccommodationId(accommodationId);
         List<DetailRoomDto> detailRoomDtos = new ArrayList<>();
         for (Room room : rooms) {
@@ -171,30 +169,44 @@ public class RoomService {
                     .id(room.getRoomId())
                     .name(room.getRoomName())
                     .price(room.getRoomPrice())
-                    .people(room.getRoomPeople())
+                    .headCount(room.getHeadCount())
                     .detail(room.getRoomDetail())
                     .status(StatusService.statusConverter(room.getRoomStatus()))
                     .images(imageList)
                     .facilities(facilityList)
-                    .isPeopleCapable(roomPeopleCapability(room.getRoomPeople(), reservationInfo.getRoomPeople()))
+                    .isHeadCountCapable(headCountCapability(room.getHeadCount(), reservationInfo.getHeadCount()))
                     .isAvailable(roomAvailability(room.getRoomId(), reservationInfo.getCheckInDate(), reservationInfo.getCheckOutDate()))
                     .build());
         }
         return detailRoomDtos;
     }
 
+    public List<AvailableRoomDto> getRoomAvailable(Long accommodationId, ReservationInfoDto reservationInfoDto) {
+        List<AvailableRoomDto> availableRoomDtoList = new ArrayList<>();
+        List<Room> rooms = getRoomListByAccommodationId(accommodationId);
+        for (Room room : rooms) {
+            availableRoomDtoList.add(new AvailableRoomDto(
+                    room.getRoomId(),
+                    headCountCapability(room.getHeadCount(), reservationInfoDto.getHeadCount()),
+                    roomAvailability(room.getRoomId(), reservationInfoDto.getCheckInDate(), reservationInfoDto.getCheckOutDate())
+            ));
+        }
+        return availableRoomDtoList;
+    }
+
     /**
      * 검색 시 입력한 인원 수가 방의 기본 인원 이상인지 아닌지 반환
      * 검색 하지 않으면 입력한 인원 수를 0으로 두고 판단
-     * @param stdRoomPeople 방의 기본 인원 수
-     * @param inputRoomPeople 입력한 인원 수
-     * @return 입력한 인원 수가 방의 기본 인원 수보다 크면 YES
+     *
+     * @param stdHeadCount   방의 최대 인원 수
+     * @param inputHeadCount 입력한 인원 수
+     * @return 입력한 인원 수가 방의 최대 인원 수보다 크면 YES
      */
-    private String roomPeopleCapability(Integer stdRoomPeople, Integer inputRoomPeople) {
-        if (inputRoomPeople == null) {
-            inputRoomPeople = 0;
+    private String headCountCapability(Integer stdHeadCount, Integer inputHeadCount) {
+        if (inputHeadCount == null) {
+            inputHeadCount = 0;
         }
-        if (stdRoomPeople < inputRoomPeople) {
+        if (stdHeadCount < inputHeadCount) {
             return "NO";
         }
         return "YES";

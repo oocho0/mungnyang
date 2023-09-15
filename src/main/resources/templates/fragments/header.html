@@ -14,7 +14,9 @@
             <a class="nav-link link-body-emphasis" href="/seller/accommodation"
                sec:authorize="hasAnyAuthority('ROLE_SELLER', 'ROLE_ADMIN')">숙소 등록</a>
             <a class="nav-link link-body-emphasis" href="/seller/accommodations"
-               sec:authorize="hasAnyAuthority('ROLE_SELLER', 'ROLE_ADMIN')">숙소 관리</a>
+               sec:authorize="hasAnyAuthority('ROLE_SELLER', 'ROLE_ADMIN')">숙소 정보 관리</a>
+            <a class="nav-link link-body-emphasis" href="/seller/accommodation/reservation"
+               sec:authorize="hasAnyAuthority('ROLE_SELLER', 'ROLE_ADMIN')">숙소 예약 현황</a>
             <a class="nav-link link-body-emphasis" href="/user/cart" sec:authorize="hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')">
                 예약 바구니</a>
             <a class="nav-link link-body-emphasis" href="/user/reservations" sec:authorize="hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')">
@@ -31,6 +33,8 @@
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" th:href="@{/member/myPage}">내 정보 수정</a></li>
                     <li><a class="dropdown-item" th:href="@{/member/pre-withdraw}">회원 탈퇴</a></li>
+                    <li><hr class="dropdown-divider" sec:authorize="hasAnyAuthority('ROLE_ADMIN')"></li>
+                    <li><a class="dropdown-item" th:href="@{/admin/new}" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">관리자 계정 추가</a></li>
                 </ul>
             </div>
             <button type="button" class="btn btn-outline-primary" onclick="location.href='/member/login'"

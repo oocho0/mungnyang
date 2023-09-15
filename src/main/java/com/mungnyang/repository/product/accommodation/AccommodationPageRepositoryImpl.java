@@ -15,7 +15,6 @@ import com.mungnyang.entity.product.accommodation.QAccommodationComment;
 import com.mungnyang.entity.product.accommodation.QAccommodationImage;
 import com.mungnyang.entity.product.accommodation.room.QRoom;
 import com.mungnyang.entity.service.QReservationRoom;
-import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -99,7 +98,7 @@ public class AccommodationPageRepositoryImpl implements AccommodationPageReposit
     }
 
     @Override
-    public List<ResultDto> getAccommodationResultsByFilter(List<Long> categoryId, List<Long> cityId, Integer roomPeople,
+    public List<ResultDto> getAccommodationResultsByFilter(List<Long> categoryId, List<Long> cityId, Integer headCount,
                                                            LocalDateTime checkInDate, LocalDateTime checkOutDate) {
         return jpaQueryFactory.select(
                         new QResultDto(
@@ -120,7 +119,7 @@ public class AccommodationPageRepositoryImpl implements AccommodationPageReposit
                 .leftJoin(accommodationImage).on(accommodation.accommodationId.eq(accommodationImage.accommodation.accommodationId))
                 .where(accommodation.smallCategory.smallCategoryId.in(categoryId),
                         accommodation.city.cityId.in(cityId),
-                        room.roomPeople.goe(roomPeople),
+                        room.headCount.goe(headCount),
                         searchByCheckInTime(checkInDate, checkOutDate),
                         accommodationImage.image.isRepresentative.eq(IsTrue.YES),
                         accommodation.accommodationStatus.ne(Status.CLOSED))

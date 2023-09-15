@@ -7,28 +7,20 @@ class book {
 
 var now = moment();
 now.set({'hour': 15, 'minute': 0, 'second': 0, 'millisecond': 0});
-var endDate = moment(now).add(1, "d");
-endDate.set({'hour': 11, 'minute': 0, 'second': 0, 'millisecond': 0});
+
 $(function(){
     setCalendar();
-    var start = now;
-    var end = endDate;
-    if($("#dataRange").attr("data-checkIn") != ""){
-        start = moment($("#dataRange").attr("data-checkIn"));
-        start.set({'hour': 15, 'minute': 0, 'second': 0, 'millisecond': 0});
-        end = moment($("#dataRange").attr("data-checkOut"));
-        end.add(1, "d");
-        end.set({'hour': 11, 'minute': 0, 'second': 0, 'millisecond': 0});
-    }
+    var start = moment($("#dateRange").attr("data-checkin"));
+    start.set({'hour': 15, 'minute': 0, 'second': 0, 'millisecond': 0});
+    var end = moment($("#dateRange").attr("data-checkout"));
+    end.set({'hour': 11, 'minute': 0, 'second': 0, 'millisecond': 0});
     $("#dateRange").val(start.format('YYYY[년] MM[월] DD[일]') + ' - ' + end.format('YYYY[년] MM[월] DD[일]'));
-    $("#dateRange").attr("data-checkIn", start.format("YYYY-MM-DD[T]HH:mm:ss"));
-    $("#dateRange").attr("data-checkOut", end.format("YYYY-MM-DD[T]HH:mm:ss"));
     $('#dateRange').daterangepicker({
         "locale": {
             "format": "YYYY년 MM월 DD일",
             "separator": " - ",
             "applyLabel": "변경",
-            "cancelLabel": "취소",
+            "cancelLabel": "조건 해제",
             "fromLabel": "From",
             "toLabel": "To",
             "daysOfWeek": ["일", "월", "화", "수", "목", "금", "토"],
@@ -37,12 +29,11 @@ $(function(){
         },
         "showDropdowns": true,
         "autoUpdateInput": false,
-        "startDate": start,
-        "endDate": end,
+        "startDate" : start,
+        "endDate" : end,
         "minDate": now,
         "opens": "center"
-    }, function(start, end, label) {
-    });
+    }, function(start, end, label) {});
     $('#dateRange').on('apply.daterangepicker', function(ev, picker) {
         if(picker.startDate.format('DD/MM/YYYY') == picker.endDate.format('DD/MM/YYYY')){
             ev.preventDefault();
@@ -51,9 +42,14 @@ $(function(){
             $(this).val(picker.startDate.format('YYYY[년] MM[월] DD[일]') + ' - ' + picker.endDate.format('YYYY[년] MM[월] DD[일]'));
             var checkInDate = picker.startDate.set({'hour': 15, 'minute': 0, 'second': 0, 'millisecond': 0});
             var checkOutDate = picker.endDate.set({'hour': 11, 'minute': 0, 'second': 0, 'millisecond': 0});
-            $(this).attr("data-checkIn", checkInDate.format("YYYY-MM-DD[T]HH:mm:ss"));
-            $(this).attr("data-checkOut", checkOutDate.format("YYYY-MM-DD[T]HH:mm:ss"));
+            $(this).attr("data-checkin", checkInDate.format("YYYY-MM-DD[T]HH:mm:ss"));
+            $(this).attr("data-checkout", checkOutDate.format("YYYY-MM-DD[T]HH:mm:ss"));
         }
+    });
+    $('#dateRange').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+        $(this).attr("data-checkin", '');
+        $(this).attr("data-checkout", '');
     });
 });
 
@@ -84,8 +80,8 @@ function setCalendar(){
                             alert("기간을 선택해야한댜야옹");
                             return;
                         }
-                        $("#dateRange").attr("data-checkIn", newCheckIn.format("YYYY-MM-DD[T]HH:mm:ss"));
-                        $("#dateRange").attr("data-checkOut", newCheckOut.format("YYYY-MM-DD[T]HH:mm:ss"));
+                        $("#dateRange").attr("data-checkin", newCheckIn.format("YYYY-MM-DD[T]HH:mm:ss"));
+                        $("#dateRange").attr("data-checkout", newCheckOut.format("YYYY-MM-DD[T]HH:mm:ss"));
                         $("#dateRange").val(newCheckIn.format('YYYY[년] MM[월] DD[일]') + ' - ' + newCheckOut.format('YYYY[년] MM[월] DD[일]'));
                     }
                 }

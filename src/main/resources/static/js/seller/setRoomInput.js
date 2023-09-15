@@ -66,14 +66,14 @@ function addRoom(){
     '                   원' +
     '                </div>' +
     '            </div>' +
-    '            <!--방 기본 인원 수-->' +
+    '            <!--방 최대 인원 수-->' +
     '            <div class="row g-3 align-items-center py-2">' +
     '                <div class="col-3 text-end">' +
-    '                    <label class="col-form-label" for="roomPeople' + newRoomIndex + '">방 기본 인원 수</label>' +
+    '                    <label class="col-form-label" for="headCount' + newRoomIndex + '">방 최대 인원 수</label>' +
     '                </div>' +
     '                <div class="col-5">' +
-    '                   <input type="number" class="form-control" id="roomPeople' + newRoomIndex + '"' +
-    '                           data-error="방 기본 인원 수가" aria-label="방 기본 인원" placeholder="방 기본 인원 수를 입력하세요."/>' +
+    '                   <input type="number" class="form-control" id="headCount' + newRoomIndex + '"' +
+    '                           data-error="방 최대 인원 수가" aria-label="방 최대 인원" placeholder="방 최대 인원 수를 입력하세요."/>' +
     '                </div>' +
     '                <div class="col-4 text-start">' +
     '                   명' +

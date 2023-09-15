@@ -9,16 +9,15 @@ import com.mungnyang.dto.product.accommodation.*;
 import com.mungnyang.dto.product.accommodation.room.DetailRoomDto;
 import com.mungnyang.dto.product.accommodation.room.ListRoomDto;
 import com.mungnyang.dto.product.CommentDto;
+import com.mungnyang.dto.service.ReservationInfoDto;
 import com.mungnyang.entity.Address;
 import com.mungnyang.entity.fixedEntity.SmallCategory;
 import com.mungnyang.entity.member.Member;
 import com.mungnyang.entity.product.ProductAddress;
 import com.mungnyang.entity.product.accommodation.Accommodation;
-import com.mungnyang.entity.product.accommodation.AccommodationComment;
 import com.mungnyang.entity.product.accommodation.AccommodationFacility;
 import com.mungnyang.entity.product.accommodation.AccommodationImage;
 import com.mungnyang.repository.product.accommodation.AccommodationRepository;
-import com.mungnyang.repository.product.accommodation.room.RoomRepository;
 import com.mungnyang.service.fixedEntity.CategoryService;
 import com.mungnyang.service.fixedEntity.StateCityService;
 import com.mungnyang.service.member.MemberService;
@@ -173,13 +172,13 @@ public class AccommodationService {
     public List<ResultDto> getAccommodationResultList(SearchAccommodationFilter filter) {
         List<Long> categoryId = filter.getCategoryId();
         List<Long> cityId = filter.getCityId();
-        Integer roomPeople = filter.getRoomPeople();
+        Integer headCount = filter.getHeadCount();
         LocalDateTime checkInDate = filter.getCheckInDate();
         LocalDateTime checkOutDate = filter.getCheckOutDate();
-        return accommodationRepository.getAccommodationResultsByFilter(categoryId, cityId, roomPeople, checkInDate, checkOutDate);
+        return accommodationRepository.getAccommodationResultsByFilter(categoryId, cityId, headCount, checkInDate, checkOutDate);
     }
 
-    public DetailAccommodationDto getAccommodationDetails(Long accommodationId, SearchReservationInfo reservationInfo) {
+    public DetailAccommodationDto getAccommodationDetails(Long accommodationId, ReservationInfoDto reservationInfo) {
         Accommodation accommodation = getAccommodationByAccommodationId(accommodationId);
         Member owner = memberService.getMemberByMemberEmail(accommodation.getCreatedBy());
         List<AccommodationImage> images = accommodationImageService.getAccommodationImageListByAccommodationId(accommodationId);
