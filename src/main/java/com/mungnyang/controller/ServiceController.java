@@ -20,9 +20,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -97,37 +99,12 @@ public class ServiceController {
         return new ResponseEntity<String>("success", HttpStatus.OK);
     }
 
-    @DeleteMapping("/cart/{cartId}")
-    public ResponseEntity<?> deleteAllCartRoom(@PathVariable Long cartId, Principal principal) {
-        if (memberService.isNotWrittenByPrinciple(cartId, principal.getName())) {
-            return new ResponseEntity<String>("삭제 권한이 없습니다.", HttpStatus.FORBIDDEN);
-        }
-        cartRoomService.deleteAllCartRoom(cartId);
-        return new ResponseEntity<String>("success", HttpStatus.OK);
-    }
-
     @DeleteMapping("/cart")
-    public ResponseEntity<?> deleteSelectedCartRoom(@ModelAttribute SelectedCartRoom selectedCartRoom, Principal principal) {
-        if (cartRoomService.isNotWrittenByPrinciple(selectedCartRoom, principal.getName())) {
-            return new ResponseEntity<String>("삭제 권한이 없습니다.", HttpStatus.FORBIDDEN);
-        }
-        if (cartRoomService.isNotOneOfThem(selectedCartRoom)) {
-            return new ResponseEntity<String>("잘못된 경로 입니다.", HttpStatus.BAD_REQUEST);
-        }
-        cartRoomService.deleteCartRoom(selectedCartRoom);
-        return new ResponseEntity<String>("success", HttpStatus.OK);
-    }
-
-    @DeleteMapping("/cart/{accommodationId}/{roomId}/{cartRoomId}")
-    public ResponseEntity<?> deleteCartRoom(@PathVariable Long accommodationId, @PathVariable Long roomId,
-                                            @PathVariable Long cartRoomId, Principal principal) {
+    public ResponseEntity<?> deleteSelectedCartRoom(@RequestParam List<Long> cartRoomId, Principal principal) {
         if (cartRoomService.isNotWrittenByPrinciple(cartRoomId, principal.getName())) {
             return new ResponseEntity<String>("삭제 권한이 없습니다.", HttpStatus.FORBIDDEN);
         }
-        if (cartRoomService.isNotOneOfThem(accommodationId, roomId, cartRoomId)) {
-            return new ResponseEntity<String>("잘못된 경로 입니다.", HttpStatus.BAD_REQUEST);
-        }
-        cartRoomService.deleteCartRoom(cartRoomId);
+        cartRoomService.deleteCartRoomList(cartRoomId);
         return new ResponseEntity<String>("success", HttpStatus.OK);
     }
 
@@ -139,12 +116,11 @@ public class ServiceController {
     }
 
     @PostMapping("/reservation")
-    public ResponseEntity<?> saveReservation(@PathVariable Long accommodationId, @PathVariable Long roomId,
-                                             CreateReservationDto createReservationDto, Principal principal) {
+    public ResponseEntity<?> saveReservation(CreateReservationDto createReservationDto, Principal principal) {
         if (reservationService.isNotOneOfAccommodationRoom(createReservationDto.getReservationRoomList())) {
             return new ResponseEntity<String>("잘못된 경로 입니다.", HttpStatus.BAD_REQUEST);
         }
-        reservationService.saveReservation(principal.getName(), roomId, createReservationDto);
+        reservationService.saveReservation(principal.getName(), createReservationDto);
         return new ResponseEntity<String>("success", HttpStatus.OK);
     }
 

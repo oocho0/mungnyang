@@ -2,6 +2,8 @@ package com.mungnyang.service.product.accommodation.room;
 
 import com.mungnyang.constant.Status;
 import com.mungnyang.dto.product.accommodation.ListAccommodationDto;
+import com.mungnyang.dto.service.CreateReservationRoomDto;
+import com.mungnyang.dto.service.CreateReservationRoomDtoWithRoom;
 import com.mungnyang.dto.service.ReservationInfoDto;
 import com.mungnyang.dto.product.accommodation.room.*;
 import com.mungnyang.dto.service.InitializeReservationRoomDto;
@@ -220,6 +222,25 @@ public class RoomService {
         return "YES";
     }
 
+    public List<ReservationListRoomDto> getReservationListRoomDto(Long accommodationId) {
+        List<Room> savedRoom = getRoomListByAccommodationId(accommodationId);
+        List<ReservationListRoomDto> roomList = new ArrayList<>();
+        for (Room room : savedRoom) {
+            Long totalReservationCount = reservationRoomService.getTotalReservationCountForRoom(room.getRoomId());
+            Long currentReservationCount = reservationRoomService.getCurrentReservationCountForRoom(room.getRoomId());
+            Long pastReservationCount = totalReservationCount - currentReservationCount;
+            roomList.add(ReservationListRoomDto.builder()
+                    .roomId(room.getRoomId())
+                    .roomName(room.getRoomName())
+                    .roomStatus(StatusService.statusConverter(room.getRoomStatus()))
+                    .totalReservationCount(totalReservationCount)
+                    .currentReservationCount(currentReservationCount)
+                    .pastReservationCount(pastReservationCount)
+                    .build());
+        }
+        return roomList;
+    }
+
     /**
      * 해당 숙소의 모든 방 삭제하기
      *
@@ -279,6 +300,25 @@ public class RoomService {
         return rooms;
     }
 
+    public InfoRoomDto getInfoRoomDto(Long roomId) {
+        Room room = getRoomByRoomId(roomId);
+        Long totalReservationCount = reservationRoomService.getTotalReservationCountForRoom(room.getRoomId());
+        Long currentReservationCount = reservationRoomService.getCurrentReservationCountForRoom(room.getRoomId());
+        Long pastReservationCount = totalReservationCount - currentReservationCount;
+        return InfoRoomDto.builder()
+                .accommodationId(room.getAccommodation().getAccommodationId())
+                .accommodationName(room.getAccommodation().getAccommodationName())
+                .roomId(room.getRoomId())
+                .roomName(room.getRoomName())
+                .roomStatus(StatusService.statusConverter(room.getRoomStatus()))
+                .totalReservationCount(totalReservationCount)
+                .currentReservationCount(currentReservationCount)
+                .pastReservationCount(pastReservationCount)
+                .currentReservationRoomList(reservationRoomService.getCurrentReservationRoomList(room.getRoomId()))
+                .pastReservationRoomList(reservationRoomService.getPastReservationRoomList(room.getRoomId()))
+                .build();
+    }
+
     /**
      * RoomId로 Room 찾기
      *
@@ -291,6 +331,25 @@ public class RoomService {
             throw new IllegalArgumentException();
         }
         return findRoom;
+    }
+
+    /**
+     * 예약-방 신규 생성을 위해 RoomId를 Room 엔티티로 바꿔서 전달해줌
+     *
+     * @param reservationRoomList RoomId가 들어있는 DTO
+     * @return Room 엔티티로 바꾼 DTO
+     */
+    public List<CreateReservationRoomDtoWithRoom> getCreateReservationRoomDtoWithRoom(List<CreateReservationRoomDto> reservationRoomList) {
+        List<CreateReservationRoomDtoWithRoom> createReservationRoomDtoWithRoomList = new ArrayList<>();
+        for (CreateReservationRoomDto createReservationRoomDto : reservationRoomList) {
+            modelMapper.typeMap(CreateReservationRoomDto.class, CreateReservationRoomDtoWithRoom.class).addMappings(mapping -> {
+                mapping.skip(CreateReservationRoomDtoWithRoom::setRoom);
+            });
+            CreateReservationRoomDtoWithRoom createReservationRoomDtoWithRoom = modelMapper.map(createReservationRoomDto, CreateReservationRoomDtoWithRoom.class);
+            createReservationRoomDtoWithRoom.setRoom(getRoomByRoomId(createReservationRoomDto.getRoomId()));
+            createReservationRoomDtoWithRoomList.add(createReservationRoomDtoWithRoom);
+        }
+        return createReservationRoomDtoWithRoomList;
     }
 
     public void deleteClosedTestAllRooms(Long accommodationId) {

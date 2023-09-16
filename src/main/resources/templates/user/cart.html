@@ -9,8 +9,10 @@
     <style></style>
 </th:block>
 <th:block layout:fragment="script">
-    <script type="text/javascript" th:inline="javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment-jdateformatparser@1.2.1/moment-jdateformatparser.min.js"></script>
     <script type="text/javascript" th:src="@{/js/user/cart.js}"></script>
+    <script type="text/javascript" th:inline="javascript"></script>
 </th:block>
 <div layout:fragment="content">
     <div class="px-5 py-4 text-center bg-body rounded-3">
@@ -28,39 +30,57 @@
                         </button>
                     </div>
                 </div>
-                <div class="card mb-3 pb-3" th:each="cartRoom : ${cartRooms}" th:id="|cartRoom${cartRoom.cartRoomId}|">
-                    <div class="card-header bg-body d-flex flex-wrap justify-content-between">
-                        <div class="form-check form-check-inline">
-                            <input type="checkbox" class="form-check-input cartRoom" th:id="${cartRoom.accommodationId}"
-                                   th:name="${cartRoom.roomId}" th:value="${cartRoom.cartRoomId}"
-                                   th:data-price="${cartRoom.roomPrice}" th:data-headcount="${cartRoom.headCount}"
-                                   th:data-days="${cartRoom.days}" th:data-checkin="${cartRoom.checkInDate}"
-                                   th:data-checkout="${cartRoom.checkOutDate}"/>
+                <div id="contents">
+                    <div class="card mb-3 pb-3" th:if="${#arrays.isEmpty(cartRooms)}">
+                        <div class="card-body pt-5 pb-4">
+                            아직 예약 바구니에 넣은 예약이 없습니멍!<br>추가해보세냥!
                         </div>
-                        <button type="button" class="btn btn-danger btn-sm"
-                                th:onclick="|deleteCartRoom(${cartRoom.accommodationId}, ${cartRoom.roomId}, ${cartRoom.cartRoomId});|">
-                            삭제
-                        </button>
                     </div>
-                    <div class="card-body text-start px-5">
-                        <div class="row g-4">
-                            <div class="col-4">
-                                <img class="img-fluid object-fit-cover border rounded" style="height:180px;"
-                                     th:src="${cartRoom.accommodationImage}" alt=""/>
+                    <div class="card mb-3 pb-3" th:unless="${#arrays.isEmpty(cartRooms)}" th:each="cartRoom : ${cartRooms}"
+                         th:id="|cartRoom${cartRoom.cartRoomId}|">
+                        <div class="card-header bg-body d-flex flex-wrap justify-content-between">
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" class="form-check-input cartRoom" th:id="${cartRoom.accommodationId}"
+                                       th:name="${cartRoom.roomId}" th:value="${cartRoom.cartRoomId}"
+                                       th:data-price="${cartRoom.roomPrice}" th:data-headcount="${cartRoom.headCount}"
+                                       th:data-days="${cartRoom.days}" th:data-checkin="${cartRoom.checkInDate}"
+                                       th:data-checkout="${cartRoom.checkOutDate}"
+                                       th:data-status="${cartRoom.alreadyBooked}"/>
                             </div>
-                            <div class="col-8">
-                                <h5 class="card-title"
-                                    th:text="|${cartRoom.accommodationName} / ${cartRoom.roomName}|"></h5>
-                                <div class="py-1">인원 : <span th:text="${cartRoom.headCount}"></span> 명</div>
-                                <div class="pb-4">기간 : <span
-                                        th:text="|${#temporals.year(cartRoom.checkInDate)}년 ${#temporals.month(cartRoom.checkInDate)}월 ${#temporals.day(cartRoom.checkInDate)}일 ~ ${#temporals.year(cartRoom.checkOutDate)}년 ${#temporals.month(cartRoom.checkOutDate)}월 ${#temporals.day(cartRoom.checkOutDate)}일|"></span>
+                            <button type="button" class="btn btn-danger btn-sm"
+                                    th:onclick="|deleteCartRoom(${cartRoom.cartRoomId});|">
+                                삭제
+                            </button>
+                        </div>
+                        <div class="card-body text-start px-5">
+                            <div class="row g-4">
+                                <div class="col-4">
+                                    <img class="img-fluid object-fit-cover border rounded" style="height:180px;"
+                                         th:src="${cartRoom.accommodationImage}" alt=""/>
                                 </div>
-                                <div class="d-grid gap-2 d-md-flex justify-content-md-end fs-5">1박 당 <span
-                                        th:text="${#numbers.formatInteger(cartRoom.roomPrice, 0, 'COMMA')}"></span>
-                                </div>
-                                <div class="d-grid gap-2 d-md-flex justify-content-md-end fs-4 fw-bold">총 <span
-                                        th:text="|${cartRoom.days}박|"></span> 금액 : <span
-                                        th:text="${#numbers.formatInteger((cartRoom.days * cartRoom.roomPrice), 0, 'COMMA')} + ' 원'"></span>
+                                <div class="col-8">
+                                    <div class="d-flex justify-content-between align-items-top">
+                                        <div>
+                                            <h5 class="card-title"
+                                                th:text="|${cartRoom.accommodationName} / ${cartRoom.roomName}|"></h5>
+                                            <div class="py-1">인원 : <span th:text="${cartRoom.headCount}"></span> 명</div>
+                                            <div class="pb-4">기간 : <span
+                                                    th:text="|${#temporals.format(cartRoom.checkInDate, 'yyyy년 MM월 dd일')} ~ ${#temporals.format(cartRoom.checkOutDate, 'yyyy년 MM월 dd일')}|"></span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                                <div th:if="${#strings.equals(cartRoom.alreadyBooked, 'YES')}" class="badge bg-secondary rounded-pill fs-5 p-3">예약 불가</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end fs-5">1박 당 <span
+                                            th:text="${#numbers.formatInteger(cartRoom.roomPrice, 0, 'COMMA')}"></span>
+                                    </div>
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end fs-4 fw-bold">총 <span
+                                            th:text="|${cartRoom.days}박|"></span> 금액 : <span
+                                            th:text="${#numbers.formatInteger((cartRoom.days * cartRoom.roomPrice), 0, 'COMMA')} + ' 원'"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>

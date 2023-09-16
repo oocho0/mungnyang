@@ -15,7 +15,7 @@ function page(page){
                 return;
             }
             var startPage = 1;
-            if(result.comments.number > 5 ) {
+            if(result.comments.totalPages > 5 ) {
                 startPage = result.comments.number + 1;
             }
             var endPage = (result.comments.totalPages == 0) ? 1 : (startPage + result.comments.size - 1 < result.comments.totalPages ? (startPage + result.comments.size - 1) : result.comments.totalPages);

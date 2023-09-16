@@ -23,6 +23,7 @@ import com.mungnyang.service.fixedEntity.StateCityService;
 import com.mungnyang.service.member.MemberService;
 import com.mungnyang.service.product.StatusService;
 import com.mungnyang.service.product.accommodation.room.RoomService;
+import com.mungnyang.service.service.ReservationRoomService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -48,6 +49,7 @@ public class AccommodationService {
     private final AccommodationCommentService accommodationCommentService;
     private final RoomService roomService;
     private final MemberService memberService;
+    private final ReservationRoomService reservationRoomService;
 
     /**
      * 신규 숙소 등록하기
@@ -96,6 +98,26 @@ public class AccommodationService {
         modifyAccommodationDto.setImageList(accommodationImageService.getModifyImageDtoListByAccommodationId(accommodationId));
         modifyAccommodationDto.setFacilityList(accommodationFacilityService.getFacilityDtoListByAccommodationId(accommodationId));
         return modifyAccommodationDto;
+    }
+
+    public List<ReservationListAccommodationDto> getReservationListAccommodationDtoList(String email) {
+        List<Accommodation> savedAccommodations = accommodationRepository.findByCreatedByAndAccommodationStatusNot(email, Status.CLOSED);
+        List<ReservationListAccommodationDto> reservationListAccommodationDtoList = new ArrayList<>();
+        for (Accommodation savedAccommodation : savedAccommodations) {
+            Long totalReservationCount = reservationRoomService.getTotalReservationCountForAccommodation(savedAccommodation.getAccommodationId());
+            Long currentReservationCount = reservationRoomService.getCurrentReservationCountForAccommodation(savedAccommodation.getAccommodationId());
+            Long pastReservationCount = totalReservationCount - currentReservationCount;
+            reservationListAccommodationDtoList.add(ReservationListAccommodationDto.builder()
+                    .accommodationId(savedAccommodation.getAccommodationId())
+                    .accommodationName(savedAccommodation.getAccommodationName())
+                    .accommodationStatus(StatusService.statusConverter(savedAccommodation.getAccommodationStatus()))
+                    .totalReservationCount(totalReservationCount)
+                    .currentReservationCount(currentReservationCount)
+                    .pastReservationCount(pastReservationCount)
+                    .roomList(roomService.getReservationListRoomDto(savedAccommodation.getAccommodationId()))
+                    .build());
+        }
+        return reservationListAccommodationDtoList;
     }
 
     /**

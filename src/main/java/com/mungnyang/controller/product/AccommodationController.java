@@ -3,8 +3,10 @@ package com.mungnyang.controller.product;
 import com.mungnyang.constant.IsTrue;
 import com.mungnyang.dto.product.accommodation.*;
 import com.mungnyang.dto.product.accommodation.room.CreateRoomDto;
+import com.mungnyang.dto.product.accommodation.room.InfoRoomDto;
 import com.mungnyang.dto.product.accommodation.room.ModifyRoomDto;
 import com.mungnyang.dto.service.CalendarShowReservationRoomDto;
+import com.mungnyang.dto.service.InfoReservationRoomDto;
 import com.mungnyang.entity.fixedEntity.SmallCategory;
 import com.mungnyang.entity.product.accommodation.Accommodation;
 import com.mungnyang.service.fixedEntity.CategoryService;
@@ -13,6 +15,10 @@ import com.mungnyang.service.product.accommodation.room.RoomService;
 import com.mungnyang.service.service.ReservationRoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -55,6 +61,50 @@ public class AccommodationController {
         List<ListAccommodationDto> findAccommodations = accommodationService.getListAccommodationDtoListByCreatedBy(principal.getName());
         model.addAttribute("accommodations", findAccommodations);
         return "seller/list";
+    }
+
+    @GetMapping("/accommodations/reservations")
+    public String loadReservationListPageForSeller(Model model, Principal principal) {
+        List<ReservationListAccommodationDto> accommodations = accommodationService.getReservationListAccommodationDtoList(principal.getName());
+        model.addAttribute("accommodations", accommodations);
+        return "seller/reservationList";
+    }
+
+    @GetMapping("/accommodations/reservations/{accommodationId}/{roomId}")
+    public String loadReservationRoomPageForSeller(@PathVariable Long accommodationId, @PathVariable Long roomId,
+                                                   Principal principal, Model model) {
+        if (accommodationService.isNotWrittenByPrinciple(accommodationId, principal.getName())) {
+            return "error";
+        }
+        if (roomService.isNotOneOfAccommodationRoom(accommodationId, roomId)) {
+            return "error";
+        }
+        InfoRoomDto room = roomService.getInfoRoomDto(roomId);
+        model.addAttribute("room", room);
+        return "seller/reservationRoom";
+    }
+
+    @GetMapping("/accommodations/reservations/{roomId}/current")
+    public ResponseEntity<?> getReservationRoomCurrentPaging(@PathVariable Long roomId,
+                                                      @PageableDefault(size = 10, sort = "checkOutDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<InfoReservationRoomDto> infoReservationRoomDtoPage = reservationRoomService.getCurrentReservationRoomList(roomId, pageable);
+        return new ResponseEntity<Page<InfoReservationRoomDto>>(infoReservationRoomDtoPage, HttpStatus.OK);
+    }
+
+    @GetMapping("/accommodations/reservations/{roomId}/past")
+    public ResponseEntity<?> getReservationRoomPastPaging(@PathVariable Long roomId,
+                                                      @PageableDefault(size = 10, sort = "checkOutDate", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<InfoReservationRoomDto> infoReservationRoomDtoPage = reservationRoomService.getPastReservationRoomList(roomId, pageable);
+        return new ResponseEntity<Page<InfoReservationRoomDto>>(infoReservationRoomDtoPage, HttpStatus.OK);
+    }
+
+    @GetMapping("/accommodations/reservations/{roomId}/calendar")
+    public ResponseEntity<?> loadReservationRoomListForReservationRoomPage(@PathVariable Long roomId) {
+        List<CalendarShowReservationRoomDto> calendarList = reservationRoomService.getReservationRoomListForSeller(roomId);
+        if (calendarList == null) {
+            return new ResponseEntity<String>("none", HttpStatus.OK);
+        }
+        return new ResponseEntity<List<CalendarShowReservationRoomDto>>(calendarList, HttpStatus.OK);
     }
 
     @GetMapping("/accommodations/{accommodationId}")

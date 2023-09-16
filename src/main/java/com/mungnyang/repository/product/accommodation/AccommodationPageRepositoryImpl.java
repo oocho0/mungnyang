@@ -8,6 +8,7 @@ import com.mungnyang.dto.product.ResultDto;
 import com.mungnyang.dto.product.TopInfoDto;
 import com.mungnyang.dto.product.accommodation.ListAccommodationDto;
 import com.mungnyang.dto.product.accommodation.QListAccommodationDto;
+import com.mungnyang.dto.product.accommodation.ReservationListAccommodationDto;
 import com.mungnyang.entity.fixedEntity.QCity;
 import com.mungnyang.entity.fixedEntity.QState;
 import com.mungnyang.entity.product.accommodation.QAccommodation;

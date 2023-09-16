@@ -31,7 +31,7 @@
         <form role="form" class="p-5 text-center bg-body rounded-3" method="post" th:action="@{/admin/new}"
               th:object="${createMemberDto}" onsubmit="return checkForm();">
             <h2 class="text-body-emphasis pb-5 border-bottom">관리자 계정 추가</h2>
-            <div class="container py-3 mx-5">
+            <div class="container py-3">
                 <!--표시되지 않은 속성-->
                 <input type="hidden" th:field="*{memberId}"/>
                 <input type="hidden" th:field="*{role}"/>

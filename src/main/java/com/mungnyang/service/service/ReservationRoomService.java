@@ -7,7 +7,12 @@ import com.mungnyang.entity.product.accommodation.room.Room;
 import com.mungnyang.entity.service.Reservation;
 import com.mungnyang.entity.service.ReservationRoom;
 import com.mungnyang.repository.service.ReservationRoomRepository;
+import com.mungnyang.service.product.accommodation.AccommodationImageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReservationRoomService {
     private final ReservationRoomRepository reservationRoomRepository;
+    private final AccommodationImageService accommodationImageService;
 
     /**
      * 숙소 관리자가 숙소 등록 페이지에 입력한 예약 현황 정보인 reservation-room 객체 저장
@@ -30,28 +36,26 @@ public class ReservationRoomService {
      */
     public void saveReservationRoomForInitialize(Room room, List<InitializeReservationRoomDto> initializeReservationRoomDtoList) {
         for (InitializeReservationRoomDto initializeReservationRoomDto : initializeReservationRoomDtoList) {
-            ReservationRoom createdReservationRoom = ReservationRoom.builder()
+            reservationRoomRepository.save(ReservationRoom.builder()
                     .room(room)
                     .checkInDate(initializeReservationRoomDto.getCheckInDate())
                     .checkOutDate(initializeReservationRoomDto.getCheckOutDate())
                     .reservationStatus(ReservationStatus.RESERVATION)
-                    .build();
-            reservationRoomRepository.save(createdReservationRoom);
+                    .build());
         }
     }
 
     /**
      * 신규 예약-방 저장하기
      *
-     * @param room                해당 방 엔티티
      * @param reservation         해당 예약 엔티티
      * @param reservationRoomList 예약-방 정보 리스트
      */
-    public List<Long> saveReservationRoom(Room room, Reservation reservation, List<CreateReservationRoomDto> reservationRoomList) {
+    public List<Long> saveReservationRoom(Reservation reservation, List<CreateReservationRoomDtoWithRoom> reservationRoomList) {
         List<Long> cartRoomIdList = new ArrayList<>();
-        for (CreateReservationRoomDto createReservationRoomDto : reservationRoomList) {
+        for (CreateReservationRoomDtoWithRoom createReservationRoomDto : reservationRoomList) {
             reservationRoomRepository.save(ReservationRoom.builder()
-                    .room(room)
+                    .room(createReservationRoomDto.getRoom())
                     .reservation(reservation)
                     .headCount(createReservationRoomDto.getHeadCount())
                     .checkInDate(createReservationRoomDto.getCheckInDate())
@@ -65,11 +69,78 @@ public class ReservationRoomService {
         return cartRoomIdList;
     }
 
+    /**
+     * 예약 취소하기 - 실제로 DB에서 삭제하지 않고 ReservationStatus를 바꿈
+     *
+     * @param reservationId 취소할 예약 일련번호
+     */
     public void deleteReservationRoom(Long reservationId) {
         List<ReservationRoom> reservationRoomList = getReservationRoomByReservationReservationId(reservationId);
         for (ReservationRoom reservationRoom : reservationRoomList) {
             reservationRoom.setReservationStatus(ReservationStatus.CANCEL);
         }
+    }
+
+    public Page<InfoReservationRoomDto> getCurrentReservationRoomList(Long roomId) {
+        return getCurrentReservationRoomList(roomId, PageRequest.of(0, 10));
+    }
+
+    public Page<InfoReservationRoomDto> getCurrentReservationRoomList(Long roomId, Pageable pageable) {
+        Page<InfoReservationRoomDto> reservationRoomPage = reservationRoomRepository.getCurrentInfoReservationRoomDto(roomId, pageable);
+        List<InfoReservationRoomDto> reservationRoomList = reservationRoomPage.getContent();
+        for (InfoReservationRoomDto infoReservationRoomDto : reservationRoomList) {
+            ReservationRoom reservationRoom = getReservationRoomByReservationRoomId(infoReservationRoomDto.getReservationRoomId());
+            infoReservationRoomDto.setMemberName(reservationRoom.getReservation() == null ? "지정 예약" : reservationRoom.getReservation().getMember().getName());
+            infoReservationRoomDto.setMemberTel(reservationRoom.getReservation() == null ? "없음" : reservationRoom.getReservation().getMember().getTel());
+            infoReservationRoomDto.setDays((int) (ChronoUnit.DAYS.between(infoReservationRoomDto.getCheckInDate(), infoReservationRoomDto.getCheckOutDate()) + 1));
+        }
+        return reservationRoomPage;
+    }
+
+    public Page<InfoReservationRoomDto> getPastReservationRoomList(Long roomId) {
+        return getPastReservationRoomList(roomId, PageRequest.of(0, 10));
+    }
+
+    public Page<InfoReservationRoomDto> getPastReservationRoomList(Long roomId, Pageable pageable) {
+        Page<InfoReservationRoomDto> reservationRoomPage = reservationRoomRepository.getPastInfoReservationRoomDto(roomId, pageable);
+        List<InfoReservationRoomDto> reservationRoomList = reservationRoomPage.getContent();
+        for (InfoReservationRoomDto infoReservationRoomDto : reservationRoomList) {
+            ReservationRoom reservationRoom = getReservationRoomByReservationRoomId(infoReservationRoomDto.getReservationRoomId());
+            infoReservationRoomDto.setMemberName(reservationRoom.getReservation() == null ? "지정 예약" : reservationRoom.getReservation().getMember().getName());
+            infoReservationRoomDto.setMemberTel(reservationRoom.getReservation() == null ? "없음" : reservationRoom.getReservation().getMember().getTel());
+            infoReservationRoomDto.setDays((int) (ChronoUnit.DAYS.between(infoReservationRoomDto.getCheckInDate(), infoReservationRoomDto.getCheckOutDate()) + 1));
+        }
+        return reservationRoomPage;
+    }
+
+    public List<CalendarShowReservationRoomDto> getReservationRoomListForSeller(Long roomId) {
+        List<ReservationRoom> reservationRoomList = reservationRoomRepository.findByRoomRoomIdAndReservationStatusOrderByReservationRoomId(roomId, ReservationStatus.RESERVATION);
+        List<CalendarShowReservationRoomDto> calendarList = new ArrayList<>();
+        for (ReservationRoom reservationRoom : reservationRoomList) {
+            calendarList.add(CalendarShowReservationRoomDto.builder()
+                    .id(reservationRoom.getReservationRoomId())
+                    .title(reservationRoom.getReservation() == null ? "지정 예약" : reservationRoom.getReservation().getMember().getName())
+                    .start(reservationRoom.getCheckInDate())
+                    .end(reservationRoom.getCheckOutDate())
+                    .build());
+        }
+        return calendarList;
+    }
+
+    public Long getTotalReservationCountForAccommodation(Long accommodationId) {
+        return reservationRoomRepository.countByRoomAccommodationAccommodationIdAndReservationStatus(accommodationId, ReservationStatus.RESERVATION);
+    }
+
+    public Long getCurrentReservationCountForAccommodation(Long accommodationId) {
+        return reservationRoomRepository.countByRoomAccommodationAccommodationIdAndCheckOutDateAfterAndReservationStatus(accommodationId, LocalDateTime.now(), ReservationStatus.RESERVATION);
+    }
+
+    public Long getTotalReservationCountForRoom(Long roomId) {
+        return reservationRoomRepository.countByRoomRoomIdAndReservationStatus(roomId, ReservationStatus.RESERVATION);
+    }
+
+    public Long getCurrentReservationCountForRoom(Long roomId) {
+        return reservationRoomRepository.countByRoomRoomIdAndCheckOutDateAfterAndReservationStatus(roomId, LocalDateTime.now(), ReservationStatus.RESERVATION);
     }
 
     /**
@@ -80,7 +151,7 @@ public class ReservationRoomService {
      */
     public List<CalendarShowReservationRoomDto> getReservationRoomDtoListByRoomIdForDetailPage(Long roomId) {
         List<CalendarShowReservationRoomDto> reservationRoomDtoList = new ArrayList<>();
-        List<ReservationRoom> reservationRoomList = getReservationRoomListByRoomId(roomId, LocalDateTime.now());
+        List<ReservationRoom> reservationRoomList = getReservationRoomListByRoomId(roomId);
         for (ReservationRoom reservationRoom : reservationRoomList) {
             reservationRoomDtoList.add(CalendarShowReservationRoomDto.builder()
                     .id(reservationRoom.getReservationRoomId())
@@ -102,7 +173,7 @@ public class ReservationRoomService {
         List<CalendarShowReservationRoomDto> reservationRoomDtoList = new ArrayList<>();
         List<ReservationRoom> reservationRoomList = new ArrayList<>();
         if (isInitialRecord == IsTrue.YES) {
-            reservationRoomList = reservationRoomRepository.findByRoomRoomIdAndReservationNullAndReservationStatus(roomId, ReservationStatus.RESERVATION);
+            reservationRoomList = reservationRoomRepository.findByRoomRoomIdAndCheckOutDateAfterAndReservationNullAndReservationStatus(roomId, LocalDateTime.now(), ReservationStatus.RESERVATION);
             if (reservationRoomList.isEmpty()) {
                 return null;
             }
@@ -112,13 +183,10 @@ public class ReservationRoomService {
                         .title("예약됨")
                         .start(reservationRoom.getCheckInDate())
                         .end(reservationRoom.getCheckOutDate())
-                        .extendedProps(CalendarShowReservationRoomDto.ExtendedProps.builder()
-                                .roomId(reservationRoom.getRoom().getRoomId())
-                                .build())
                         .build());
             }
         } else {
-            reservationRoomList = reservationRoomRepository.findByRoomRoomIdAndReservationNotNullAndReservationStatus(roomId, ReservationStatus.RESERVATION);
+            reservationRoomList = reservationRoomRepository.findByRoomRoomIdAndCheckOutDateAfterAndReservationNotNullAndReservationStatus(roomId, LocalDateTime.now(), ReservationStatus.RESERVATION);
             if (reservationRoomList.isEmpty()) {
                 return null;
             }
@@ -129,11 +197,6 @@ public class ReservationRoomService {
                         .title(reservationRoom.getReservation().getMember().getName())
                         .start(reservationRoom.getCheckInDate())
                         .end(reservationRoom.getCheckOutDate())
-                        .extendedProps(CalendarShowReservationRoomDto.ExtendedProps.builder()
-                                .roomId(reservationRoom.getRoom().getRoomId())
-                                .reservationId(reservationRoom.getReservation().getReservationId())
-                                .totalPrice((int) (days * reservationRoom.getRoom().getRoomPrice()))
-                                .build())
                         .build());
             }
         }
@@ -159,6 +222,7 @@ public class ReservationRoomService {
                         .room(room)
                         .checkInDate(modifyReservationRoomDto.getCheckInDate())
                         .checkOutDate(modifyReservationRoomDto.getCheckOutDate())
+                        .reservationStatus(ReservationStatus.RESERVATION)
                         .build();
                 reservationRoomRepository.save(newReservationRoom);
             }
@@ -180,6 +244,7 @@ public class ReservationRoomService {
                     .reservationRoomId(reservationRoom.getReservationRoomId())
                     .accommodationId(reservationRoom.getRoom().getAccommodation().getAccommodationId())
                     .accommodationName(reservationRoom.getRoom().getAccommodation().getAccommodationName())
+                    .accommodationImage(accommodationImageService.getAccommodationImage(reservationRoom.getRoom().getAccommodation().getAccommodationId()))
                     .roomId(reservationRoom.getRoom().getRoomId())
                     .roomName(reservationRoom.getRoom().getRoomName())
                     .roomPrice(reservationRoom.getRoom().getRoomPrice())
@@ -207,19 +272,19 @@ public class ReservationRoomService {
     public String getIsAlreadyBooked(Long roomId, LocalDateTime checkInDate, LocalDateTime checkOutDate) {
         Long count = reservationRoomRepository.findReservationRoomForCartRoom(roomId, checkInDate, checkOutDate);
         if (count > 0) {
-            return "YES";
+            return IsTrue.YES.name();
         }
-        return "No";
+        return IsTrue.NO.name();
     }
 
     /**
-     * RoomId로 reservation-room 엔티티 리스트 찾기
+     * RoomId로 현재 시간 이후로 있는 reservation-room 엔티티 리스트 찾기
      *
      * @param roomId 해당 방의 일련번호
      * @return ReservationRoom 엔티티 리스트
      */
-    private List<ReservationRoom> getReservationRoomListByRoomId(Long roomId, LocalDateTime today) {
-        return reservationRoomRepository.findByRoomRoomIdAndCheckOutDateAfterAndReservationStatusOrderByReservationRoomId(roomId, today, ReservationStatus.RESERVATION);
+    private List<ReservationRoom> getReservationRoomListByRoomId(Long roomId) {
+        return reservationRoomRepository.findByRoomRoomIdAndCheckOutDateAfterAndReservationStatusOrderByReservationRoomIdDesc(roomId, LocalDateTime.now(), ReservationStatus.RESERVATION);
     }
 
     /**

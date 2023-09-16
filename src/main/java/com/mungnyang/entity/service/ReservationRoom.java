@@ -4,6 +4,7 @@ import com.mungnyang.constant.ReservationStatus;
 import com.mungnyang.entity.WriterEntity;
 import com.mungnyang.entity.product.accommodation.room.Room;
 import lombok.*;
+import org.springframework.stereotype.Controller;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -32,5 +33,8 @@ public class ReservationRoom extends WriterEntity {
     private Integer headCount;
     private LocalDateTime checkInDate;
     private LocalDateTime checkOutDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ReservationStatus reservationStatus;
 }

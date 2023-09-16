@@ -29,7 +29,7 @@
                 <h2 class="text-body-emphasis pb-4"><span class="pe-3" id="name" th:text="${store.name}"></span><span
                         th:unless="${#strings.equals(store.status, 'OPEN')}" class="badge bg-secondary rounded-pill"
                         style="font-size: 14px">휴업중</span></h2>
-                <div class="container py-3 mx-3">
+                <div class="container py-3">
                     <div class="row">
                         <div class="col-6">
                             <div id="imageList" class="carousel slide" data-bs-ride="true">
@@ -136,7 +136,7 @@
                                 </div>
                             </div>
                             <div class="mb-5" th:unless="${#lists.isEmpty(store.comments.content)}">
-                                <nav th:with="startPage = ${(store.comments.number < 6) ? 1 : store.comments.number + 1},
+                                <nav th:with="startPage = ${(store.comments.totalPages < 6) ? 1 : store.comments.number + 1},
                                 endPage = (${(store.comments.totalPages == 0) ? 1 : (startPage + store.comments.size - 1 < store.comments.totalPages ? (startPage + store.comments.size - 1) : store.comments.totalPages)})">
                                     <ul class="pagination justify-content-center">
                                         <li class="page-item"

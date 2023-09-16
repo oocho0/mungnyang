@@ -29,30 +29,53 @@ function totalPrice(){
     $("#totalPrice").text(price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
 }
 
-function deleteAll(cartId){
-    var url = "/user/cart/" + cartId;
-    deleteFunction(url);
+function deleteAll(){
+    var result = confirm("전체 예약을 삭제 하시겠습니까?");
+    if (!result){
+        return;
+    }
+    var url = "/user/cart?cartRoomId=";
+    var deletedCartRoomId = [];
+    $(".cartRoom").each(function(index, element){
+        if(index > 0){
+            url += ",";
+        }
+        var cartRoomId = $(element).val();
+        url += cartRoomId;
+        deletedCartRoomId.push(cartRoomId);
+    });
+    deleteFunction(url, deletedCartRoomId);
 }
 
-function deleteCartRoom(accommodationId, roomId, cartRoomId){
-    var url = "/user/cart/" + accommodationId + "/" + roomId + "/" + cartRoomId;
-    deleteFunction(url);
+function deleteCartRoom(cartRoomId){
+    var result = confirm("예약을 삭제 하시겠습니까?");
+    if (!result){
+        return;
+    }
+    var url = "/user/cart?cartRoomId=" + cartRoomId;
+    var deletedCartRoomId = [cartRoomId];
+    deleteFunction(url, deletedCartRoomId);
 }
 
 function deleteSelect(){
-    var url = "/user/cart?"
+    var result = confirm("선택한 예약들을 삭제 하시겠습니까?");
+    if (!result){
+        return;
+    }
+    var url = "/user/cart?cartRoomId=";
+    var deletedCartRoomId = [];
     $(".cartRoom:checked").each(function(index, element){
         if(index > 0){
-            url += "&";
+            url += ",";
         }
-        url += "selectedCartRoomList[" + index +"].accommodationId=" + $(element).attr("id");
-        url += "&selectedCartRoomList[" + index +"].roomId=" + $(element).attr("name");
-        url += "&selectedCartRoomList[" + index +"].cartRoomId=" + $(element).val();
+        var cartRoomId = $(element).val();
+        url += cartRoomId;
+        deletedCartRoomId.push(cartRoomId);
     });
-    deleteFunction(url);
+    deleteFunction(url, deletedCartRoomId);
 }
 
-function deleteFunction(url){
+function deleteFunction(url, deletedCartRoomId){
     var token = $("meta[name='_csrf']").attr("content");
     var header = $("meta[name='_csrf_header']").attr("content");
     $.ajax({
@@ -65,7 +88,18 @@ function deleteFunction(url){
         },
         success : function(result, status){
             alert("삭제가 완료되었습니다.");
-            page(0);
+            $.each(deletedCartRoomId, function(index, element){
+                $("#cartRoom"+element).remove();
+            });
+            if ($(".card").length == 0){
+                $("#contents").append($(
+                    '<div class="card mb-3 pb-3">' +
+                    '    <div class="card-body pt-5 pb-4">' +
+                    '        아직 예약 바구니에 넣은 예약이 없습니멍!<br>추가해보세냥!' +
+                    '    </div>' +
+                    '</div>'
+                ));
+            }
         },
         error : function(status, error){
             if(status.status == '401' || status.status == '403' || status.status == '404'){
@@ -87,6 +121,10 @@ function reservation(){
     formData.append("reservationDate", moment().format("YYYY-MM-DD[T]HH:mm:ss"));
     var totalPrice = 0;
     $(".cartRoom:checked").each(function(index, element){
+        if ($(element).attr("data-status") == "YES"){
+            alert("예약 불가한 상품이 있습니다.");
+            return;
+        }
         var accommodationId = $(element).attr("id");
         var roomId = $(element).attr("name");
         var cartRoomId = $(element).val();
@@ -105,7 +143,7 @@ function reservation(){
         formData.append("reservationRoomList[" + index + "].headCount", headCount);
         formData.append("reservationRoomList[" + index + "].checkInDate", checkIn);
         formData.append("reservationRoomList[" + index + "].checkOutDate", checkOut);
-    );
+    });
     formData.append("reservationTotalPrice", totalPrice);
     $.ajax({
         url : url,

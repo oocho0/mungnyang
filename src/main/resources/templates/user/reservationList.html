@@ -2,19 +2,54 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}">
 <th:block layout:fragment="css">
-  <style></style>
+    <style></style>
 </th:block>
 <th:block layout:fragment="script">
-  <script type="text/javascript" th:inline="javascript"></script>
+    <script type="text/javascript" th:inline="javascript"></script>
 </th:block>
 <div layout:fragment="content">
-  <div class="px-5 py-4 text-center bg-body rounded-3">
-    <div class="p-5 text-center bg-body rounded-3">
-      <h2 class="text-body-emphasis pb-5 border-bottom">예약 내역</h2>
-      <div class="container py-3 mx-3">
-
-      </div>
+    <div class="px-5 py-4 text-center bg-body rounded-3">
+        <div class="p-5 text-center bg-body rounded-3">
+            <h2 class="text-body-emphasis pb-5 border-bottom">예약 내역</h2>
+            <div class="container p-5">
+                <div th:if="${#arrays.isEmpty(reservations)}" class="card" >
+                    <div class="card-body">
+                        예약 내역이 없습니다.
+                    </div>
+                </div>
+                <div th:unless="${#arrays.isEmpty(reservations)}" class="card mb-4" th:each="reservation : ${reservations}">
+                    <div class="card-header justify-content-between d-flex align-items-center px-4">
+                        <h5 class="pt-1" th:text="|예약 번호 : ${reservation.reservationId}|"></h5>
+                        <span th:unless="${#strings.equals(reservation.reservationStatus, 'CANCEL')}"
+                              class="badge bg-warning badge-pill fs-5">예약</span>
+                        <span th:if="${#strings.equals(reservation.reservationStatus, 'CANCEL')}"
+                              class="badge bg-secondary badge-pill fs-5">예약 취소</span>
+                    </div>
+                    <div class="card-body px-5 py-4 text-start">
+                        <div class="pb-3" th:text="|예약 일시 : ${#temporals.format(reservation.reservationDate, 'yyyy년 MM월 dd일 HH시 mm분')}|"></div>
+                        <div class="py-3 px-5" th:each="reservationRoom : ${reservation.reservationRoomList}" th:id="|reservationRoom${reservationRoom.reservationRoomId}|">
+                            <div class="row">
+                                <div class="col-4">
+                                    <img class="img-fluid object-fit-cover border rounded" style="width:100%; height:160px;"
+                                    th:src="${reservationRoom.accommodationImage}" alt=""/>
+                                </div>
+                                <div class="col-8 text-start">
+                                    <div class="text-start fs-5 pb-3 fw-bold">
+                                        <span th:id="|accommodation${reservationRoom.accommodationId}|" th:text="${reservationRoom.accommodationName}"></span> /
+                                        <span th:id="|room${reservationRoom.roomId}|" th:text="${reservationRoom.roomName}"></span>
+                                    </div>
+                                    <div th:text="|예약 인원 : ${reservationRoom.headCount} 명|"></div>
+                                    <div th:text="|기간 : ${#temporals.format(reservationRoom.checkInDate, 'yyyy년 MM월 dd일')} ~ ${#temporals.format(reservationRoom.checkOutDate, 'yyyy년 MM월 dd일')}|"></div>
+                                    <div class="pt-3 text-end" th:text="|1박 당 ${#numbers.formatInteger(reservationRoom.roomPrice, 0, 'COMMA')} 원|"></div>
+                                    <div class="text-end fs-5" th:text="|총 ${reservationRoom.days}박 ${#numbers.formatInteger(reservationRoom.days * reservationRoom.roomPrice, 0, 'COMMA')} 원|"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fs-4 text-end fw-bold pt-3" th:text="|총 결재 금액 : ${#numbers.formatInteger(reservation.reservationTotalPrice, 0, 'COMMA')} 원|"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 </html>

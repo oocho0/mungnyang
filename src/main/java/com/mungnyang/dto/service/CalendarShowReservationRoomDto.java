@@ -21,17 +21,4 @@ public class CalendarShowReservationRoomDto {
     private String title;
     private LocalDateTime start;
     private LocalDateTime end;
-    private ExtendedProps extendedProps;
-
-    @Getter
-    @Setter
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class ExtendedProps {
-
-        private Long roomId;
-        private Long reservationId;
-        private Integer totalPrice;
-    }
 }

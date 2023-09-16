@@ -3,9 +3,9 @@ package com.mungnyang.service.service;
 import com.mungnyang.constant.ReservationStatus;
 import com.mungnyang.dto.service.CreateReservationDto;
 import com.mungnyang.dto.service.CreateReservationRoomDto;
+import com.mungnyang.dto.service.CreateReservationRoomDtoWithRoom;
 import com.mungnyang.dto.service.ReservationDto;
 import com.mungnyang.entity.member.Member;
-import com.mungnyang.entity.product.accommodation.room.Room;
 import com.mungnyang.entity.service.Reservation;
 import com.mungnyang.repository.service.ReservationRepository;
 import com.mungnyang.service.member.MemberService;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -54,19 +53,18 @@ public class ReservationService {
      * 신규 예약 저장하기
      *
      * @param email                회원의 아이디이자 이메일
-     * @param roomId               예약하는 숙소의 방 일련번호
      * @param createReservationDto 예약 정보가 담긴 DTO
      */
-    public void saveReservation(String email, Long roomId, CreateReservationDto createReservationDto) {
+    public void saveReservation(String email, CreateReservationDto createReservationDto) {
         Member signInMember = getMemberByMemberEmail(email);
-        Room findRoom = roomService.getRoomByRoomId(roomId);
         Reservation savedReservation = reservationRepository.save(Reservation.builder()
                 .member(signInMember)
                 .reservationDate(createReservationDto.getReservationDate())
                 .reservationTotalPrice(createReservationDto.getReservationTotalPrice())
                 .reservationStatus(ReservationStatus.RESERVATION)
                 .build());
-        List<Long> cartRoomId = reservationRoomService.saveReservationRoom(findRoom, savedReservation, createReservationDto.getReservationRoomList());
+        List<CreateReservationRoomDtoWithRoom> createReservationRoomDtoWithRoomList = roomService.getCreateReservationRoomDtoWithRoom(createReservationDto.getReservationRoomList());
+        List<Long> cartRoomId = reservationRoomService.saveReservationRoom(savedReservation, createReservationRoomDtoWithRoomList);
         if (cartRoomId.size() != 0) {
             cartRoomService.deleteCartRoomList(cartRoomId);
         }

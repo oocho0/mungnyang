@@ -65,12 +65,6 @@ public class CartRoomService {
                 .build());
     }
 
-    public void deleteAllCartRoom(Long cartId) {
-        List<CartRoom> savedCartRoomList = getCartRoomListByCartId(cartId);
-        for (CartRoom cartRoom : savedCartRoomList) {
-            deleteCartRoom(cartRoom.getCartRoomId());
-        }
-    }
 
     public void deleteCartRoomList(List<Long> cartRoomIdList) {
         for (Long cartRoomId : cartRoomIdList) {
@@ -87,69 +81,20 @@ public class CartRoomService {
         cartRoomRepository.delete(savedCartRoom);
     }
 
-    public void deleteCartRoom(SelectedCartRoom selectedCartRoom) {
-        List<SelectedCartRoom.SelectedCartRoomDto> selectedCartRoomDtoList = selectedCartRoom.getSelectedCartRoomList();
-        for (SelectedCartRoom.SelectedCartRoomDto selectedCartRoomDto : selectedCartRoomDtoList) {
-            deleteCartRoom(selectedCartRoomDto.getCartRoomId());
-        }
-    }
 
     /**
      * Url로 넘어온 cartRoomId와 로그인한 회원의 정보가 동일한지 판단해서 다르면 문제
-     * @param cartRoomId Url로 넘어온 cartRoomId
+     * @param cartRoomIds Url로 넘어온 cartRoomId 리스트
      * @param email 로그인한 회원의 아이디이자 이메일
      * @return 동일하지 않으면 true, 동일하면 문제없으므로 false
      */
-    public boolean isNotWrittenByPrinciple(Long cartRoomId, String email) {
-        CartRoom savedCartRoom = getCartRoomByCartRoomId(cartRoomId);
-        return !Objects.equals(email, savedCartRoom.getCreatedBy());
-    }
-
-    /**
-     * Url로 넘어온 삭제할 예약바구니-방 정보와 로그인한 회원의 정보가 동일한지 판단해서 다르면 문제
-     * @param selectedCartRoom Url로 넘어온 삭제할 예약바구니-방 정보
-     * @param email 로그인한 회원의 아이디이자 이메일
-     * @return 동일하지 않으면 true, 동일하면 문제없으므로 false
-     */
-    public boolean isNotWrittenByPrinciple(SelectedCartRoom selectedCartRoom, String email) {
+    public boolean isNotWrittenByPrinciple(List<Long> cartRoomIds, String email) {
         boolean result = false;
-        List<SelectedCartRoom.SelectedCartRoomDto> selectedCartRoomDtoList = selectedCartRoom.getSelectedCartRoomList();
-        for (SelectedCartRoom.SelectedCartRoomDto selectedCartRoomDto : selectedCartRoomDtoList) {
-            result = isNotWrittenByPrinciple(selectedCartRoomDto.getCartRoomId(), email);
+        for (Long cartRoomId : cartRoomIds) {
+            CartRoom savedCartRoom = getCartRoomByCartRoomId(cartRoomId);
+            result = !Objects.equals(email, savedCartRoom.getCreatedBy());
         }
         return result;
-    }
-
-    /**
-     * Url로 넘어온 삭제할 예약바구니-방 정보 accommodationId와 roomId가 carRoomId에 담긴 정보와 동일한지 판단해서 다르면 문제
-     * @param selectedCartRoom Url로 넘어온 삭제할 예약바구니-방 정보
-     * @return 동일하지 않으면 true, 동일하면 문제없으므로 false
-     */
-    public boolean isNotOneOfThem(SelectedCartRoom selectedCartRoom) {
-        boolean result = false;
-        List<SelectedCartRoom.SelectedCartRoomDto> selectedCartRoomDtoList = selectedCartRoom.getSelectedCartRoomList();
-        for (SelectedCartRoom.SelectedCartRoomDto selectedCartRoomDto : selectedCartRoomDtoList) {
-            result = isNotOneOfThem(selectedCartRoomDto.getAccommodationId(), selectedCartRoomDto.getCartRoomId(), selectedCartRoomDto.getCartRoomId());
-        }
-        return result;
-    }
-
-    /**
-     * Url로 넘어온 accommodationId와 roomId가 carRoomId에 담긴 정보와 동일한지 판단해서 다르면 문제
-     * @param accommodationId Url로 넘어온 accommodationId
-     * @param roomId  Url로 넘어온 roomId
-     * @param cartRoomId Url로 넘어온 cartRoomId
-     * @return 동일하지 않으면 true, 동일하면 문제없으므로 false
-     */
-    public boolean isNotOneOfThem(Long accommodationId, Long roomId, Long cartRoomId) {
-        CartRoom savedCartRoom = getCartRoomByCartRoomId(cartRoomId);
-        if (Objects.equals(accommodationId, savedCartRoom.getRoom().getAccommodation().getAccommodationId())) {
-            return false;
-        }
-        if (Objects.equals(roomId, savedCartRoom.getRoom().getRoomId())) {
-            return false;
-        }
-        return true;
     }
 
     /**

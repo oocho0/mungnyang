@@ -25,6 +25,8 @@ public class Reservation extends WriterEntity {
     private Member member;
 
     private LocalDateTime reservationDate;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ReservationStatus reservationStatus;
     private Integer reservationTotalPrice;
 }

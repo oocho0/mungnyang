@@ -13,7 +13,7 @@
     <div class="px-5 py-4 text-center bg-body rounded-3">
         <div class="p-5 text-center bg-body rounded-3">
             <h2 class="text-body-emphasis pb-5 border-bottom">편의 시설 관리</h2>
-            <div class="container py-3 mx-3">
+            <div class="container py-3">
                 <div class="row mb-3 g-2 justify-content-center align-items-center">
                     <div class="col-auto">
                         <label for="bigCategory" class="col-form-label">조건 검색 : </label>
@@ -88,7 +88,7 @@
                     </tr>
                     </tbody>
                 </table>
-                <nav th:with="startPage = ${(stores.number / stores.size ) * stores.size + 1},
+                <nav th:with="startPage = ${(stores.totalPages < 6) ? 1 : (stores.number / stores.size ) * stores.size + 1},
                                 endPage = (${(stores.totalPages == 0) ? 1 : (startPage + stores.size - 1 < stores.totalPages ? (startPage + stores.size - 1) : stores.totalPages)})">
                     <ul class="pagination justify-content-center">
                         <li class="page-item" th:classappend="${stores.number <= stores.size} ? 'disabled'">

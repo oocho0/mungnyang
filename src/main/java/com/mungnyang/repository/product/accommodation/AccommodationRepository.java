@@ -9,8 +9,10 @@ import java.util.List;
 
 public interface AccommodationRepository extends JpaRepository<Accommodation, Long>, QuerydslPredicateExecutor<Accommodation>, AccommodationPageRepository {
 
-    Accommodation findByAccommodationIdAndAccommodationStatusNot(Long accommodationIs, Status closed);
+    Accommodation findByAccommodationIdAndAccommodationStatusNot(Long accommodationId, Status closed);
     Accommodation findByAccommodationNameAndAccommodationStatusNot(String accommodationName, Status closed);
 
     List<Accommodation> findByAccommodationStatus(Status closed);
+
+    List<Accommodation> findByCreatedByAndAccommodationStatusNot(String email, Status closed);
 }
