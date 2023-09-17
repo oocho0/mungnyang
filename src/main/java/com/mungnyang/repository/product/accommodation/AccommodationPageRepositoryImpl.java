@@ -107,7 +107,7 @@ public class AccommodationPageRepositoryImpl implements AccommodationPageReposit
                                 accommodation.accommodationName,
                                 accommodation.smallCategory.bigCategory.name.concat("/").concat(accommodation.smallCategory.name),
                                 accommodationComment.comment.rate.avg().coalesce(0.0).floatValue(),
-                                accommodationComment.count(),
+                                accommodationComment.accommodationCommentId.countDistinct(),
                                 accommodation.accommodationStatus.stringValue(),
                                 accommodation.productAddress.address.main,
                                 accommodation.productAddress.Lon,

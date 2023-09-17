@@ -32,16 +32,6 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final CartService cartService;
 
-    /**
-     * 회원 일련번호로 회원 찾기
-     *
-     * @param memberId 회원 일련 번호
-     * @return Member 객체
-     */
-    @Transactional(readOnly = true)
-    public Member getMemberByMemberId(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(IllegalArgumentException::new);
-    }
 
     /**
      * 회원 이메일(아이디)로 회원 찾기
@@ -59,16 +49,6 @@ public class MemberService {
         return cartService.getCartByMemberId(signInMember.getMemberId());
     }
 
-    /**
-     * Url로 넘어온 cartId와 로그인한 회원의 정보가 동일한지 판단해서 다르면 문제
-     * @param cartId Url로 넘어온 CartId
-     * @param email 로그인한 회원의 아이디이자 이메일
-     * @return 동일하지 않으면 true, 동일하면 문제없으므로 false
-     */
-    public boolean isNotWrittenByPrinciple(Long cartId, String email) {
-        Cart findCart = getCart(email);
-        return !Objects.equals(cartId, findCart.getCartId());
-    }
 
     /**
      * 회원 아이디 중복 확인 후, 회원 DB에 저장하기
@@ -316,34 +296,6 @@ public class MemberService {
             admin.setRole(Role.ADMIN.name());
             admin.setMemberType(MemberType.NORMAL.name());
             saveMember(admin);
-        }
-        if (getMemberByMemberEmail("seller@abc.com") == null) {
-            CreateMemberDto seller = new CreateMemberDto();
-            seller.setName("판매자");
-            seller.setEmail("seller@abc.com");
-            seller.setPassword("12345678");
-            seller.setAddressZipcode("00000");
-            seller.setAddressMain("한국");
-            seller.setAddressDetail("서울");
-            seller.setAddressExtra("어딘가");
-            seller.setTel("010-1212-3434");
-            seller.setRole(Role.SELLER.name());
-            seller.setMemberType(MemberType.NORMAL.name());
-            saveMember(seller);
-        }
-        if (getMemberByMemberEmail("user@abc.com") == null) {
-            CreateMemberDto user = new CreateMemberDto();
-            user.setName("사용자");
-            user.setEmail("user@abc.com");
-            user.setPassword("12345678");
-            user.setAddressZipcode("00000");
-            user.setAddressMain("한국");
-            user.setAddressDetail("서울");
-            user.setAddressExtra("어딘가");
-            user.setTel("010-4321-4321");
-            user.setRole(Role.USER.name());
-            user.setMemberType(MemberType.NORMAL.name());
-            saveMember(user);
         }
     }
 }

@@ -13,6 +13,7 @@ public class CartRoomDto {
     private Long cartRoomId;
     private Long accommodationId;
     private String accommodationName;
+    private String accommodationStatus;
     private Long roomId;
     private String roomName;
     private Integer roomPrice;

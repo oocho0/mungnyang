@@ -11,18 +11,16 @@ import com.mungnyang.repository.fixedEntity.BigCategoryRepository;
 import com.mungnyang.repository.fixedEntity.SmallCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CategoryService {
     private final BigCategoryRepository bigCategoryRepository;
     private final SmallCategoryRepository smallCategoryRepository;
-
-    public BigCategory getBigCategoriesById(Long bigCategoryId) {
-        return bigCategoryRepository.findById(bigCategoryId).orElseThrow(IllegalArgumentException::new);
-    }
 
     /**
      * 조회 화면에서의 숙소를 제외한 대분류 리스트 반환

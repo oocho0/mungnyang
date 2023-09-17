@@ -1,5 +1,6 @@
 package com.mungnyang.repository.product.accommodation.room;
 
+import com.mungnyang.constant.ReservationStatus;
 import com.mungnyang.entity.product.accommodation.room.QRoom;
 import com.mungnyang.entity.product.accommodation.room.Room;
 import com.mungnyang.entity.service.QReservationRoom;
@@ -26,6 +27,7 @@ public class RoomPageRepositoryImpl implements RoomPageRepository {
                 jpaQueryFactory.select(room.roomId)
                         .from(room)
                         .leftJoin(reservationRoom).on(room.roomId.eq(reservationRoom.room.roomId))
+                        .where(reservationRoom.reservationStatus.eq(ReservationStatus.RESERVATION))
                         .where(reservationRoom.checkInDate.eq(checkInTime)
                                 .or(reservationRoom.checkOutDate.eq(checkOutDate))
                                 .or(reservationRoom.checkInDate.between(checkInTime, checkOutDate))
@@ -37,7 +39,6 @@ public class RoomPageRepositoryImpl implements RoomPageRepository {
     @Override
     public List<Room> getRoomAvailability(Long roomId, LocalDateTime inputCheckInDate, LocalDateTime inputCheckOutDate) {
         return jpaQueryFactory.selectFrom(room)
-                .leftJoin(reservationRoom).on(room.roomId.eq(reservationRoom.room.roomId))
                 .where(room.roomId.eq(roomId),
                         searchByCheckInTime(inputCheckInDate, inputCheckOutDate))
                 .fetch();

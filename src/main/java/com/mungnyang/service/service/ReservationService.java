@@ -13,12 +13,14 @@ import com.mungnyang.service.product.StatusService;
 import com.mungnyang.service.product.accommodation.room.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ReservationService {
     private final ReservationRepository reservationRepository;

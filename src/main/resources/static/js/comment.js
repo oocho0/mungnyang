@@ -71,7 +71,7 @@ function page(page){
                 var date = moment(value.createDate);
                 var dateStr = date.format('YYYY-MM-DD');
                 if(result.email == value.email){
-                    deleteBtn =  '        <button class="btn btn-outline-secondary btn-sm" onclick="deleteComment(' + value.commentId + ');">삭제 하기</button>';
+                    deleteBtn =  '        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="deleteComment(' + value.commentId + ');">삭제 하기</button>';
                 }
                 $("#existComment").append($(
                     '<div class="card mb-2">' +
@@ -184,4 +184,6 @@ function deleteComment(id){
             }
         }
     });
+
+    return false;
 }

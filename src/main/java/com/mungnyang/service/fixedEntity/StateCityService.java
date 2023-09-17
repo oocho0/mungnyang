@@ -12,10 +12,12 @@ import com.mungnyang.repository.fixedEntity.CityRepository;
 import com.mungnyang.repository.fixedEntity.StateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class StateCityService {
 
@@ -64,9 +66,5 @@ public class StateCityService {
             throw new IllegalArgumentException();
         }
         return findCity;
-    }
-
-    public State findStateByStateId(Long stateId) {
-        return stateRepository.findById(stateId).orElseThrow(IllegalArgumentException::new);
     }
 }

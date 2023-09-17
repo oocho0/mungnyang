@@ -102,7 +102,8 @@ public class StoreController {
     }
 
     @GetMapping("/new")
-    public String loadAddAdminPage(CreateMemberDto createMemberDto, Model model) {
+    public String loadAddAdminPage(Model model) {
+        CreateMemberDto createMemberDto = new CreateMemberDto();
         createMemberDto.setRole(Role.ADMIN.name());
         createMemberDto.setMemberType(MemberType.NORMAL.name());
         model.addAttribute("createMemberDto", createMemberDto);

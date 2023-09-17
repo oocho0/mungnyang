@@ -13,7 +13,6 @@ public class InfoReservationRoomDto {
     private LocalDateTime checkInDate;
     private LocalDateTime checkOutDate;
     private String memberName;
-    private String memberTel;
     private Integer days;
 
     @QueryProjection

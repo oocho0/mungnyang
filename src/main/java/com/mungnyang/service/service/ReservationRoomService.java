@@ -91,7 +91,6 @@ public class ReservationRoomService {
         for (InfoReservationRoomDto infoReservationRoomDto : reservationRoomList) {
             ReservationRoom reservationRoom = getReservationRoomByReservationRoomId(infoReservationRoomDto.getReservationRoomId());
             infoReservationRoomDto.setMemberName(reservationRoom.getReservation() == null ? "지정 예약" : reservationRoom.getReservation().getMember().getName());
-            infoReservationRoomDto.setMemberTel(reservationRoom.getReservation() == null ? "없음" : reservationRoom.getReservation().getMember().getTel());
             infoReservationRoomDto.setDays((int) (ChronoUnit.DAYS.between(infoReservationRoomDto.getCheckInDate(), infoReservationRoomDto.getCheckOutDate()) + 1));
         }
         return reservationRoomPage;
@@ -107,7 +106,6 @@ public class ReservationRoomService {
         for (InfoReservationRoomDto infoReservationRoomDto : reservationRoomList) {
             ReservationRoom reservationRoom = getReservationRoomByReservationRoomId(infoReservationRoomDto.getReservationRoomId());
             infoReservationRoomDto.setMemberName(reservationRoom.getReservation() == null ? "지정 예약" : reservationRoom.getReservation().getMember().getName());
-            infoReservationRoomDto.setMemberTel(reservationRoom.getReservation() == null ? "없음" : reservationRoom.getReservation().getMember().getTel());
             infoReservationRoomDto.setDays((int) (ChronoUnit.DAYS.between(infoReservationRoomDto.getCheckInDate(), infoReservationRoomDto.getCheckOutDate()) + 1));
         }
         return reservationRoomPage;

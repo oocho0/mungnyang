@@ -9,10 +9,12 @@ import com.mungnyang.repository.service.CartRepository;
 import com.mungnyang.service.product.accommodation.room.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CartService {
     private final CartRepository cartRepository;

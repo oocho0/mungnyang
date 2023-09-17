@@ -103,7 +103,6 @@ function page(page){
                     '<tr>' +
                     '    <th scope="row">' + value.reservationRoomId + '</th>' +
                     '    <td>' + value.memberName + '</td>' +
-                    '    <td>' + value.memberTel + '</td>' +
                     '    <td>' + value.headCount + '</td>' +
                     '    <td>' + value.days + '</td>' +
                     '    <td>' + checkInDateStr + '</td>' +

@@ -50,7 +50,6 @@
                                     <tr>
                                         <th scope="col">예약 번호</th>
                                         <th scope="col">예약자</th>
-                                        <th scope="col">연락처</th>
                                         <th scope="col">인원</th>
                                         <th scope="col">일수</th>
                                         <th scope="col">체크인 날짜</th>
@@ -59,13 +58,12 @@
                                     </thead>
                                     <tbody class="table-group-divider">
                                     <tr th:if="${#arrays.isEmpty(room.currentReservationRoomList.content)}">
-                                        <td colspan="7">예정된 예약 일정이 없습니다.</td>
+                                        <td colspan="6">예정된 예약 일정이 없습니다.</td>
                                     </tr>
                                     <tr th:unless="${#arrays.isEmpty(room.currentReservationRoomList.content)}"
                                         th:each="reservationRoom, status : ${room.currentReservationRoomList.content}">
                                         <th scope="row" th:text="${reservationRoom.reservationRoomId}"></th>
                                         <td th:text="${reservationRoom.memberName}"></td>
-                                        <td th:text="${reservationRoom.memberTel}"></td>
                                         <td th:text="${reservationRoom.headCount}"></td>
                                         <td th:text="|${reservationRoom.days}박|"></td>
                                         <td th:text="${#temporals.format(reservationRoom.checkInDate, 'yyyy년 MM월 dd일')}"></td>
@@ -124,7 +122,6 @@
                                     <tr>
                                         <th scope="col">예약 번호</th>
                                         <th scope="col">예약자</th>
-                                        <th scope="col">연락처</th>
                                         <th scope="col">인원</th>
                                         <th scope="col">일수</th>
                                         <th scope="col">체크인 날짜</th>
@@ -133,13 +130,12 @@
                                     </thead>
                                     <tbody class="table-group-divider">
                                     <tr th:if="${#arrays.isEmpty(room.pastReservationRoomList.content)}">
-                                        <td colspan="7">지난 예약 일정이 없습니다.</td>
+                                        <td colspan="6">지난 예약 일정이 없습니다.</td>
                                     </tr>
                                     <tr th:unless="${#arrays.isEmpty(room.pastReservationRoomList.content)}"
                                         th:each="reservationRoom, status : ${room.pastReservationRoomList.content}">
                                         <th scope="row" th:text="${reservationRoom.reservationRoomId}"></th>
                                         <td th:text="${reservationRoom.memberName}"></td>
-                                        <td th:text="${reservationRoom.memberTel}"></td>
                                         <td th:text="${reservationRoom.headCount}"></td>
                                         <td th:text="|${reservationRoom.days}박|"></td>
                                         <td th:text="${#temporals.format(reservationRoom.checkInDate, 'yyyy년 MM월 dd일')}"></td>

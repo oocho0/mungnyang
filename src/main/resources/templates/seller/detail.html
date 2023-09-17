@@ -192,7 +192,8 @@
                                         <div>
                                             <span th:text="${comment.email}"></span> / <span th:text="${#temporals.format(comment.createDate, 'yyyy-MM-dd')}"></span>
                                         </div>
-                                        <button th:if="${#strings.equals(comment.email, user)}" class="btn btn-outline-secondary btn-sm" th:onclick="|deleteComment(${comment.commentId})|">삭제 하기
+                                        <button th:if="${#strings.equals(comment.email, user)}" type="button" class="btn btn-outline-secondary btn-sm"
+                                                th:onclick="|deleteComment(${comment.commentId})|">삭제 하기
                                         </button>
                                     </div>
                                     <div class="card-body row">

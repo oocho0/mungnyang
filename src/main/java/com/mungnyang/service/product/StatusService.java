@@ -31,23 +31,7 @@ public class StatusService {
         return status == Status.OPEN ? Status.OPEN.name() : (status == Status.CLOSED ? Status.CLOSED.name() : Status.PAUSE.name());
     }
 
-    /**
-     * String타입의 isTrue를 IsTrue타입으로 바꿈
-     * @param isTrue String타입의 isTrue
-     * @return 변환된 IsTrue타입
-     */
-    public static IsTrue isTrueConverter(String isTrue){
-        return StringUtils.equals(isTrue, IsTrue.YES.name()) ? IsTrue.YES : IsTrue.NO;
-    }
 
-    /**
-     * String타입의 reservationStatus를 ReservationStatus타입으로 바꿈
-     * @param reservationStatus String타입의 reservationStatus
-     * @return 변환된 IsAvailable타입
-     */
-    public static ReservationStatus reservationStatusConverter(String reservationStatus) {
-        return StringUtils.equals(reservationStatus, ReservationStatus.RESERVATION.name()) ? ReservationStatus.RESERVATION : ReservationStatus.CANCEL;
-    }
 
     /**
      * ReservationStatus타입의 reservationStatus를 String타입으로 바꿈

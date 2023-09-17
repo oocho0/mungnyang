@@ -147,7 +147,7 @@ public class StorePageRepositoryImpl implements StorePageRepository {
                                 store.storeName,
                                 store.smallCategory.bigCategory.name.concat(" / ").concat(store.smallCategory.name),
                                 storeComment.comment.rate.avg().coalesce(0.0).floatValue(),
-                                storeComment.count(),
+                                storeComment.storeCommentId.countDistinct(),
                                 store.storeStatus.stringValue(),
                                 store.productAddress.address.main,
                                 store.productAddress.Lon,
