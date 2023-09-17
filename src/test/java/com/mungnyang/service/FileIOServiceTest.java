@@ -20,7 +20,6 @@ import java.util.List;
 
 @SpringBootTest
 @Slf4j
-@TestPropertySource(locations = "/application-real.properties")
 class FileIOServiceTest {
 
     @Autowired

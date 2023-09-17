@@ -20,6 +20,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
+@TestPropertySource(locations = "classpath:application-test.properties")
 class AccommodationServiceTest {
 
     @Autowired
@@ -71,7 +73,7 @@ class AccommodationServiceTest {
         assertThat(findAccommodationImages.get(0).getImage().getFileName()).isEqualTo(testImageList.get(0).getOriginalFilename());
         assertThat(findAccommodationFacilities.get(0).getFacilityName()).isEqualTo(testFacilityList.get(0));
         assertThat(findRooms.get(0).getRoomName()).isEqualTo(testRoomList.get(0).getRoomName());
-        assertThat(roomFacilities.get(0).getFacilityName()).isEqualTo(testRoomList.get(0));
+        assertThat(roomFacilities.get(0).getFacilityName()).isEqualTo(testRoomList.get(0).getFacilityList().get(0));
         assertThat(roomImages.get(0).getImage().getFileName()).isEqualTo(testRoomList.get(0).getImageList().get(0).getOriginalFilename());
     }
 
