@@ -6,8 +6,7 @@ build/
 !**/src/test/**/build/
 *.key
 Kakao.java
-application-kakaokeys.properties
-application-path.properties
+*.properties
 
 ### STS ###
 .apt_generated
