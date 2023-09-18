@@ -29,7 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.formLogin().loginPage(Url.LOGIN).defaultSuccessUrl(Url.MAIN)
                 .usernameParameter("email").failureUrl(Url.LOGIN_FAIL);
         http.logout().logoutRequestMatcher(new AntPathRequestMatcher(Url.LOGOUT)).logoutSuccessUrl(Url.MAIN);
-        http.authorizeRequests().mvcMatchers(Url.MAIN, "/member/**", "/search/**", "/images/**", "/store/**", "/accommodation/**").permitAll()
+        http.authorizeRequests().mvcMatchers(Url.MAIN, "/member/**", "/search/**", "/images/**", "/store/**", "/accommodation/**", "/profile").permitAll()
                 .mvcMatchers("/admin/**").hasRole(Role.ADMIN.name())
                 .mvcMatchers("/seller/**").hasAnyRole(Role.ADMIN.name(), Role.SELLER.name())
                 .mvcMatchers("/user/**").hasAnyRole(Role.ADMIN.name(), Role.SELLER.name(), Role.USER.name())
