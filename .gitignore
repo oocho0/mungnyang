@@ -6,9 +6,8 @@ build/
 !**/src/test/**/build/
 *.key
 *.properties
-!gradle/wrapper/gradle-wrapper.properties
-!src/main/resources/application.properties
-!src/main/resources/application-test.properties
+src/main/resources/application-path.properties
+src/main/resources/application-kakaokeys.properties
 ### STS ###
 .apt_generated
 .classpath
