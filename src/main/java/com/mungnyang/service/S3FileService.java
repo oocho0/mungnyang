@@ -24,7 +24,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class S3FileService implements FileService {
     @Value("${cloud.aws.s3.bucket}")
-    private final String bucket;
+    private String bucket;
     private final Path path;
     private final AmazonS3 amazonS3;
 
