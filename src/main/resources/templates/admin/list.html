@@ -92,27 +92,27 @@
                                 endPage = (${(stores.totalPages == 0) ? 1 : (startPage + stores.size - 1 < stores.totalPages ? (startPage + stores.size - 1) : stores.totalPages)})">
                     <ul class="pagination justify-content-center">
                         <li class="page-item" th:classappend="${stores.number <= stores.size} ? 'disabled'">
-                            <a class="page-link" th:onclick="page(0);" aria-label="first">
+                            <a class="page-link" onclick="page(0);" aria-label="first">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
                         <li class="page-item" th:classappend="${stores.first} ? 'disabled'">
-                            <a class="page-link" th:onclick="page(' + ${stores.number - 1} + ');" aria-label="Previous">
+                            <a class="page-link" th:onclick="|page(${stores.number - 1});|" aria-label="Previous">
                                 <span aria-hidden="true">&lt;</span>
                             </a>
                         </li>
                         <li class="page-item" th:each="page: ${#numbers.sequence(startPage, endPage)}" th:classappend="${stores.number eq page-1} ? 'active' : ''">
-                            <a class="page-link" th:onclick="page(' + ${page-1} + ');" th:inline="text">
+                            <a class="page-link" th:onclick="|page(${page-1});|" th:inline="text">
                                 [[${page}]]
                             </a>
                         </li>
                         <li class="page-item" th:classappend="${stores.last} ? 'disabled'">
-                            <a class="page-link" th:onclick="page(' + ${stores.number + 1} + ');" aria-label="Next">
+                            <a class="page-link" th:onclick="|page(${stores.number + 1});|" aria-label="Next">
                                 <span aria-hidden="true">&gt;</span>
                             </a>
                         </li>
                         <li class="page-item" th:classappend="${(stores.totalPages/stores.size) <= startPage} ? 'disabled'">
-                            <a class="page-link" th:onclick="page(' + ${stores.totalPages -1} + ');" aria-label="last">
+                            <a class="page-link" th:onclick="|page(${stores.totalPages -1});|" aria-label="last">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>

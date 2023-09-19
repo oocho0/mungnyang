@@ -217,27 +217,27 @@
                                 <nav th:with="startPage = ${(accommodation.comments.number / accommodation.comments.size ) * accommodation.comments.size + 1}, endPage = (${(accommodation.comments.totalPages == 0) ? 1 : (startPage + accommodation.comments.size - 1 < accommodation.comments.totalPages ? (startPage + accommodation.comments.size - 1) : accommodation.comments.totalPages)})">
                                     <ul class="pagination justify-content-center">
                                         <li class="page-item" th:classappend="${accommodation.comments.number <= accommodation.comments.size} ? 'disabled'">
-                                            <a class="page-link" th:onclick="page(0);" aria-label="first">
+                                            <a class="page-link" onclick="page(0);" aria-label="first">
                                                 <span aria-hidden="true">&laquo;</span>
                                             </a>
                                         </li>
                                         <li class="page-item" th:classappend="${accommodation.comments.first} ? 'disabled'">
-                                            <a class="page-link" th:onclick="page(' + ${accommodation.comments.number - 1} + ');" aria-label="Previous">
+                                            <a class="page-link" th:onclick="|page(${accommodation.comments.number - 1});|" aria-label="Previous">
                                                 <span aria-hidden="true">&lt;</span>
                                             </a>
                                         </li>
                                         <li class="page-item" th:each="page: ${#numbers.sequence(startPage, endPage)}" th:classappend="${accommodation.comments.number eq page-1} ? 'active' : ''">
-                                            <a class="page-link" th:onclick="page(' + ${page-1} + ');" th:inline="text">
+                                            <a class="page-link" th:onclick="|page(${page-1});|" th:inline="text">
                                                 [[${page}]]
                                             </a>
                                         </li>
                                         <li class="page-item" th:classappend="${accommodation.comments.last} ? 'disabled'">
-                                            <a class="page-link" th:onclick="page(' + ${accommodation.comments.number + 1} + ');" aria-label="Next">
+                                            <a class="page-link" th:onclick="|page(${accommodation.comments.number + 1} );|" aria-label="Next">
                                                 <span aria-hidden="true">&gt;</span>
                                             </a>
                                         </li>
                                         <li class="page-item" th:classappend="${(accommodation.comments.totalPages/accommodation.comments.size) <= startPage} ? 'disabled'">
-                                            <a class="page-link" th:onclick="page(' + ${accommodation.comments.totalPages -1} + ');" aria-label="last">
+                                            <a class="page-link" th:onclick="|page(${accommodation.comments.totalPages -1});|" aria-label="last">
                                                 <span aria-hidden="true">&raquo;</span>
                                             </a>
                                         </li>
