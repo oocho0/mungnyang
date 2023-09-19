@@ -1,44 +1,64 @@
 package com.mungnyang.service;
 
+import com.mungnyang.constant.Path;
 import com.mungnyang.entity.product.Image;
+import com.mungnyang.entity.product.Product;
+import com.mungnyang.entity.product.accommodation.Accommodation;
+import com.mungnyang.entity.product.accommodation.room.Room;
+import com.mungnyang.entity.product.store.Store;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
 import java.util.UUID;
 
-@Service
+@RequiredArgsConstructor
 @Slf4j
-public class FileIOService {
+public class FileIOService implements FileService {
+
+    private final Path path;
 
     /**
      * 이미지를 해당 Path에 저장하기
-     * @param uploadPath 업로드될 Path
+     * @param product 업로드될 Path
      * @param originalFileName 파일의 원래 이름
-     * @param fileData 이미지 파일의 바이트 정보
+     * @param imageFile 이미지 파일의 바이트 정보
      * @return 저장된 파일의 UUID 이름
      * @throws Exception
      */
-    public String uploadFile(String uploadPath, String originalFileName, byte[] fileData) throws Exception{
+    @Override
+    public void uploadFile(Image image, Product product, String originalFileName, MultipartFile imageFile) throws Exception{
+        String savedPath = getPath(product);
         UUID uuid = UUID.randomUUID();
         String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
         String savedFileName = uuid.toString() + extension;
-        String fileUploadFullUrl = uploadPath + "/" + savedFileName;
+        String fileUploadFullUrl = savedPath + "/" + savedFileName;
         FileOutputStream fos = new FileOutputStream(fileUploadFullUrl);
-        fos.write(fileData);
+        fos.write(imageFile.getBytes());
         fos.close();
-        return savedFileName;
+        image.setName(savedFileName);
+        image.setFileName(originalFileName);
+        image.setUrl("/images/" + product.getClass().getSimpleName().toLowerCase() + "/" + savedFileName);
     }
 
     /**
      * 해당 Path의 이미지 파일 삭제하기
-     * @param filePath 삭제할 이미지의 path
+     * @param product Store/Accommodation/Room 타입에 참조된 이미지 삭제
+     * @param name 삭제할 이미지의 name
      * @throws Exception
      */
-    public void deleteFile(String filePath) throws Exception{
-        File deleteFile = new File(filePath);
+    @Override
+    public void deleteFile(Product product, String name) throws Exception{
+        String savedPath = getPath(product);
+        savedPath += "/" + name;
+        deleteFile(savedPath);
+    }
+
+    private void deleteFile(String savedPath) {
+        File deleteFile = new File(savedPath);
         if(deleteFile.exists()) {
             deleteFile.delete();
             log.info("파일을 삭제하였습니다.");
@@ -74,5 +94,23 @@ public class FileIOService {
                 }
             }
         }
+    }
+
+    /**
+     * 이미지의 Path 가져오기
+     * @param product
+     * @return
+     */
+    private String getPath(Product product) {
+        if (product instanceof Store) {
+            return path.getStoreImagePath();
+        }
+        if (product instanceof Accommodation) {
+            return path.getAccomImagePath();
+        }
+        if (product instanceof Room) {
+            return path.getRoomImagePath();
+        }
+        return null;
     }
 }

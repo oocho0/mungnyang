@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ import java.util.List;
 class FileIOServiceTest {
 
     @Autowired
-    private FileIOService fileIOService;
+    private FileService fileService;
     @Autowired
     private AccommodationImageRepository accommodationImageRepository;
     @Autowired

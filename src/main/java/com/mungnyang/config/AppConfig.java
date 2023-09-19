@@ -20,7 +20,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Objects;
 
 @Slf4j
 @Configuration
@@ -71,4 +70,5 @@ public class AppConfig {
     public JPAQueryFactory jpaQueryFactory(){
         return new JPAQueryFactory(entityManager);
     }
+
 }

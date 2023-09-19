@@ -5,20 +5,16 @@ import com.mungnyang.constant.Path;
 import com.mungnyang.entity.product.Image;
 import com.mungnyang.entity.product.Product;
 import com.mungnyang.entity.product.ProductImage;
-import com.mungnyang.entity.product.accommodation.Accommodation;
 import com.mungnyang.entity.product.accommodation.AccommodationImage;
-import com.mungnyang.entity.product.accommodation.room.Room;
 import com.mungnyang.entity.product.accommodation.room.RoomImage;
-import com.mungnyang.entity.product.store.Store;
 import com.mungnyang.entity.product.store.StoreImage;
-import com.mungnyang.service.FileIOService;
+import com.mungnyang.service.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ImageService {
 
-    private final FileIOService fileIOService;
+    private final FileService fileService;
     private final Path path;
 
     /**
@@ -49,13 +45,8 @@ public class ImageService {
         String imageName = "";
         String imageUrl = "";
         if (!StringUtils.isEmpty(originalFileName)) {
-            String savePath = getPath(product);
-            imageName = fileIOService.uploadFile(savePath, originalFileName, imageFile.getBytes());
-            imageUrl = "/images/" + product.getClass().getSimpleName().toLowerCase() + "/" + imageName;
+            fileService.uploadFile(image, product, originalFileName, imageFile);
         }
-        image.setName(imageName);
-        image.setFileName(originalFileName);
-        image.setUrl(imageUrl);
         return image;
     }
 
@@ -66,9 +57,7 @@ public class ImageService {
      * @throws Exception
      */
     public void deleteImage(Product product, Image image) throws Exception {
-        String savedPath = getPath(product);
-        savedPath += "/" + image.getName();
-        fileIOService.deleteFile(savedPath);
+        fileService.deleteFile(product, image.getName());
     }
 
     public void clearStorage(List<? extends ProductImage> productImage) {
@@ -96,24 +85,6 @@ public class ImageService {
                 images.add(roomImage.getImage());
             }
         }
-        fileIOService.clearStorage(images, savedPath);
-    }
-
-    /**
-     * 이미지의 Path 가져오기
-     * @param product
-     * @return
-     */
-    private String getPath(Product product) {
-        if (product instanceof Store) {
-            return path.getStoreImagePath();
-        }
-        if (product instanceof Accommodation) {
-            return path.getAccomImagePath();
-        }
-        if (product instanceof Room) {
-            return path.getRoomImagePath();
-        }
-        return null;
+        fileService.clearStorage(images, savedPath);
     }
 }
