@@ -34,7 +34,6 @@
                 th:text="${#strings.equals(createMemberDto.role, 'SELLER')} ? '관리자 회원 가입' : '회원 가입'"></h2>
             <div class="container py-3 mx-5">
                 <!--표시되지 않은 속성-->
-                <input type="hidden" th:field="*{memberId}"/>
                 <input type="hidden" th:field="*{role}"/>
                 <input type="hidden" th:field="*{tel}"/>
                 <input type="hidden" th:field="*{memberType}">
