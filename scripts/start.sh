@@ -22,8 +22,7 @@ chmod +x $JAR_NAME
 echo "> $JAR_NAME 실행"
 IDLE_PROFILE=$(find_idle_profile)
 echo "> $JAR_NAME 를 profile=$IDLE_PROFILE 로 실행"
-nohup java -cp /home/ec2-user/app \
-    -jar \
-    -Dspring.config.location=classpath:/application.properties,classpath:/application-kakaokeys.properties,classpath:/application-path.properties,classpath:/application-test.properties,classpath:/application-$IDLE_PROFILE.properties,classpath:/application-real-db.properties \
+nohup java -jar \
+    -Dspring.config.location=classpath:/application.properties,/home/ec2-user/app/application-kakaokeys.properties,/home/ec2-user/app/application-path.properties,classpath:/application-test.properties,classpath:/application-$IDLE_PROFILE.properties,/home/ec2-user/app/application-real-db.properties \
     -Dspring.profiles.active=$IDLE_PROFILE \
     $JAR_NAME > $REPOSITORY/nohup.out 2>&1 &
