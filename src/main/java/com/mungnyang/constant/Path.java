@@ -7,11 +7,11 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 
 @Getter
 @RequiredArgsConstructor
-//@ConstructorBinding
-//@ConfigurationProperties("path")
+@ConstructorBinding
+@ConfigurationProperties("path")
 public final class Path {
-    private final String storeImagePath = "images/store/";
-    private final String roomImagePath = "images/room/";
-    private final String accomImagePath = "images/accommodation/";
-    private final String uploadPath = "files:///images/";
+    private final String storeImagePath;
+    private final String roomImagePath;
+    private final String accomImagePath;
+    private final String uploadPath;
 }
