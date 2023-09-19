@@ -51,8 +51,8 @@ public class StoreService {
      */
     public void registerStore(CreateStoreDto createStoreDto) throws Exception {
         Store store = createStore(createStoreDto);
-        storeRepository.save(store);
         storeImageService.saveStoreImages(store, createStoreDto.getImageList());
+        storeRepository.save(store);
     }
 
     /**
