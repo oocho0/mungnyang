@@ -249,7 +249,7 @@ function searchStore(){
                     '<li class="list-group-item list-group-item-action result1 py-2 px-4" id="' + value.id + '">' +
                     '    <div class="row g-3">' +
                     '        <div class="col-3">' +
-                    '            <img style="width: 100%; height: 120px; object-fit: cover;" src=' + value.repImageUrl + '/>' +
+                    '            <img style="width: 100%; height: 120px; object-fit: cover;" src="' + value.repImageUrl + '"/>' +
                     '        </div>' +
                     '        <div class="col-9">' +
                     '            <div class="d-flex justify-content-between align-items-center py-2">' +
