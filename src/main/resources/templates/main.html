@@ -139,13 +139,11 @@
                 </div>
                 <div id="searchResult" class="accordion-collapse collapse show" data-bs-parent="#searchTab" hidden="hidden">
                     <div class="accordion-body">
-                        <div class="row" style="height: 500px">
-                            <div id="map" class="col-5"></div>
+                        <div class="row">
+                            <div id="map" class="col-5" style="height: 500px;"></div>
                             <script type="text/javascript" th:src="@{/js/mainKakaoMapApi.js}"></script>
-                            <div class="col-7" style="overflow: auto;">
-                                <ul class="list-group list-group-flush p-0 border text-start" style="overflow: auto;" id="resultList">
-                                </ul>
-                            </div>
+                            <ul class="col-7 list-group list-group-flush p-0 border text-start" style="height: 500px; overflow: auto;" id="resultList">
+                            </ul>
                         </div>
                     </div>
                 </div>
