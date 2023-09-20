@@ -15,15 +15,7 @@
             src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b7f35cfc0e791dd9028e3e4f0bf9fba9"></script>
     <script type="text/javascript" th:src="@{/js/datePicker.js}"></script>
     <script type="text/javascript" th:src="@{/js/options.js}"></script>
-    <script type="text/javascript" th:inline="javascript">
-        $(document).ready(function(){
-            var alert = [[${alert}]];
-            if(alert != null){
-                alert(alert);
-            };
-        });
-
-    </script>
+    <script type="text/javascript" th:inline="javascript"></script>
 </th:block>
 <div layout:fragment="content">
     <div class="px-5 py-4 text-center bg-body rounded-3">
