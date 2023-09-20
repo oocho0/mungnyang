@@ -133,6 +133,9 @@ function validate(checkInDate, checkOutDate){
 
 function addReservationList(formData){
     var k = 0;
+    if(bookArray.length == 0){
+        return;
+    }
     for(var i = 0; i < bookArray.length; i++){
         if(bookArray[i].id != null) {
             formData.append("reservationList[" + k + "].reservationRoomId", bookArray[i].id);

@@ -33,7 +33,7 @@ function request(){
 }
 
 function makeFormData(formData){
-    addImageToFormData(formData);
+    addFormData(formData);
     addFacilityData(formData);
     addReservationList(formData);
 }
