@@ -178,8 +178,6 @@ public class MemberController {
         if (result != null) {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
-        memberService.withdrawMember(signInMember);
-        SecurityContextHolder.clearContext();
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
@@ -190,8 +188,18 @@ public class MemberController {
         if (result != null) {
             return new ResponseEntity<>(result.get(1), HttpStatus.BAD_REQUEST);
         }
+        return new ResponseEntity<>("success", HttpStatus.OK);
+    }
+
+    @PostMapping("/delete")
+    public String deleteAccount(@RequestBody Map<String, String> param, Principal principal, Model model) {
+        if (!param.get("deleteAccount").equals("deleteYes")) {
+            return "error";
+        }
+        Member signInMember = memberService.getMemberByMemberEmail(principal.getName());
         memberService.withdrawMember(signInMember);
         SecurityContextHolder.clearContext();
-        return new ResponseEntity<>("success", HttpStatus.OK);
+        model.addAttribute("alert", "회원 탈퇴를 완료하였습니다.");
+        return "main";
     }
 }

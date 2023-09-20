@@ -8,6 +8,11 @@ function request(){
 
     var param = JSON.stringify(paramData);
 
+    var deleteParamData = {
+        deleteAccount : "deleteYes",
+    };
+    var deleteParam = JSON.stringify(deleteParamData);
+
     $.ajax({
         url      : url,
         type     : "POST",
@@ -20,9 +25,16 @@ function request(){
         dataType : "json",
         cache   : false,
         success  : function(result, status){
-            console.log(result);
-            alert('탈퇴가 완료되었습니다.');
-            location.href='/';
+            $.ajax({
+                url : "/member/delete",
+                type : "POST",
+                contentType : "application/json",
+                data : deleteParam,
+                beforeSend : function(xhr){
+                    /* 데이터를 전송하기 전에 헤더에 csrf값을 설정 */
+                    xhr.setRequestHeader(header, token);
+                }
+            });
         },
         error : function(status, error){
             if(status.status == '401' || status.status == '403' || status.status == '404'){

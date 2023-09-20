@@ -88,7 +88,7 @@ function addReservationList(formData){
     for(var i = 0; i < initialBooked.length; i++){
         var parsedCheckInDate = initialBooked[i].checkInDate.format("YYYY-MM-DD[T]HH:mm:ss");
         var parsedCheckOutDate = initialBooked[i].checkOutDate.format("YYYY-MM-DD[T]HH:mm:ss");
-        formData.append("reservationList[" + k + "].checkInDate", parsedCheckInDate);
-        formData.append("reservationList[" + k + "].checkOutDate", parsedCheckOutDate);
+        formData.append("reservationList[" + i + "].checkInDate", parsedCheckInDate);
+        formData.append("reservationList[" + i + "].checkOutDate", parsedCheckOutDate);
     }
 }
