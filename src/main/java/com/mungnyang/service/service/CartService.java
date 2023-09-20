@@ -59,4 +59,9 @@ public class CartService {
         newCart.setMember(member);
         cartRepository.save(newCart);
     }
+
+    public void deleteCart(Member member) {
+        Cart savedCart = getCartByMemberId(member.getMemberId());
+        cartRepository.delete(savedCart);
+    }
 }

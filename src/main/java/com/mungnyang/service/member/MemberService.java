@@ -214,6 +214,7 @@ public class MemberService {
      * @param member
      */
     public void withdrawMember(Member member) {
+        cartService.deleteCart(member);
         memberRepository.delete(member);
     }
 

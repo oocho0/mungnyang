@@ -143,7 +143,9 @@ public class RoomService {
         savedRoom.setRoomStatus(StatusService.statusConverter(modifyRoomDto.getRoomStatus()));
         roomImageService.updateRoomImage(savedRoom, modifyRoomDto.getImageList());
         roomFacilityService.updateRoomFacility(savedRoom, modifyRoomDto.getFacilityList());
-        reservationRoomService.updateReservationRoom(savedRoom, modifyRoomDto.getReservationList());
+        if (modifyRoomDto.getReservationList().size() != 0) {
+            reservationRoomService.updateReservationRoom(savedRoom, modifyRoomDto.getReservationList());
+        }
     }
 
     /**
