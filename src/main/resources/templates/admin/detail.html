@@ -85,7 +85,7 @@
                                     <div class="card-header bg-body d-flex justify-content-between align-items-center"
                                          th:data-id="${comment.commentId}">
                                         <div>
-                                            <span th:text="${comment.email}"></span> / <span
+                                            <span th:text="${comment.userName}"></span> / <span
                                                 th:text="${#temporals.format(comment.createDate, 'yyyy-MM-dd')}"></span>
                                         </div>
                                         <button th:if="${#strings.equals(comment.email, user)}"

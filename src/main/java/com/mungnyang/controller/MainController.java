@@ -9,12 +9,10 @@ import com.mungnyang.dto.service.ReservationInfoDto;
 import com.mungnyang.dto.product.accommodation.room.AvailableRoomDto;
 import com.mungnyang.dto.product.store.DetailStoreDto;
 import com.mungnyang.dto.service.CalendarShowReservationRoomDto;
-import com.mungnyang.entity.member.Member;
 import com.mungnyang.entity.product.accommodation.Accommodation;
 import com.mungnyang.entity.product.store.Store;
 import com.mungnyang.service.fixedEntity.CategoryService;
 import com.mungnyang.service.fixedEntity.StateCityService;
-import com.mungnyang.service.member.MemberService;
 import com.mungnyang.service.product.accommodation.AccommodationCommentService;
 import com.mungnyang.service.product.accommodation.AccommodationService;
 import com.mungnyang.service.product.accommodation.room.RoomService;
@@ -49,7 +47,6 @@ public class MainController {
     private final AccommodationCommentService accommodationCommentService;
     private final RoomService roomService;
     private final ReservationRoomService reservationRoomService;
-    private final MemberService memberService;
     @GetMapping("/")
     public String getmainPage(Model model) {
         List<MainBigCategoryDto> bigCategoryDtoList = categoryService.getMainBigCategoryDtoForStore();
@@ -83,8 +80,7 @@ public class MainController {
         if (principal == null) {
             model.addAttribute("user", null);
         }else{
-            Member signedMember = memberService.getMemberByMemberEmail(principal.getName());
-            model.addAttribute("user", signedMember.getName());
+            model.addAttribute("user", principal.getName());
         }
         return "admin/detail";
     }
@@ -103,8 +99,7 @@ public class MainController {
         if (principal == null) {
             model.addAttribute("user", null);
         }else {
-            Member signedMember = memberService.getMemberByMemberEmail(principal.getName());
-            model.addAttribute("user", signedMember.getName());
+            model.addAttribute("user", principal.getName());
         }
         return "seller/detail";
     }
@@ -124,8 +119,7 @@ public class MainController {
         if (principal == null) {
             userEmail = null;
         }else {
-            Member signedMember = memberService.getMemberByMemberEmail(principal.getName());
-            userEmail = signedMember.getName();
+            userEmail = principal.getName();
         }
         CommentPagingDto commentPagingDto = new CommentPagingDto(storeComments, userEmail);
         if (commentPagingDto.getComments().getTotalElements() == 0L) {
@@ -142,8 +136,7 @@ public class MainController {
         if (principal == null) {
             userEmail = null;
         }else{
-            Member signedMember = memberService.getMemberByMemberEmail(principal.getName());
-            userEmail = signedMember.getName();
+            userEmail = principal.getName();
         }
         CommentPagingDto commentPagingDto = new CommentPagingDto(accommodationComments, userEmail);
         if (commentPagingDto.getComments().getTotalElements() == 0L) {

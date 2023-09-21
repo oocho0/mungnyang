@@ -17,9 +17,9 @@
                sec:authorize="hasAnyAuthority('ROLE_SELLER', 'ROLE_ADMIN')">숙소 정보 관리</a>
             <a class="nav-link link-body-emphasis" href="/seller/accommodations/reservations"
                sec:authorize="hasAnyAuthority('ROLE_SELLER', 'ROLE_ADMIN')">숙소 예약 현황</a>
-            <a class="nav-link link-body-emphasis" href="/user/cart" sec:authorize="hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')">
+            <a class="nav-link link-body-emphasis" href="/user/cart" sec:authorize="hasAnyAuthority('ROLE_USER', 'ROLE_SELLER', 'ROLE_ADMIN')">
                 예약 바구니</a>
-            <a class="nav-link link-body-emphasis" href="/user/reservations" sec:authorize="hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')">
+            <a class="nav-link link-body-emphasis" href="/user/reservations" sec:authorize="hasAnyAuthority('ROLE_USER', 'ROLE_SELLER', 'ROLE_ADMIN')">
                 예약 내역</a>
         </nav>
         <div class="col-2 text-end">

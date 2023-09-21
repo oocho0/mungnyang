@@ -2,6 +2,7 @@ package com.mungnyang.repository.product.accommodation;
 
 import com.mungnyang.dto.product.CommentDto;
 import com.mungnyang.dto.product.QCommentDto;
+import com.mungnyang.entity.member.QMember;
 import com.mungnyang.entity.product.accommodation.QAccommodationComment;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -18,6 +19,7 @@ import java.util.List;
 public class AccommodationCommentPageRepositoryImpl implements AccommodationCommentPageRepository {
     private final JPAQueryFactory jpaQueryFactory;
     private final QAccommodationComment accommodationComment = QAccommodationComment.accommodationComment;
+    private final QMember member = QMember.member;
 
     @Override
     public Page<CommentDto> getAccommodationCommentDtoPaging(Long accommodationId, Pageable pageable) {
@@ -27,9 +29,11 @@ public class AccommodationCommentPageRepositoryImpl implements AccommodationComm
                                 accommodationComment.comment.commentContent,
                                 accommodationComment.comment.rate,
                                 accommodationComment.createdBy,
+                                member.name,
                                 accommodationComment.reqDate
                         )
                 ).from(accommodationComment)
+                .leftJoin(member).on(accommodationComment.createdBy.eq(member.email))
                 .where(accommodationComment.accommodation.accommodationId.eq(accommodationId))
                 .orderBy(accommodationComment.reqDate.desc())
                 .offset(pageable.getOffset())

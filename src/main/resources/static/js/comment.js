@@ -77,7 +77,7 @@ function page(page){
                     '<div class="card mb-2">' +
                     '    <div class="card-header bg-body d-flex justify-content-between align-items-center" data-id="' + value.commentId + '">' +
                     '        <div>' +
-                    '            <span>' + value.email + '</span> / <span>' + dateStr + '</span>' +
+                    '            <span>' + value.userName + '</span> / <span>' + dateStr + '</span>' +
                     '        </div>' +
                     deleteBtn +
                     '    </div>' +

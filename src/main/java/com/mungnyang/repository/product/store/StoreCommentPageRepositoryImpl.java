@@ -2,6 +2,7 @@ package com.mungnyang.repository.product.store;
 
 import com.mungnyang.dto.product.CommentDto;
 import com.mungnyang.dto.product.QCommentDto;
+import com.mungnyang.entity.member.QMember;
 import com.mungnyang.entity.product.store.QStoreComment;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -18,6 +19,7 @@ import java.util.List;
 public class StoreCommentPageRepositoryImpl implements StoreCommentPageRepository {
     private final JPAQueryFactory jpaQueryFactory;
     private final QStoreComment storeComment = QStoreComment.storeComment;
+    private final QMember member = QMember.member;
 
     @Override
     public Page<CommentDto> getStoreCommentDtoPaging(Long storeId, Pageable pageable) {
@@ -27,9 +29,11 @@ public class StoreCommentPageRepositoryImpl implements StoreCommentPageRepositor
                                 storeComment.comment.commentContent,
                                 storeComment.comment.rate,
                                 storeComment.createdBy,
+                                member.name,
                                 storeComment.reqDate
                         )
                 ).from(storeComment)
+                .leftJoin(member).on(storeComment.createdBy.eq(member.email))
                 .where(storeComment.store.storeId.eq(storeId))
                 .orderBy(storeComment.reqDate.desc())
                 .offset(pageable.getOffset())
