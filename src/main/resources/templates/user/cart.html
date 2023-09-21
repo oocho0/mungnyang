@@ -70,7 +70,7 @@
                                         </div>
                                         <div>
                                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                                <div th:if="${#strings.equals(cartRoom.alreadyBooked, 'YES') or #strings.equals(cartRoom.accommodationStatus, 'CLOSED')}}" class="badge bg-secondary rounded-pill fs-5 p-3">예약 불가</div>
+                                                <div th:if="${#strings.equals(cartRoom.alreadyBooked, 'YES')} or ${#strings.equals(cartRoom.accommodationStatus, 'CLOSED')}" class="badge bg-secondary rounded-pill fs-5 p-3">예약 불가</div>
                                             </div>
                                         </div>
                                     </div>
