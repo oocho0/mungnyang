@@ -2,6 +2,7 @@ package com.mungnyang.controller;
 
 import com.mungnyang.dto.fixedEntityDto.MainCityDto;
 import com.mungnyang.dto.fixedEntityDto.MainSmallCategoryDto;
+import com.mungnyang.dto.fixedEntityDto.MainStateDto;
 import com.mungnyang.entity.fixedEntity.City;
 import com.mungnyang.entity.fixedEntity.SmallCategory;
 import com.mungnyang.entity.product.accommodation.Accommodation;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -42,14 +44,26 @@ public class FixedEntityController {
     }
 
     @GetMapping("/search/store/{stateId}")
-    public ResponseEntity<?> findCityStoreCount(@PathVariable Long stateId) {
-        List<MainCityDto> mainCityDtoList = stateCityService.getMainCityDtoList(Store.class, stateId);
+    public ResponseEntity<?> findCityStoreCount(@PathVariable Long stateId, @RequestParam List<Long> smallCategoryId) {
+        List<MainCityDto> mainCityDtoList = stateCityService.getMainCityDtoList(Store.class, stateId, smallCategoryId);
         return new ResponseEntity<List<MainCityDto>>(mainCityDtoList, HttpStatus.OK);
     }
 
     @GetMapping("/search/accommodation/{stateId}")
-    public ResponseEntity<?> findCityAccommodationCount(@PathVariable Long stateId) {
-        List<MainCityDto> mainCityDtoList = stateCityService.getMainCityDtoList(Accommodation.class, stateId);
+    public ResponseEntity<?> findCityAccommodationCount(@PathVariable Long stateId, @RequestParam List<Long> accommodationCategoryId) {
+        List<MainCityDto> mainCityDtoList = stateCityService.getMainCityDtoList(Accommodation.class, stateId, accommodationCategoryId);
         return new ResponseEntity<List<MainCityDto>>(mainCityDtoList, HttpStatus.OK);
+    }
+
+    @GetMapping("/search/store/state")
+    public ResponseEntity<?> findStoreStateCount(@RequestParam List<Long> smallCategoryId) {
+        List<MainStateDto> mainStateDtoList = stateCityService.getMainStateDtoList(Store.class, smallCategoryId);
+        return new ResponseEntity<List<MainStateDto>>(mainStateDtoList, HttpStatus.OK);
+    }
+
+    @GetMapping("/search/accommodation/state")
+    public ResponseEntity<?> findAccommodationStateCount(@RequestParam List<Long> accommodationCategoryId) {
+        List<MainStateDto> mainStateDtoList = stateCityService.getMainStateDtoList(Accommodation.class, accommodationCategoryId);
+        return new ResponseEntity<List<MainStateDto>>(mainStateDtoList, HttpStatus.OK);
     }
 }

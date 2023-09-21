@@ -89,7 +89,7 @@
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end fs-4 fw-bold px-3 py-4">
                     결재 금액 : <span class="fs-4" id="totalPrice">0</span> 원
                 </div>
-                <button type="button" class="btn btn-primary btn-lg" onclick="reservation();">예약하기</button>
+                <button th:unless="${#arrays.isEmpty(cartRooms)}" type="button" class="btn btn-primary btn-lg" onclick="reservation();">예약하기</button>
             </div>
         </div>
     </div>

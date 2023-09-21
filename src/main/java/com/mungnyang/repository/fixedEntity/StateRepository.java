@@ -16,15 +16,15 @@ public interface StateRepository extends JpaRepository<State, Long> {
     @Query("select new com.mungnyang.dto.fixedEntityDto.MainStateDto(st.stateId, st.name, count(s.storeId))" +
             " from State st" +
             " left join City c on st.stateId = c.state.stateId" +
-            " left join Store s on c.cityId = s.city.cityId" +
+            " left outer join Store s on c.cityId = s.city.cityId and s.smallCategory.smallCategoryId in :ids" +
             " group by st.stateId")
-    List<MainStateDto> findMainStateDtoListForStore();
+    List<MainStateDto> findMainStateDtoListForStore(@Param("ids") List<Long> smallCategoryId);
 
     @Query("select new com.mungnyang.dto.fixedEntityDto.MainStateDto(st.stateId, st.name, count(a.accommodationId))" +
             " from State st" +
             " left join City c on st.stateId = c.state.stateId" +
-            " left join Accommodation a on c.cityId = a.city.cityId" +
+            " left outer join Accommodation a on c.cityId = a.city.cityId and a.smallCategory.smallCategoryId in :ids" +
             " where a.accommodationStatus != :status or a.accommodationStatus is null" +
             " group by st.stateId")
-    List<MainStateDto> findMainStateDtoListForAccommodation(@Param("status") Status closed);
+    List<MainStateDto> findMainStateDtoListForAccommodation(@Param("status") Status closed, @Param("ids") List<Long> smallCategoryId);
 }

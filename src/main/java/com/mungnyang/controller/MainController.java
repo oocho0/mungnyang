@@ -53,10 +53,10 @@ public class MainController {
         model.addAttribute("bigCategories", bigCategoryDtoList);
         List<MainSmallCategoryDto> smallCategoryDtoList = categoryService.getMainSmallCategoryDtoByBigCategory(1L);
         model.addAttribute("smallCategories", smallCategoryDtoList);
-        List<MainStateDto> storeStateDtoList = stateCityService.getMainStateDtoList(Store.class);
-        model.addAttribute("storeState", storeStateDtoList);
-        List<MainStateDto> accommodationStateList = stateCityService.getMainStateDtoList(Accommodation.class);
-        model.addAttribute("accommodationState", accommodationStateList);
+//        List<MainStateDto> storeStateDtoList = stateCityService.getMainStateDtoList(Store.class);
+//        model.addAttribute("storeState", storeStateDtoList);
+//        List<MainStateDto> accommodationStateList = stateCityService.getMainStateDtoList(Accommodation.class);
+//        model.addAttribute("accommodationState", accommodationStateList);
         List<MainTopDto> storeTopList = storeService.getStoresTopList();
         model.addAttribute("storeTopList", storeTopList);
         List<MainTopDto> accommodationTopList = accommodationService.getAccommodationsTopList();

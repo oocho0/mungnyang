@@ -98,8 +98,10 @@ function cart(id){
            xhr.setRequestHeader(header, token);
         },
         success  : function(result, status){
-           alert("장바구니에 담겼습니다. 장바구니로 이동합니다.");
-           location.href = "/user/cart";
+           var result = confirm("장바구니에 담겼습니다.\n장바구니로 이동하시려면 '확인'을 누르시고, 계속 진행하시려면 '취소'를 누르세요.");
+           if(result){
+                location.href = "/user/cart";
+           }
         },
         error : function(status, error){
             if(status.status == '401' || status.status == '403' || status.status == '404'){

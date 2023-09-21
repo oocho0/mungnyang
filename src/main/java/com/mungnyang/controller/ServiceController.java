@@ -120,6 +120,9 @@ public class ServiceController {
         if (reservationService.isNotOneOfAccommodationRoom(createReservationDto.getReservationRoomList())) {
             return new ResponseEntity<String>("잘못된 경로 입니다.", HttpStatus.BAD_REQUEST);
         }
+        if (reservationService.isDuplicate(createReservationDto)){
+            return new ResponseEntity<String>("예약 건 중에 같은 숙소 호실에 기간이 중복되는 건이 존재합니다.", HttpStatus.BAD_REQUEST);
+        }
         reservationService.saveReservation(principal.getName(), createReservationDto);
         return new ResponseEntity<String>("success", HttpStatus.OK);
     }

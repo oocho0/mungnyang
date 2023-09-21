@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -96,6 +97,37 @@ public class ReservationService {
             result = roomService.isNotOneOfAccommodationRoom(accommodationId, roomId);
         }
         return result;
+    }
+    
+    public boolean isDuplicate(CreateReservationDto createReservationDto) {
+        List<CreateReservationRoomDto> createReservationRoomDtoList = createReservationDto.getReservationRoomList();
+        for (int i = 0; i < createReservationRoomDtoList.size(); i++) {
+            for (int j = i+1; j < createReservationRoomDtoList.size(); j++) {
+                LocalDateTime stdCheckInDate = createReservationRoomDtoList.get(i).getCheckInDate();
+                LocalDateTime stdCheckOutDate = createReservationRoomDtoList.get(i).getCheckOutDate();
+                LocalDateTime comCheckInDate = createReservationRoomDtoList.get(j).getCheckInDate();
+                LocalDateTime comCheckOutDate = createReservationRoomDtoList.get(j).getCheckOutDate();
+                if (stdCheckInDate.isEqual(comCheckInDate)) {
+                    return true;
+                }
+                if (stdCheckOutDate.isEqual(comCheckOutDate)) {
+                    return true;
+                }
+                if (stdCheckInDate.isAfter(comCheckInDate) && stdCheckInDate.isBefore(comCheckOutDate)) {
+                    return true;
+                }
+                if (stdCheckOutDate.isAfter(comCheckInDate) && stdCheckOutDate.isBefore(comCheckOutDate)) {
+                    return true;
+                }
+                if (comCheckInDate.isAfter(stdCheckInDate) && comCheckInDate.isBefore(stdCheckOutDate)) {
+                    return true;
+                }
+                if (comCheckOutDate.isAfter(stdCheckInDate) && comCheckOutDate.isBefore(stdCheckOutDate)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public boolean isNotWrittenByPrinciple(Long reservationId, String email) {

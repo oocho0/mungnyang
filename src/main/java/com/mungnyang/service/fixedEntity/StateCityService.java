@@ -24,18 +24,18 @@ public class StateCityService {
     private final StateRepository stateRepository;
     private final CityRepository cityRepository;
 
-    public List<MainStateDto> getMainStateDtoList(Class<? extends Product> product) {
+    public List<MainStateDto> getMainStateDtoList(Class<? extends Product> product, List<Long> categoryId) {
         if (product == Store.class) {
-            return stateRepository.findMainStateDtoListForStore();
+            return stateRepository.findMainStateDtoListForStore(categoryId);
         }
-        return stateRepository.findMainStateDtoListForAccommodation(Status.CLOSED);
+        return stateRepository.findMainStateDtoListForAccommodation(Status.CLOSED, categoryId);
     }
 
-    public List<MainCityDto> getMainCityDtoList(Class<? extends Product> product, Long stateId) {
+    public List<MainCityDto> getMainCityDtoList(Class<? extends Product> product, Long stateId, List<Long> categoryId) {
         if (product == Store.class) {
-            return cityRepository.findMainCityDtoListForStore(stateId);
+            return cityRepository.findMainCityDtoListForStore(stateId, categoryId);
         }
-        return cityRepository.findMainCityDtoListForAccommodation(stateId, Status.CLOSED);
+        return cityRepository.findMainCityDtoListForAccommodation(stateId, Status.CLOSED, categoryId);
     }
 
     /**

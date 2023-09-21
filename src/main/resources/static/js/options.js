@@ -14,26 +14,20 @@ function init(){
             findCategory(id);
         }
     });
-    $("#storeState .radio1").on("click", function(){
+    $("#accommodationCategoryAll").on("click", function(){
         if (!$(this).hasClass("active")) {
-            var id = $(this).attr("data-id");
-            $("#storeSelectedOptions span[data-bigId='주소']").each(function(index, element){
-                $(element).remove();
+            $("#accommodationCategory .multi1").each(function(index, element){
+                if($(element).hasClass("active")){
+                }else{
+                    $(element).trigger("click");
+                }
             });
-            $(this).closest(".card-body").find(".active").removeClass("active");
             $(this).addClass("active");
-            findCityForStore(id);
-        }
-    });
-    $("#accommodationState .radio1").on("click", function(){
-        if (!$(this).hasClass("active")) {
-            var id = $(this).attr("data-id");
-            $("#accommodationSelectedOptions span[data-bigId='주소']").each(function(index, element){
-                $(element).remove();
+        }else{
+            $("#accommodationCategory .multi1").each(function(index, element){
+                $(element).trigger("click");
             });
-            $(this).closest(".card-body").find(".active").removeClass("active");
-            $(this).addClass("active");
-            findCity(id);
+            $(this).removeClass("active");
         }
     });
     $("#accommodationCategory .multi1").on("click", function(){
@@ -41,11 +35,13 @@ function init(){
         if ($(this).hasClass("active")) {
             $("#accommodationSelectedOptions span[data-bigId='분류'][data-spanId='" + id + "']").remove();
             $(this).removeClass("active");
+            $("#accommodationCategoryAll").removeClass("active");
         } else {
             $("#accommodationSelectedOptions").append($(
                 '<span class="px-2" data-bigId="분류" data-spanId="' + id + '">' + $(this).find("span:first").text() + '</span>'
             ));
             $(this).addClass("active");
+            findAccommodationState();
         }
     });
 }
@@ -56,11 +52,13 @@ function selectStoreCategory(){
         if ($(this).hasClass("active")) {
             $("#storeSelectedOptions span[data-bigId='분류'][data-spanId='" + id + "']").remove();
             $(this).removeClass("active");
+            $("#smallCategoryAll").removeClass("active");
         } else {
             $("#storeSelectedOptions").append($(
                 '<span class="px-2" data-bigId="분류" data-spanId="' + id + '">' + parent.find("span:first").text() + ' / ' + $(this).find("span:first").text() + '</span>'
             ));
             $(this).addClass("active");
+            findStoreState();
         }
     });
 }
@@ -71,6 +69,7 @@ function selectStoreCity(){
         if ($(this).hasClass("active")) {
             $("#storeSelectedOptions span[data-bigId='주소'][data-spanId='" + id + "']").remove();
             $(this).removeClass("active");
+            $("#storeCityAll").removeClass("active");
         } else {
             $("#storeSelectedOptions").append($(
                 '<span class="px-2" data-bigId="주소" data-spanId="' + id + '">' + parent.find("span:first").text() + ' / ' + $(this).find("span:first").text() + '</span>'
@@ -105,6 +104,11 @@ function findCategory(id){
        cache : false,
        success : function(result, status){
             $("#smallCategory").empty();
+            $("#smallCategory").append($(
+                '<a id="smallCategoryAll" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">' +
+                '   <span>소분류 전체</span>' +
+                '</a>'
+            ));
             $.each(result, function(key, value){
                 $("#smallCategory").append($(
                     '<a data-id="' + value.smallCategoryId + '" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center multi1">' +
@@ -115,6 +119,22 @@ function findCategory(id){
                     $("#smallCategory [data-id='" + value.smallCategoryId + "']").append($('<span class="badge bg-primary rounded-pill">' + value.productCount + '</span>'));
                 }
             });
+            $("#smallCategoryAll").on("click", function(){
+                if (!$(this).hasClass("active")) {
+                    $("#smallCategory .multi1").each(function(index, element){
+                        if($(element).hasClass("active")){
+                        }else{
+                            $(element).trigger("click");
+                        }
+                    });
+                    $(this).addClass("active");
+                }else{
+                    $("#smallCategory .multi1").each(function(index, element){
+                        $(element).trigger("click");
+                    });
+                    $(this).removeClass("active");
+                }
+            });
             selectStoreCategory();
        },
        error : function(status, error){
@@ -123,8 +143,64 @@ function findCategory(id){
     });
 }
 
+function findStoreState(){
+    var url = "/search/store/state?";
+    var categoryParam = "smallCategoryId=";
+    $("#smallCategory .multi1.active").each(function(index, element){
+        if(index == 0){
+            categoryParam += $(element).attr("data-id");
+        }else{
+            categoryParam += "," + $(element).attr("data-id");
+        }
+    });
+    url += categoryParam;
+    $.ajax({
+        url : url,
+        type : "GET",
+        async : false,
+        dataType : "json",
+        cache : false,
+        success : function(result, status){
+            $("#storeState").empty();
+            $.each(result, function(key, value){
+                $("#storeState").append($(
+                    '<a data-id="' + value.stateId + '" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center radio1">'+
+                    '    <span>' + value.name + '</span>'+
+                    '</a>'
+                ));
+                if(value.productCount != 0){
+                    $("#storeState [data-id='" + value.stateId + "']").append($('<span class="badge bg-primary rounded-pill">' + value.productCount + '</span>'));
+                }
+            });
+            $("#storeState .radio1").on("click", function(){
+                if (!$(this).hasClass("active")) {
+                    var id = $(this).attr("data-id");
+                    $("#storeSelectedOptions span[data-bigId='주소']").each(function(index, element){
+                        $(element).remove();
+                    });
+                    $(this).closest(".card-body").find(".active").removeClass("active");
+                    $(this).addClass("active");
+                    findCityForStore(id);
+                }
+            });
+        },
+        error : function(status, error){
+           alert(status.responseText);
+        }
+    });
+}
+
 function findCityForStore(id){
     var url = "/search/store/" + id;
+    var cityParam = "?smallCategoryId=";
+    $("#smallCategory .multi1.active").each(function(index, element){
+        if(index == 0){
+            cityParam += $(element).attr("data-id");
+        }else{
+            cityParam += "," + $(element).attr("data-id");
+        }
+    });
+    url += cityParam;
     $.ajax({
        url : url,
        type : "GET",
@@ -133,6 +209,11 @@ function findCityForStore(id){
        cache : false,
        success : function(result, status){
             $("#storeCity").empty();
+            $("#storeCity").append($(
+                '<a id="storeCityAll" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">' +
+                '   <span>시/군/구 전체</span>' +
+                '</a>'
+            ));
             $.each(result, function(key, value){
                 $("#storeCity").append($(
                     '<a data-id="' + value.cityId + '" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center multi1">' +
@@ -143,6 +224,22 @@ function findCityForStore(id){
                     $("#storeCity [data-id='" + value.cityId + "']").append($('<span class="badge bg-primary rounded-pill">' + value.productCount + '</span>'));
                 }
             });
+            $("#storeCityAll").on("click", function(){
+                if (!$(this).hasClass("active")) {
+                    $("#storeCity .multi1").each(function(index, element){
+                        if($(element).hasClass("active")){
+                        }else{
+                            $(element).trigger("click");
+                        }
+                    });
+                    $(this).addClass("active");
+                }else{
+                    $("#storeCity .multi1").each(function(index, element){
+                        $(element).trigger("click");
+                    });
+                    $(this).removeClass("active");
+                }
+            });
             selectStoreCity();
        },
        error : function(status, error){
@@ -151,8 +248,65 @@ function findCityForStore(id){
     });
 }
 
+
+function findAccommodationState(){
+    var url = "/search/accommodation/state?";
+    var categoryParam = "accommodationCategoryId=";
+    $("#accommodationCategory .multi1.active").each(function(index, element){
+        if(index == 0){
+            categoryParam += $(element).attr("data-id");
+        }else{
+            categoryParam += "," + $(element).attr("data-id");
+        }
+    });
+    url += categoryParam;
+    $.ajax({
+        url : url,
+        type : "GET",
+        async : false,
+        dataType : "json",
+        cache : false,
+        success : function(result, status){
+            $("#accommodationState").empty();
+            $.each(result, function(key, value){
+                $("#accommodationState").append($(
+                    '<a data-id="' + value.stateId + '" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center radio1">'+
+                    '    <span>' + value.name + '</span>'+
+                    '</a>'
+                ));
+                if(value.productCount != 0){
+                    $("#accommodationState [data-id='" + value.stateId + "']").append($('<span class="badge bg-primary rounded-pill">' + value.productCount + '</span>'));
+                }
+            });
+            $("#accommodationState .radio1").on("click", function(){
+                if (!$(this).hasClass("active")) {
+                    var id = $(this).attr("data-id");
+                    $("#accommodationSelectedOptions span[data-bigId='주소']").each(function(index, element){
+                        $(element).remove();
+                    });
+                    $(this).closest(".card-body").find(".active").removeClass("active");
+                    $(this).addClass("active");
+                    findCity(id);
+                }
+            });
+        },
+        error : function(status, error){
+           alert(status.responseText);
+        }
+    });
+}
+
 function findCity(id){
     var url = "/search/accommodation/" + id;
+    var cityParam = "?accommodationCategoryId=";
+    $("#accommodationCategory .multi1.active").each(function(index, element){
+        if(index == 0){
+            cityParam += $(element).attr("data-id");
+        }else{
+            cityParam += "," + $(element).attr("data-id");
+        }
+    });
+    url += cityParam;
     $.ajax({
        url : url,
        type : "GET",
@@ -161,6 +315,11 @@ function findCity(id){
        cache : false,
        success : function(result, status){
             $("#accommodationCity").empty();
+            $("#accommodationCity").append($(
+                '<a id="accommodationCityAll" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">' +
+                '   <span>시/군/구 전체</span>' +
+                '</a>'
+            ));
             $.each(result, function(key, value){
                 $("#accommodationCity").append($(
                     '<a data-id="' + value.cityId + '" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center multi1">' +
@@ -169,6 +328,22 @@ function findCity(id){
                 ));
                 if(value.productCount != 0){
                      $("#accommodationCity [data-id='" + value.cityId + "']").append($('<span class="badge bg-primary rounded-pill">' + value.productCount + '</span>'));
+                }
+            });
+            $("#accommodationCityAll").on("click", function(){
+                if (!$(this).hasClass("active")) {
+                    $("#accommodationCity .multi1").each(function(index, element){
+                        if($(element).hasClass("active")){
+                        }else{
+                            $(element).trigger("click");
+                        }
+                    });
+                    $(this).addClass("active");
+                }else{
+                    $("#accommodationCity .multi1").each(function(index, element){
+                        $(element).trigger("click");
+                    });
+                    $(this).removeClass("active");
                 }
             });
             selectAccommodationCity();
@@ -201,7 +376,7 @@ function searchStore(){
         return;
     }
     var categoryParam = "categoryId=";
-    $("#smallCategory .active").each(function(index, element){
+    $("#smallCategory .multi1.active").each(function(index, element){
         if(index == 0){
             categoryParam += $(element).attr("data-id");
         }else{
@@ -209,7 +384,7 @@ function searchStore(){
         }
     });
     var cityParam = "&cityId=";
-    $("#storeCity .active").each(function(index, element){
+    $("#storeCity .multi1.active").each(function(index, element){
         if(index == 0){
             cityParam += $(element).attr("data-id");
         }else{
@@ -305,7 +480,7 @@ function searchAccommodation(){
         return;
     }
     var categoryParam = "categoryId=";
-    $("#accommodationCategory .active").each(function(index, element){
+    $("#accommodationCategory .multi1.active").each(function(index, element){
         if(index == 0){
             categoryParam += $(element).attr("data-id");
         }else{
@@ -313,7 +488,7 @@ function searchAccommodation(){
         }
     });
     var cityParam = "&cityId=";
-    $("#accommodationCity .active").each(function(index, element){
+    $("#accommodationCity .multi1.active").each(function(index, element){
         if(index == 0){
             cityParam += $(element).attr("data-id");
         }else{

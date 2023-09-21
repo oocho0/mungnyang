@@ -58,12 +58,6 @@
                             <div class="card">
                                 <div class="card-header bg-body">시/도</div>
                                 <div class="card-body list-group list-group-flush p-0" id="storeState">
-                                    <a th:each="state : ${storeState}" th:data-id="${state.stateId}"
-                                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-center radio1">
-                                        <span th:text="${state.name}"></span>
-                                        <span th:unless="${state.productCount == 0}" class="badge bg-primary rounded-pill"
-                                              th:text="${state.productCount}"></span>
-                                    </a>
                                 </div>
                             </div>
                             <div class="card">
@@ -86,6 +80,9 @@
                                 <div class="card">
                                     <div class="card-header bg-body">숙소 분류</div>
                                     <div class="card-body list-group list-group-flush p-0" id="accommodationCategory">
+                                        <a id="accommodationCategoryAll" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                            <span>숙소 분류 전체</span>
+                                        </a>
                                         <a th:each="sc : ${smallCategories}" th:data-id="${sc.smallCategoryId}"
                                            class="list-group-item list-group-item-action d-flex justify-content-between align-items-center multi1">
                                             <span th:text="${sc.name}"></span>
@@ -98,13 +95,6 @@
                                 <div class="card">
                                     <div class="card-header bg-body">시/도</div>
                                     <div class="card-body list-group list-group-flush p-0" id="accommodationState">
-                                        <a th:each="state : ${accommodationState}" th:data-id="${state.stateId}"
-                                           class="list-group-item list-group-item-action d-flex justify-content-between align-items-center radio1">
-                                            <span th:text="${state.name}"></span>
-                                            <span th:unless="${state.productCount == 0}"
-                                                  class="badge bg-primary rounded-pill"
-                                                  th:text="${state.productCount}"></span>
-                                        </a>
                                     </div>
                                 </div>
                                 <div class="card">

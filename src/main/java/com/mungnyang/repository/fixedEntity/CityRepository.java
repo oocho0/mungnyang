@@ -22,14 +22,14 @@ public interface CityRepository extends JpaRepository<City, Long> {
 
     @Query("select new com.mungnyang.dto.fixedEntityDto.MainCityDto(c.cityId, c.name, count(s.storeId))" +
             " from City c" +
-            " left join Store s on c.cityId = s.city.cityId" +
+            " left outer join Store s on c.cityId = s.city.cityId and s.smallCategory.smallCategoryId in :ids" +
             " where c.state.stateId = :stateId" +
             " group by c.cityId")
-    List<MainCityDto> findMainCityDtoListForStore(@Param("stateId") Long stateId);
+    List<MainCityDto> findMainCityDtoListForStore(@Param("stateId") Long stateId, @Param("ids") List<Long> categoryId);
     @Query("select new com.mungnyang.dto.fixedEntityDto.MainCityDto(c.cityId, c.name, count(a.accommodationId))" +
             " from City c" +
-            " left join Accommodation a on c.cityId = a.city.cityId" +
+            " left outer join Accommodation a on c.cityId = a.city.cityId and a.smallCategory.smallCategoryId in :ids" +
             " where c.state.stateId = :stateId and (a.accommodationStatus != :status or a.accommodationStatus is null)" +
             " group by c.cityId")
-    List<MainCityDto> findMainCityDtoListForAccommodation(@Param("stateId") Long stateId, @Param("status") Status closed);
+    List<MainCityDto> findMainCityDtoListForAccommodation(@Param("stateId") Long stateId, @Param("status") Status closed, @Param("ids") List<Long> categoryId);
 }
