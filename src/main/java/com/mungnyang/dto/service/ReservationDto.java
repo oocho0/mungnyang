@@ -1,5 +1,6 @@
 package com.mungnyang.dto.service;
 
+import com.mungnyang.constant.IsTrue;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -15,5 +16,6 @@ public class ReservationDto {
     private LocalDateTime reservationDate;
     private String reservationStatus;
     private Integer reservationTotalPrice;
+    private String process;
     private List<ReservationRoomDto> reservationRoomList;
 }

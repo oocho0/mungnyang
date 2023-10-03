@@ -26,8 +26,12 @@
                      th:each="reservation : ${reservations}">
                     <div class="card-header justify-content-between d-flex align-items-center px-4">
                         <h5 class="pt-1" th:text="|예약 번호 : ${reservation.reservationId}|"></h5>
-                        <span th:unless="${#strings.equals(reservation.reservationStatus, 'CANCEL')}"
+                        <span th:if="${#strings.equals(reservation.reservationStatus, 'RESERVATION')} and ${#strings.equals(reservation.process, 'YET')}"
                               class="badge bg-warning badge-pill fs-5">예약</span>
+                        <span th:if="${#strings.equals(reservation.reservationStatus, 'RESERVATION')} and ${#strings.equals(reservation.process, 'ING')}"
+                              class="badge bg-warning badge-pill fs-5">예약 진행 중</span>
+                        <span th:if="${#strings.equals(reservation.reservationStatus, 'RESERVATION')} and ${#strings.equals(reservation.process, 'END')}"
+                              class="badge bg-secondary badge-pill fs-5">지난 예약</span>
                         <span th:if="${#strings.equals(reservation.reservationStatus, 'CANCEL')}"
                               class="badge bg-secondary badge-pill fs-5">예약 취소</span>
                     </div>
@@ -61,7 +65,7 @@
                         <div class="fs-4 text-end fw-bold pt-3"
                              th:text="|총 결재 금액 : ${#numbers.formatInteger(reservation.reservationTotalPrice, 0, 'COMMA')} 원|"></div>
                         <div class="text-center pt-5 py-3">
-                            <button th:unless="${#strings.equals(reservation.reservationStatus, 'CANCEL')}" class="btn btn-danger text-center"
+                            <button th:if="${#strings.equals(reservation.reservationStatus, 'RESERVATION')} and ${#strings.equals(reservation.process, 'YET')}" class="btn btn-danger text-center"
                                     th:onclick="|deleteReservation(${reservation.reservationId});|">예약 취소
                             </button>
                         </div>

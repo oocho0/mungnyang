@@ -46,6 +46,7 @@ public class ReservationService {
                     .reservationStatus(StatusService.reservationStatusConverter(reservation.getReservationStatus()))
                     .reservationTotalPrice(reservation.getReservationTotalPrice())
                     .reservationDate(reservation.getReservationDate())
+                    .process(reservationRoomService.getProcess(reservation.getReservationId()))
                     .reservationRoomList(reservationRoomService.getReservationRoomList(reservation.getReservationId()))
                     .build());
         }

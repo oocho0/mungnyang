@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -253,6 +252,33 @@ public class ReservationRoomService {
                     .build());
         }
         return reservationRoomDtoList;
+    }
+
+    /**
+     * 예약 화면에 나타날 예약 상태 나타내기
+     *
+     * @param reservationId 해당 예약 일련번호
+     * @return 예약의 가장 늦은 CheckOut 날이 오늘 기준 이전이면 END, 가장 빠른 checkIn 날이 오늘 기준 이전이면 ING, 모두 아니면 YET
+     */
+    public String getProcess(Long reservationId) {
+        List<ReservationRoom> reservationRoomList = getReservationRoomByReservationReservationId(reservationId);
+        LocalDateTime firstDay = null;
+        LocalDateTime lastDay = null;
+        for (ReservationRoom reservationRoom : reservationRoomList) {
+            if (firstDay == null || reservationRoom.getCheckInDate().isBefore(firstDay)) {
+                firstDay = reservationRoom.getCheckInDate();
+            }
+            if (lastDay == null || reservationRoom.getCheckOutDate().isAfter(lastDay)) {
+                lastDay = reservationRoom.getCheckOutDate();
+            }
+        }
+        if (lastDay.isBefore(LocalDateTime.now())) {
+            return "END";
+        }
+        if (firstDay.isBefore(LocalDateTime.now())) {
+            return "ING";
+        }
+        return "YET";
     }
 
     private List<ReservationRoom> getReservationRoomByReservationReservationId(Long reservationId) {
