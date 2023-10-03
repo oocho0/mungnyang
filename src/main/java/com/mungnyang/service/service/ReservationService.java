@@ -107,23 +107,25 @@ public class ReservationService {
                 LocalDateTime stdCheckOutDate = createReservationRoomDtoList.get(i).getCheckOutDate();
                 LocalDateTime comCheckInDate = createReservationRoomDtoList.get(j).getCheckInDate();
                 LocalDateTime comCheckOutDate = createReservationRoomDtoList.get(j).getCheckOutDate();
-                if (stdCheckInDate.isEqual(comCheckInDate)) {
-                    return true;
-                }
-                if (stdCheckOutDate.isEqual(comCheckOutDate)) {
-                    return true;
-                }
-                if (stdCheckInDate.isAfter(comCheckInDate) && stdCheckInDate.isBefore(comCheckOutDate)) {
-                    return true;
-                }
-                if (stdCheckOutDate.isAfter(comCheckInDate) && stdCheckOutDate.isBefore(comCheckOutDate)) {
-                    return true;
-                }
-                if (comCheckInDate.isAfter(stdCheckInDate) && comCheckInDate.isBefore(stdCheckOutDate)) {
-                    return true;
-                }
-                if (comCheckOutDate.isAfter(stdCheckInDate) && comCheckOutDate.isBefore(stdCheckOutDate)) {
-                    return true;
+                if (Objects.equals(createReservationRoomDtoList.get(i).getRoomId(), createReservationRoomDtoList.get(j).getRoomId())) {
+                    if (stdCheckInDate.isEqual(comCheckInDate)) {
+                        return true;
+                    }
+                    if (stdCheckOutDate.isEqual(comCheckOutDate)) {
+                        return true;
+                    }
+                    if (stdCheckInDate.isAfter(comCheckInDate) && stdCheckInDate.isBefore(comCheckOutDate)) {
+                        return true;
+                    }
+                    if (stdCheckOutDate.isAfter(comCheckInDate) && stdCheckOutDate.isBefore(comCheckOutDate)) {
+                        return true;
+                    }
+                    if (comCheckInDate.isAfter(stdCheckInDate) && comCheckInDate.isBefore(stdCheckOutDate)) {
+                        return true;
+                    }
+                    if (comCheckOutDate.isAfter(stdCheckInDate) && comCheckOutDate.isBefore(stdCheckOutDate)) {
+                        return true;
+                    }
                 }
             }
         }

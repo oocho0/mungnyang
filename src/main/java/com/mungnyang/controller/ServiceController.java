@@ -58,7 +58,7 @@ public class ServiceController {
     @DeleteMapping("/store/{storeId}/comment/{storeCommentId}")
     public ResponseEntity<?> deleteStoreComment(@PathVariable Long storeId, @PathVariable Long storeCommentId, Principal principal) {
         if (storeCommentService.isNotWrittenByPrinciple(storeCommentId, principal.getName())) {
-            return new ResponseEntity<String>("변경 권한이 없습니다.", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<String>("삭제 권한이 없습니다.", HttpStatus.FORBIDDEN);
         }
         if (storeCommentService.isNotOneOfStoreComment(storeId, storeCommentId)) {
             return new ResponseEntity<String>("잘못된 경로 입니다.", HttpStatus.BAD_REQUEST);
@@ -70,7 +70,7 @@ public class ServiceController {
     @DeleteMapping("/accommodation/{accommodationId}/comment/{accommodationCommentId}")
     public ResponseEntity<?> deleteAccommodationComment(@PathVariable Long accommodationId, @PathVariable Long accommodationCommentId, Principal principal) {
         if (accommodationCommentService.isNotWrittenByPrinciple(accommodationCommentId, principal.getName())) {
-            return new ResponseEntity<String>("변경 권한이 없습니다.", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<String>("삭제 권한이 없습니다.", HttpStatus.FORBIDDEN);
         }
         if (accommodationCommentService.isNotOneOfAccommodationComment(accommodationId, accommodationCommentId)) {
             return new ResponseEntity<String>("잘못된 경로 입니다.", HttpStatus.BAD_REQUEST);

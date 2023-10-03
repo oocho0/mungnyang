@@ -24,7 +24,9 @@ function check(){
 function totalPrice(){
     var price = 0;
     $(".cartRoom:checked").each(function(index, element){
-        price += $(element).attr("data-price") * $(element).attr("data-days");
+        if ($(element).attr("data-status") != "YES"){
+            price += $(element).attr("data-price") * $(element).attr("data-days");
+        }
     });
     $("#totalPrice").text(price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
 }
@@ -120,6 +122,10 @@ function reservation(){
     var formData = new FormData();
     formData.append("reservationDate", moment().format("YYYY-MM-DD[T]HH:mm:ss"));
     var totalPrice = 0;
+    if($(".cartRoom:checked").length == 0){
+        alert("선택한 예약 상품이 없습니다.");
+        return;
+    }
     $(".cartRoom:checked").each(function(index, element){
         if ($(element).attr("data-status") == "YES"){
             alert("예약 불가한 상품이 있습니다.");
