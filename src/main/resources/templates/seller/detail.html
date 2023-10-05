@@ -148,11 +148,11 @@
                                             <div class="py-3">
                                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end fs-5 pb-2">1박 당 <span th:text="${#numbers.formatInteger(price, 0, 'COMMA')} + ' 원'"></span>
                                                 </div>
-                                                <div class="d-grid gap-2 d-md-flex justify-content-md-end fs-4 fw-bold">총 <span th:text="|${days}박|"></span> 금액 : <span th:text="${#numbers.formatInteger((price * days), 0, 'COMMA')} + ' 원'"></span>
+                                                <div th:if="${#strings.equals(room.status, 'OPEN')}" class="d-grid gap-2 d-md-flex justify-content-md-end fs-4 fw-bold">총 <span th:text="|${days}박|"></span> 금액 : <span th:text="${#numbers.formatInteger((price * days), 0, 'COMMA')} + ' 원'"></span>
                                                 </div>
                                             </div>
                                             <div th:id="|btn${room.id}|" th:data-days="${days}" th:data-headCount="${reservationInfoDto.headCount}" th:data-checkIn="${reservationInfoDto.checkInDate}" th:data-checkOut="${reservationInfoDto.checkOutDate}">
-                                                <div th:if="${#strings.equals(room.isHeadCountCapable, 'YES')} and ${#strings.equals(room.isAvailable, 'YES')}" class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                                <div th:if="${#strings.equals(room.status, 'OPEN')} and ${#strings.equals(room.isHeadCountCapable, 'YES')} and ${#strings.equals(room.isAvailable, 'YES')}" class="d-grid gap-2 d-md-flex justify-content-md-end">
                                                     <button class="btn btn-secondary me-md-2" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
                                                             th:data-bs-title="|총 <b>${reservationInfoDto.headCount}</b>명, 총 <b>${days}</b>박<br><b>${#temporals.year(reservationInfoDto.checkInDate)}년 ${#temporals.month(reservationInfoDto.checkInDate)}월 ${#temporals.day(reservationInfoDto.checkInDate)}일 ~<br>${#temporals.year(reservationInfoDto.checkOutDate)}년 ${#temporals.month(reservationInfoDto.checkOutDate)}월 ${#temporals.day(reservationInfoDto.checkOutDate)}일</b>|"
                                                             type="button" th:onclick="|cart(${room.id});|">예약 바구니에 넣개</button>
@@ -166,11 +166,11 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <h3 class="accordion-header">
+                                    <h3 th:if="${#strings.equals(room.status, 'OPEN')}" class="accordion-header">
                                         <button type="button" class="accordion-button collapsed rounded-bottom-2" data-bs-toggle="collapse" th:data-bs-target="|#showDateRoom${room.id}|" aria-expanded="false" th:aria-controls="|showDateRoom${room.id}|">
                                         예약 가능 날짜 보기</button>
                                     </h3>
-                                    <div th:id="|showDateRoom${room.id}|" class="accordion-collapse collapse" th:data-bs-parent="|#room${room.id}|">
+                                    <div th:if="${#strings.equals(room.status, 'OPEN')}" th:id="|showDateRoom${room.id}|" class="accordion-collapse collapse" th:data-bs-parent="|#room${room.id}|">
                                         <div class="accordion-body">
                                             <div class="calendar"  style="height: 300px"></div>
                                         </div>

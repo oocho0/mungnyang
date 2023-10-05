@@ -542,6 +542,7 @@ function searchAccommodation(){
                     link = '                <button class="btn btn-warning rounded-pill" onclick="location.href=\'/accommodation/' + value.id + href + '\'">예약 하러 가기</button>';
                 }else{
                     status = '<span class="badge bg-secondary rounded-pill" style="font-size: 9px">휴업중</span>';
+                    link = '                <button class="btn btn-warning rounded-pill" onclick="location.href=\'/accommodation/' + value.id + href + '\'">자세히 보기</button>';
                 }
                 $("#resultList").append($(
                     '<li class="list-group-item list-group-item-action result1 py-2 px-4" id="' + value.id + '">' +
