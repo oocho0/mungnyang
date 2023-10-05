@@ -31,7 +31,7 @@
                     <div class="col-2 text-end">
                         <label class="col-form-label">숙소 상태</label>
                     </div>
-                    <div class="col-8 text-start">
+                    <div class="col-5 text-start">
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" value="OPEN" th:field="*{accommodationStatus}"
                                    id="accommodationStatusOpen"/>
@@ -42,6 +42,9 @@
                                    id="accommodationStatusPause"/>
                             <label class="form-check-label" for="accommodationStatusPause">휴업</label>
                         </div>
+                    </div>
+                    <div class="col-5 text-start">
+                        <span class="form-text">숙소 상태를 변경하면, 숙소의 모든 방 상태에 똑같이 적용됩니다.</span>
                     </div>
                 </div>
                 <!--숙소 명-->

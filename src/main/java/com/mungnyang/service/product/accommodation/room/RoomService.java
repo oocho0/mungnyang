@@ -128,6 +128,18 @@ public class RoomService {
     }
 
     /**
+     * 숙소 상태 변화에 따라 방 상태도 업데이트
+     * @param accommodationId 수정되는 숙소
+     * @param accommodationStatus 숙소의 상태
+     */
+    public void updateRoomStatus(Long accommodationId, Status accommodationStatus) {
+        List<Room> savedRooms = getRoomListByAccommodationId(accommodationId);
+        for (Room savedRoom : savedRooms) {
+            savedRoom.setRoomStatus(accommodationStatus);
+        }
+    }
+
+    /**
      * 방 수정 하기
      *
      * @param roomId        해당 방 일련번호

@@ -144,7 +144,11 @@ public class AccommodationService {
                 .build());
         savedAccommodation.setCheckInTime(modifyAccommodationDto.getCheckInTime());
         savedAccommodation.setCheckOutTime(modifyAccommodationDto.getCheckOutTime());
-        savedAccommodation.setAccommodationStatus(StatusService.statusConverter(modifyAccommodationDto.getAccommodationStatus()));
+        Status accommodationStatus = StatusService.statusConverter(modifyAccommodationDto.getAccommodationStatus());
+        if(!accommodationStatus.equals(savedAccommodation.getAccommodationStatus())){
+            savedAccommodation.setAccommodationStatus(accommodationStatus);
+            roomService.updateRoomStatus(accommodationId, accommodationStatus);
+        }
         accommodationImageService.updateAccommodationImages(savedAccommodation, modifyAccommodationDto.getImageList());
         accommodationFacilityService.updateAccommodationFacilities(savedAccommodation, modifyAccommodationDto.getFacilityList());
     }
