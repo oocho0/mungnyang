@@ -132,12 +132,12 @@ function reservation(){
             return;
         }
         var checkIn = $(element).attr("data-checkin");
-        checkIn = moment(checkIn).format("YYYY-MM-DD[T]HH:mm:ss");
         var now = moment();
         if (checkIn.isBefore(now)) {
             alert("예약 불가한 상품이 있습니다.");
             return;
         }
+        checkIn = moment(checkIn).format("YYYY-MM-DD[T]HH:mm:ss");
         var accommodationId = $(element).attr("id");
         var roomId = $(element).attr("name");
         var cartRoomId = $(element).val();
