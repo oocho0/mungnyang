@@ -131,14 +131,19 @@ function reservation(){
             alert("예약 불가한 상품이 있습니다.");
             return;
         }
+        var checkIn = $(element).attr("data-checkin");
+        checkIn = moment(checkIn).format("YYYY-MM-DD[T]HH:mm:ss");
+        var now = moment();
+        if (checkIn.isBefore(now)) {
+            alert("예약 불가한 상품이 있습니다.");
+            return;
+        }
         var accommodationId = $(element).attr("id");
         var roomId = $(element).attr("name");
         var cartRoomId = $(element).val();
         var price = $(element).attr("data-price");
         var days = $(element).attr("data-days");
         var headCount = $(element).attr("data-headCount");
-        var checkIn = $(element).attr("data-checkin");
-        checkIn = moment(checkIn).format("YYYY-MM-DD[T]HH:mm:ss");
         var checkOut = $(element).attr("data-checkout");
         checkOut = moment(checkOut).format("YYYY-MM-DD[T]HH:mm:ss");
         totalPrice += price * days;
