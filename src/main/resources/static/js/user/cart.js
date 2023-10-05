@@ -126,9 +126,11 @@ function reservation(){
         alert("선택한 예약 상품이 없습니다.");
         return;
     }
+    var okay = true;
     $(".cartRoom:checked").each(function(index, element){
         if ($(element).attr("data-status") == "YES"){
             alert("예약 불가한 상품이 있습니다.");
+            okay = false;
             return;
         }
         var checkIn = $(element).attr("data-checkin");
@@ -136,6 +138,7 @@ function reservation(){
         checkIn = moment(checkIn);
         if (checkIn.isBefore(now)) {
             alert("예약 불가한 상품이 있습니다.");
+            okay = false;
             return;
         }
         checkIn = checkIn.format("YYYY-MM-DD[T]HH:mm:ss");
@@ -156,6 +159,9 @@ function reservation(){
         formData.append("reservationRoomList[" + index + "].checkInDate", checkIn);
         formData.append("reservationRoomList[" + index + "].checkOutDate", checkOut);
     });
+    if (!okay){
+        return;
+    }
     formData.append("reservationTotalPrice", totalPrice);
     $.ajax({
         url : url,
