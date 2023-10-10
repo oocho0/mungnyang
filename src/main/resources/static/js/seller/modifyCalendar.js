@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 },
                 color : 'yellow',
+                textColor: 'black',
                 editable : false,
                 overlap : false
             }
@@ -88,6 +89,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         },
         eventClick: function(info){
+            if(info.event.title != "예약됨" || info.event.title != "신규 예약"){
+                return;
+            }
             info.event.remove();
             for(var i = 0; i < bookArray.length; i++){
                 if(bookArray[i].title == info.event.id){
