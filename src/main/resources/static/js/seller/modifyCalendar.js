@@ -89,16 +89,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         },
         eventClick: function(info){
-            if(info.event.title != "예약됨" || info.event.title != "신규 예약"){
-                return;
-            }
-            info.event.remove();
-            for(var i = 0; i < bookArray.length; i++){
-                if(bookArray[i].title == info.event.id){
-                    bookArray[i].is_delete = "Y";
+            if(info.event.title == '예약됨' || info.event.title == '신규 예약'){
+                info.event.remove();
+                for(var i = 0; i < bookArray.length; i++){
+                    if(bookArray[i].title == info.event.id){
+                        bookArray[i].is_delete = "Y";
+                    }
                 }
+                console.log(bookArray);
             }
-            console.log(bookArray);
         },
         events : []
     });
