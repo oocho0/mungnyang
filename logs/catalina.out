@@ -1,0 +1,107 @@
+2023-10-28 21:48:17.463  INFO 72432 --- [restartedMain] com.mungnyang.MungnyangApplication       : Starting MungnyangApplication using Java 11.0.19 on Juheeui-MacBookPro.local with PID 72432 (/Users/juheekim/Desktop/coding/mycodesource/oocho0_github/mungnyang/out/production/classes started by juheekim in /Users/juheekim/Desktop/coding/mycodesource/oocho0_github/mungnyang)
+2023-10-28 21:48:17.464  INFO 72432 --- [restartedMain] com.mungnyang.MungnyangApplication       : The following 3 profiles are active: "path", "kakaokeys", "real-db"
+2023-10-28 21:48:17.630  INFO 72432 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2023-10-28 21:48:17.630  INFO 72432 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2023-10-28 21:48:18.015  INFO 72432 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2023-10-28 21:48:18.068  INFO 72432 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 49 ms. Found 19 JPA repository interfaces.
+2023-10-28 21:48:24.691  WARN 72432 --- [restartedMain] com.amazonaws.util.EC2MetadataUtils      : Unable to retrieve the requested metadata (/latest/meta-data/instance-id). Failed to connect to service endpoint: 
+
+com.amazonaws.SdkClientException: Failed to connect to service endpoint: 
+	at com.amazonaws.internal.EC2ResourceFetcher.doReadResource(EC2ResourceFetcher.java:100) ~[aws-java-sdk-core-1.11.792.jar:na]
+	at com.amazonaws.internal.EC2ResourceFetcher.doReadResource(EC2ResourceFetcher.java:70) ~[aws-java-sdk-core-1.11.792.jar:na]
+	at com.amazonaws.internal.InstanceMetadataServiceResourceFetcher.readResource(InstanceMetadataServiceResourceFetcher.java:75) ~[aws-java-sdk-core-1.11.792.jar:na]
+	at com.amazonaws.internal.EC2ResourceFetcher.readResource(EC2ResourceFetcher.java:66) ~[aws-java-sdk-core-1.11.792.jar:na]
+	at com.amazonaws.util.EC2MetadataUtils.getItems(EC2MetadataUtils.java:402) ~[aws-java-sdk-core-1.11.792.jar:na]
+	at com.amazonaws.util.EC2MetadataUtils.getData(EC2MetadataUtils.java:371) ~[aws-java-sdk-core-1.11.792.jar:na]
+	at org.springframework.cloud.aws.context.support.env.AwsCloudEnvironmentCheckUtils.isRunningOnCloudEnvironment(AwsCloudEnvironmentCheckUtils.java:38) ~[spring-cloud-aws-context-2.2.6.RELEASE.jar:2.2.6.RELEASE]
+	at org.springframework.cloud.aws.context.annotation.OnAwsCloudEnvironmentCondition.matches(OnAwsCloudEnvironmentCondition.java:38) ~[spring-cloud-aws-context-2.2.6.RELEASE.jar:2.2.6.RELEASE]
+	at org.springframework.context.annotation.ConditionEvaluator.shouldSkip(ConditionEvaluator.java:108) ~[spring-context-5.3.29.jar:5.3.29]
+	at org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader$TrackedConditionEvaluator.shouldSkip(ConfigurationClassBeanDefinitionReader.java:489) ~[spring-context-5.3.29.jar:5.3.29]
+	at org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader.loadBeanDefinitionsForConfigurationClass(ConfigurationClassBeanDefinitionReader.java:140) ~[spring-context-5.3.29.jar:5.3.29]
+	at org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader.loadBeanDefinitions(ConfigurationClassBeanDefinitionReader.java:129) ~[spring-context-5.3.29.jar:5.3.29]
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.processConfigBeanDefinitions(ConfigurationClassPostProcessor.java:343) ~[spring-context-5.3.29.jar:5.3.29]
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.postProcessBeanDefinitionRegistry(ConfigurationClassPostProcessor.java:247) ~[spring-context-5.3.29.jar:5.3.29]
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanDefinitionRegistryPostProcessors(PostProcessorRegistrationDelegate.java:311) ~[spring-context-5.3.29.jar:5.3.29]
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(PostProcessorRegistrationDelegate.java:112) ~[spring-context-5.3.29.jar:5.3.29]
+	at org.springframework.context.support.AbstractApplicationContext.invokeBeanFactoryPostProcessors(AbstractApplicationContext.java:748) ~[spring-context-5.3.29.jar:5.3.29]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:564) ~[spring-context-5.3.29.jar:5.3.29]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147) ~[spring-boot-2.7.14.jar:2.7.14]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:731) ~[spring-boot-2.7.14.jar:2.7.14]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:408) ~[spring-boot-2.7.14.jar:2.7.14]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:307) ~[spring-boot-2.7.14.jar:2.7.14]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1303) ~[spring-boot-2.7.14.jar:2.7.14]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1292) ~[spring-boot-2.7.14.jar:2.7.14]
+	at com.mungnyang.MungnyangApplication.main(MungnyangApplication.java:12) ~[classes/:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566) ~[na:na]
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50) ~[spring-boot-devtools-2.7.14.jar:2.7.14]
+Caused by: java.net.ConnectException: Host is down (connect failed)
+	at java.base/java.net.PlainSocketImpl.socketConnect(Native Method) ~[na:na]
+	at java.base/java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:412) ~[na:na]
+	at java.base/java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:255) ~[na:na]
+	at java.base/java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:237) ~[na:na]
+	at java.base/java.net.Socket.connect(Socket.java:615) ~[na:na]
+	at java.base/sun.net.NetworkClient.doConnect(NetworkClient.java:177) ~[na:na]
+	at java.base/sun.net.www.http.HttpClient.openServer(HttpClient.java:507) ~[na:na]
+	at java.base/sun.net.www.http.HttpClient.openServer(HttpClient.java:602) ~[na:na]
+	at java.base/sun.net.www.http.HttpClient.<init>(HttpClient.java:275) ~[na:na]
+	at java.base/sun.net.www.http.HttpClient.New(HttpClient.java:374) ~[na:na]
+	at java.base/sun.net.www.http.HttpClient.New(HttpClient.java:395) ~[na:na]
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(HttpURLConnection.java:1258) ~[na:na]
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1237) ~[na:na]
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:1086) ~[na:na]
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.connect(HttpURLConnection.java:1020) ~[na:na]
+	at com.amazonaws.internal.ConnectionUtils.connectToEndpoint(ConnectionUtils.java:52) ~[aws-java-sdk-core-1.11.792.jar:na]
+	at com.amazonaws.internal.EC2ResourceFetcher.doReadResource(EC2ResourceFetcher.java:80) ~[aws-java-sdk-core-1.11.792.jar:na]
+	... 29 common frames omitted
+
+2023-10-28 21:48:24.822  INFO 72432 --- [restartedMain] trationDelegate$BeanPostProcessorChecker : Bean '(inner bean)#63db08a4' of type [com.amazonaws.auth.BasicAWSCredentials] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2023-10-28 21:48:24.822  INFO 72432 --- [restartedMain] trationDelegate$BeanPostProcessorChecker : Bean '(inner bean)#3022bb08' of type [com.amazonaws.auth.AWSStaticCredentialsProvider] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2023-10-28 21:48:24.825  INFO 72432 --- [restartedMain] trationDelegate$BeanPostProcessorChecker : Bean '(inner bean)#20b889c9' of type [com.amazonaws.auth.profile.ProfileCredentialsProvider] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2023-10-28 21:48:25.107  INFO 72432 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2023-10-28 21:48:25.112  INFO 72432 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-10-28 21:48:25.113  INFO 72432 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.78]
+2023-10-28 21:48:25.148  INFO 72432 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-10-28 21:48:25.148  INFO 72432 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 7518 ms
+2023-10-28 21:48:25.165  INFO 72432 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-10-28 21:48:25.519  INFO 72432 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-10-28 21:48:25.526  INFO 72432 --- [restartedMain] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:mysql://mungnyang.cs1cmvco43e6.ap-northeast-2.rds.amazonaws.com:3306/mungnyang'
+2023-10-28 21:48:25.587  INFO 72432 --- [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2023-10-28 21:48:25.614  INFO 72432 --- [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.15.Final
+2023-10-28 21:48:25.708  INFO 72432 --- [restartedMain] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2023-10-28 21:48:25.785  INFO 72432 --- [restartedMain] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL8Dialect
+2023-10-28 21:48:26.915  INFO 72432 --- [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2023-10-28 21:48:26.924  INFO 72432 --- [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2023-10-28 21:48:27.262  WARN 72432 --- [restartedMain] c.a.a.p.i.BasicProfileConfigLoader       : Your profile name includes a 'profile ' prefix. This is considered part of the profile name in the Java SDK, so you will need to include this prefix in your profile name when you reference this profile from your Java code.
+2023-10-28 21:48:27.316  WARN 72432 --- [restartedMain] c.a.a.p.i.BasicProfileConfigLoader       : Your profile name includes a 'profile ' prefix. This is considered part of the profile name in the Java SDK, so you will need to include this prefix in your profile name when you reference this profile from your Java code.
+2023-10-28 21:48:27.370  WARN 72432 --- [restartedMain] c.a.a.p.i.BasicProfileConfigLoader       : Your profile name includes a 'profile ' prefix. This is considered part of the profile name in the Java SDK, so you will need to include this prefix in your profile name when you reference this profile from your Java code.
+2023-10-28 21:48:27.584 TRACE 72432 --- [restartedMain] o.h.type.descriptor.sql.BasicBinder      : binding parameter [1] as [VARCHAR] - [admin@abc.com]
+2023-10-28 21:48:27.592 TRACE 72432 --- [restartedMain] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([member_i1_8_] : [BIGINT]) - [1]
+2023-10-28 21:48:27.595 TRACE 72432 --- [restartedMain] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([req_date2_8_] : [TIMESTAMP]) - [2023-09-18T13:10:05.192305]
+2023-10-28 21:48:27.595 TRACE 72432 --- [restartedMain] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([update_d3_8_] : [TIMESTAMP]) - [2023-09-18T13:10:05.081925]
+2023-10-28 21:48:27.595 TRACE 72432 --- [restartedMain] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([detail4_8_] : [VARCHAR]) - [서울]
+2023-10-28 21:48:27.596 TRACE 72432 --- [restartedMain] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([extra5_8_] : [VARCHAR]) - [어딘가]
+2023-10-28 21:48:27.596 TRACE 72432 --- [restartedMain] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([main6_8_] : [VARCHAR]) - [한국]
+2023-10-28 21:48:27.596 TRACE 72432 --- [restartedMain] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([zipcode7_8_] : [VARCHAR]) - [00000]
+2023-10-28 21:48:27.596 TRACE 72432 --- [restartedMain] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([email8_8_] : [VARCHAR]) - [admin@abc.com]
+2023-10-28 21:48:27.596 TRACE 72432 --- [restartedMain] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([member_t9_8_] : [VARCHAR]) - [NORMAL]
+2023-10-28 21:48:27.596 TRACE 72432 --- [restartedMain] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([name10_8_] : [VARCHAR]) - [관리자]
+2023-10-28 21:48:27.596 TRACE 72432 --- [restartedMain] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([passwor11_8_] : [VARCHAR]) - [$2a$10$R1503NxSJrj/ulRS6x.qjOLjiEHvuSxCL6mmLFv0mh5a5iPCGl4Wi]
+2023-10-28 21:48:27.596 TRACE 72432 --- [restartedMain] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([role12_8_] : [VARCHAR]) - [ADMIN]
+2023-10-28 21:48:27.596 TRACE 72432 --- [restartedMain] o.h.type.descriptor.sql.BasicExtractor   : extracted value ([tel13_8_] : [VARCHAR]) - [010-1234-1234]
+2023-10-28 21:48:27.624  WARN 72432 --- [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2023-10-28 21:48:28.041  WARN 72432 --- [restartedMain] o.s.s.c.a.web.builders.WebSecurity       : You are asking Spring Security to ignore Ant [pattern='/css/**']. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-10-28 21:48:28.042  INFO 72432 --- [restartedMain] o.s.s.web.DefaultSecurityFilterChain     : Will not secure Ant [pattern='/css/**']
+2023-10-28 21:48:28.042  WARN 72432 --- [restartedMain] o.s.s.c.a.web.builders.WebSecurity       : You are asking Spring Security to ignore Ant [pattern='/image/**']. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-10-28 21:48:28.042  INFO 72432 --- [restartedMain] o.s.s.web.DefaultSecurityFilterChain     : Will not secure Ant [pattern='/image/**']
+2023-10-28 21:48:28.042  WARN 72432 --- [restartedMain] o.s.s.c.a.web.builders.WebSecurity       : You are asking Spring Security to ignore Ant [pattern='/js/**']. This is not recommended -- please use permitAll via HttpSecurity#authorizeHttpRequests instead.
+2023-10-28 21:48:28.042  INFO 72432 --- [restartedMain] o.s.s.web.DefaultSecurityFilterChain     : Will not secure Ant [pattern='/js/**']
+2023-10-28 21:48:28.062  INFO 72432 --- [restartedMain] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@2684e68e, org.springframework.security.web.session.ForceEagerSessionCreationFilter@5db03ae7, org.springframework.security.web.session.ForceEagerSessionCreationFilter@7f049107, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@5cd56c7a, org.springframework.security.web.context.SecurityContextPersistenceFilter@7b73b7b9, org.springframework.security.web.header.HeaderWriterFilter@1b62926, org.springframework.security.web.csrf.CsrfFilter@193ebe71, org.springframework.security.web.authentication.logout.LogoutFilter@2fdc42d3, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@7c2b0693, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@2175c5fb, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@1c94d269, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@21ab091f, org.springframework.security.web.session.SessionManagementFilter@5b9e7740, org.springframework.security.web.access.ExceptionTranslationFilter@332bbe56, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@7c9a1d97]
+2023-10-28 21:48:28.267  INFO 72432 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2023-10-28 21:48:28.323  INFO 72432 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2023-10-28 21:48:28.329  INFO 72432 --- [restartedMain] com.mungnyang.MungnyangApplication       : Started MungnyangApplication in 11.17 seconds (JVM running for 11.589)
+2023-10-28 21:49:12.798  INFO 72432 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2023-10-28 21:49:12.800  INFO 72432 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2023-10-28 21:49:12.898  INFO 72432 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
